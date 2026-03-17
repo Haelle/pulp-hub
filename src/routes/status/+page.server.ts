@@ -4,13 +4,13 @@ import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ cookies }) => {
 	const url = cookies.get('pulp_url');
-	const auth = cookies.get('pulp_auth');
+	const sessionid = cookies.get('pulp_session');
 
-	if (!url || !auth) {
+	if (!url || !sessionid) {
 		redirect(303, '/');
 	}
 
-	const response = await pulpFetch(`${url}/pulp/api/v3/status/`, auth);
+	const response = await pulpFetch(`${url}/pulp/api/v3/status/`, sessionid);
 
 	if (!response.ok) {
 		redirect(303, '/');

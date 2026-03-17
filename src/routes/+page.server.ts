@@ -1,5 +1,5 @@
 import { redirect, fail } from '@sveltejs/kit';
-import { pulpFetch } from '$lib/pulp';
+import { pulpLogin } from '$lib/pulp';
 import type { Actions } from './$types';
 
 export const actions = {
@@ -8,20 +8,19 @@ export const actions = {
 		const url = (data.get('url') as string).replace(/\/+$/, '');
 		const username = data.get('username') as string;
 		const password = data.get('password') as string;
-		const auth = btoa(`${username}:${password}`);
 
 		try {
-			const response = await pulpFetch(`${url}/v2/`, auth);
-
-			if (!response.ok) {
-				return fail(400, { error: `Authentication failed (${response.status})` });
-			}
+			const session = await pulpLogin(url, username, password);
 
 			cookies.set('pulp_url', url, { path: '/', httpOnly: true, sameSite: 'lax' });
-			cookies.set('pulp_auth', auth, { path: '/', httpOnly: true, sameSite: 'lax' });
+			cookies.set('pulp_session', session.sessionid, {
+				path: '/',
+				httpOnly: true,
+				sameSite: 'lax'
+			});
 		} catch (e) {
 			const message = e instanceof Error ? e.message : 'Unknown error';
-			return fail(400, { error: `Cannot reach Pulp: ${message}` });
+			return fail(400, { error: message });
 		}
 
 		redirect(303, '/status');
