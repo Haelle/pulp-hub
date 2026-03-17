@@ -16,7 +16,7 @@ setup: ## Install deps + configure pulp-cli (interactive)
 	$(DC) ./bin/setup.sh
 
 dev: ## Start the dev server (http://localhost:5173)
-	$(DC) npm run dev -- --host 0.0.0.0
+	$(DC) bash -c "NODE_TLS_REJECT_UNAUTHORIZED=0 npm run dev -- --host 0.0.0.0"
 
 build: ## Production build
 	$(DC) npm run build
