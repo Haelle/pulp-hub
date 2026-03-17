@@ -6,8 +6,6 @@ set -euo pipefail
 # Requires: pulp-cli configured via `pulp config create`
 # ──────────────────────────────────────────────────────────────
 
-PREFIX="dockerhub/library"
-
 NAMES=(
   "dockerhub/library/alpine"
   "dockerhub/library/busybox"

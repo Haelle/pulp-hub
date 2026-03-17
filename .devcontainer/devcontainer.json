@@ -1,0 +1,18 @@
+{
+  "name": "PulpHub",
+  "build": {
+    "dockerfile": "Dockerfile"
+  },
+  "postCreateCommand": "npm install",
+  "forwardPorts": [5173],
+  "runArgs": ["-p", "5173:5173", "--add-host=pulp.local:host-gateway"],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "svelte.svelte-vscode",
+        "bradlc.vscode-tailwindcss"
+      ]
+    }
+  },
+  "remoteUser": "node"
+}

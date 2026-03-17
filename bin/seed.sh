@@ -9,7 +9,7 @@ set -euo pipefail
 
 PREFIX="dockerhub/library"
 
-# name|upstream|tags (comma-separated)
+# name|upstream|tags (comma-separated, limits sync to avoid Docker Hub rate limits)
 IMAGES=(
   "alpine|library/alpine|3.18,3.19,latest"
   "busybox|library/busybox|1.36,latest"
@@ -24,33 +24,20 @@ ensure_remote() {
   local name="$1" upstream="$2"; shift 2
   # remaining args are --include-tags values
   if exists remote show --name "$name"; then
-    echo "  Remote exists, updating tags..."
-    pulp container remote update --name "$name" "$@" >/dev/null 2>&1 || true
+    echo "  Remote exists"
   else
     echo "  Creating remote..."
-    # pulp-cli 0.38 has a bug on remote create, fall back to curl
-    local config_file="${XDG_CONFIG_HOME:-$HOME/.config}/pulp/cli.toml"
-    local base_url username password
-    base_url=$(python3 -c "import tomllib; c=tomllib.load(open('$config_file','rb')); print(c['cli']['base_url'])")
-    username=$(python3 -c "import tomllib; c=tomllib.load(open('$config_file','rb')); print(c['cli']['username'])")
-    password=$(python3 -c "import tomllib; c=tomllib.load(open('$config_file','rb')); print(c['cli']['password'])")
-
-    local tags_json
-    tags_json=$(python3 -c "import json,sys; print(json.dumps(sys.argv[1:]))" "$@")
-    # $@ contains --include-tags tag1 --include-tags tag2, extract just the tag values
-    local tag_values=()
-    while [[ $# -gt 0 ]]; do
-      [[ "$1" == "--include-tags" ]] && { tag_values+=("$2"); shift 2; continue; }
-      shift
-    done
-    tags_json=$(python3 -c "import json,sys; print(json.dumps(sys.argv[1:]))" "${tag_values[@]}")
-
-    curl -sk -u "${username}:${password}" \
-      -X POST "${base_url}/pulp/api/v3/remotes/container/container/" \
-      -H "Content-Type: application/json" \
-      -d "{\"name\":\"${name}\",\"url\":\"https://registry-1.docker.io\",\"upstream_name\":\"${upstream}\",\"policy\":\"on_demand\",\"include_tags\":${tags_json}}" \
-      >/dev/null
+    pulp container remote create \
+      --name "$name" \
+      --url "https://registry-1.docker.io" \
+      --upstream-name "$upstream" \
+      --policy "on_demand"
     echo "  Remote created"
+  fi
+  # Set include_tags to limit sync scope (avoid Docker Hub rate limits)
+  if [[ $# -gt 0 ]]; then
+    echo "  Setting include_tags..."
+    pulp container remote update --name "$name" "$@" >/dev/null 2>&1 || true
   fi
 }
 
@@ -96,7 +83,7 @@ ensure_distribution() {
 # ── Main ──────────────────────────────────────────────────────
 
 echo "=== Pulp Seed ==="
-pulp status >/dev/null 2>&1 || { echo "ERROR: Pulp unreachable. Run 'pulp config create' first."; exit 1; }
+pulp status >/dev/null 2>&1 || { echo "ERROR: Pulp unreachable. Run 'make setup' first."; exit 1; }
 echo "✓ Pulp API OK"
 
 for entry in "${IMAGES[@]}"; do
@@ -107,8 +94,8 @@ for entry in "${IMAGES[@]}"; do
   echo "── ${FULL} ──"
 
   # Build --include-tags args
-  IFS=',' read -ra TAG_LIST <<< "$TAGS"
   TAG_ARGS=()
+  IFS=',' read -ra TAG_LIST <<< "$TAGS"
   for t in "${TAG_LIST[@]}"; do TAG_ARGS+=(--include-tags "$t"); done
 
   ensure_remote "$FULL" "$UPSTREAM" "${TAG_ARGS[@]}"

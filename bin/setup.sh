@@ -2,16 +2,11 @@
 set -euo pipefail
 
 # ──────────────────────────────────────────────────────────────
-# setup.sh — Install dependencies for PulpHub development
+# setup.sh — Configure pulp-cli to connect to the Pulp instance
+# pulp-cli is already installed via the devcontainer Dockerfile
 # ──────────────────────────────────────────────────────────────
 
 echo "=== PulpHub Setup ==="
-
-# Python dependencies (for seed/clean scripts)
-echo ""
-echo "Installing pulp-cli..."
-pip install --quiet "pulp-cli[container]"
-echo "✓ pulp-cli installed"
 
 # Check if pulp config exists
 config_file="${XDG_CONFIG_HOME:-$HOME/.config}/pulp/cli.toml"
@@ -47,6 +42,4 @@ else
 fi
 
 echo ""
-echo "Done. Next steps:"
-echo "  ./scripts/seed.sh    # Populate Pulp with test data"
-echo "  ./scripts/clean.sh   # Remove test data"
+echo "Done. Next: make seed"
