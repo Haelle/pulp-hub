@@ -1,0 +1,82 @@
+{
+    meta: {
+        createdAt: '2026-03-18T16:56:46.698Z',
+        host: 'https://pulp.local:8443',
+        resHumanReadable: true,
+    },
+    req: {
+        headers: {
+            connection: 'keep-alive',
+            cookie: 'sessionid=o7a4syi84p1qwpkwee3gwoaxv0gkunit',
+            accept: '*/*',
+            'accept-language': '*',
+            'sec-fetch-mode': 'cors',
+            'user-agent': 'node',
+            'accept-encoding': 'gzip, deflate',
+        },
+        url: '/pulp/api/v3/content/container/tags/?repository_version=%2Fpulp%2Fapi%2Fv3%2Frepositories%2Fcontainer%2Fcontainer%2F019cfdfe-f609-789d-a315-8414a0692aa4%2Fversions%2F3%2F&name=edge',
+        method: 'GET',
+        body: '',
+    },
+    res: {
+        status: 200,
+        headers: {
+            server: [
+                'nginx/1.29.6',
+            ],
+            date: [
+                'Wed, 18 Mar 2026 16:56:47 GMT',
+            ],
+            'content-type': [
+                'application/json',
+            ],
+            'content-length': [
+                '448',
+            ],
+            connection: [
+                'keep-alive',
+            ],
+            vary: [
+                'Accept, Cookie',
+            ],
+            allow: [
+                'GET, HEAD, OPTIONS',
+            ],
+            'x-frame-options': [
+                'DENY',
+            ],
+            'x-content-type-options': [
+                'nosniff',
+            ],
+            'referrer-policy': [
+                'same-origin',
+            ],
+            'cross-origin-opener-policy': [
+                'same-origin',
+            ],
+            'correlation-id': [
+                '87fff52c981f4904acb857c1eb8fbded',
+            ],
+            'access-control-expose-headers': [
+                'Correlation-ID',
+            ],
+        },
+        body: {
+            count: 1,
+            next: null,
+            previous: null,
+            results: [
+                {
+                    pulp_href: '/pulp/api/v3/content/container/tags/019d01bb-de13-74a5-9244-8350c3e6747b/',
+                    prn: 'prn:container.tag:019d01bb-de13-74a5-9244-8350c3e6747b',
+                    pulp_created: '2026-03-18T16:16:25.055667Z',
+                    pulp_last_updated: '2026-03-18T16:16:25.055694Z',
+                    pulp_labels: {},
+                    vuln_report: null,
+                    name: 'edge',
+                    tagged_manifest: '/pulp/api/v3/content/container/manifests/019d01bb-de14-79be-a47b-250c76ae110b/',
+                },
+            ],
+        },
+    },
+}

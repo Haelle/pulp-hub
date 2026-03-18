@@ -1,0 +1,90 @@
+{
+    meta: {
+        createdAt: '2026-03-18T16:44:38.444Z',
+        host: 'https://pulp.local:8443',
+        resHumanReadable: true,
+    },
+    req: {
+        headers: {
+            connection: 'keep-alive',
+            cookie: 'sessionid=o7a4syi84p1qwpkwee3gwoaxv0gkunit',
+            accept: '*/*',
+            'accept-language': '*',
+            'sec-fetch-mode': 'cors',
+            'user-agent': 'node',
+            'accept-encoding': 'gzip, deflate',
+        },
+        url: '/pulp/api/v3/content/container/manifests/019d016d-eba7-7918-aca7-e4107b651ecb/',
+        method: 'GET',
+        body: '',
+    },
+    res: {
+        status: 200,
+        headers: {
+            server: [
+                'nginx/1.29.6',
+            ],
+            date: [
+                'Wed, 18 Mar 2026 16:44:39 GMT',
+            ],
+            'content-type': [
+                'application/json',
+            ],
+            'content-length': [
+                '883',
+            ],
+            connection: [
+                'keep-alive',
+            ],
+            vary: [
+                'Accept, Cookie',
+            ],
+            allow: [
+                'GET, HEAD, OPTIONS',
+            ],
+            'x-frame-options': [
+                'DENY',
+            ],
+            'x-content-type-options': [
+                'nosniff',
+            ],
+            'referrer-policy': [
+                'same-origin',
+            ],
+            'cross-origin-opener-policy': [
+                'same-origin',
+            ],
+            'correlation-id': [
+                '9c694ca12f4c40ef96b2b2aa792be0b6',
+            ],
+            'access-control-expose-headers': [
+                'Correlation-ID',
+            ],
+        },
+        body: {
+            pulp_href: '/pulp/api/v3/content/container/manifests/019d016d-eba7-7918-aca7-e4107b651ecb/',
+            prn: 'prn:container.manifest:019d016d-eba7-7918-aca7-e4107b651ecb',
+            pulp_created: '2026-03-18T14:51:17.171419Z',
+            pulp_last_updated: '2026-03-18T14:51:17.171427Z',
+            pulp_labels: {},
+            vuln_report: null,
+            digest: 'sha256:7d2f094833805acfb2f86be079092e2f353e06204734fb42769beb7d788bc049',
+            schema_version: 2,
+            media_type: 'application/vnd.oci.image.manifest.v1+json',
+            listed_manifests: [],
+            config_blob: '/pulp/api/v3/content/container/blobs/019d016d-ec13-77e8-bdaa-2aa4c6d60d0d/',
+            blobs: [
+                '/pulp/api/v3/content/container/blobs/019d016d-ec11-7e54-8c8a-1f0032136f11/',
+                '/pulp/api/v3/content/container/blobs/019d016d-ec0f-7672-8de4-f6fe50470370/',
+            ],
+            annotations: {},
+            labels: {},
+            is_bootable: false,
+            is_flatpak: false,
+            type: 'image',
+            architecture: 'unknown',
+            os: 'unknown',
+            compressed_image_size: 84632,
+        },
+    },
+}

@@ -1,6 +1,6 @@
 DC = devcontainer exec --workspace-folder .
 
-.PHONY: up down recreate setup dev build check seed clean shell
+.PHONY: up down recreate setup dev build check test test-ui test-record seed clean shell help
 
 up: ## Start the devcontainer
 	devcontainer up --workspace-folder .
@@ -24,8 +24,11 @@ build: ## Production build
 check: ## Type-check the project
 	$(DC) npm run check
 
-test: ## Run e2e tests (requires Pulp running)
+test: ## Run e2e tests (records new tapes, replays existing)
 	$(DC) bash -c "NODE_TLS_REJECT_UNAUTHORIZED=0 npx playwright test"
+
+test-record: ## Re-record all tapes from scratch (requires Pulp running)
+	$(DC) bash -c "rm -rf e2e/tapes && NODE_TLS_REJECT_UNAUTHORIZED=0 TALKBACK_RECORD=NEW npx playwright test"
 
 test-ui: ## Run e2e tests in headed mode with slow-mo (host only)
 	SLOWMO=500 NODE_TLS_REJECT_UNAUTHORIZED=0 npx playwright test --headed

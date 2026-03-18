@@ -1,0 +1,77 @@
+{
+    meta: {
+        createdAt: '2026-03-18T16:44:22.825Z',
+        host: 'https://pulp.local:8443',
+    },
+    req: {
+        headers: {
+            connection: 'keep-alive',
+            'content-type': 'application/x-www-form-urlencoded',
+            cookie: 'csrftoken=XWYxQfZdPPZ7lmSUUDTWpzskSU6MQO7t',
+            'x-csrftoken': 'XWYxQfZdPPZ7lmSUUDTWpzskSU6MQO7t',
+            accept: '*/*',
+            'accept-language': '*',
+            'sec-fetch-mode': 'cors',
+            'user-agent': 'node',
+            'accept-encoding': 'gzip, deflate',
+        },
+        url: '/auth/login/',
+        method: 'POST',
+        body: 'dXNlcm5hbWU9YWRtaW4mcGFzc3dvcmQ9YWRtaW4mY3NyZm1pZGRsZXdhcmV0b2tlbj1YV1l4UWZaZFBQWjdsbVNVVURUV3B6c2tTVTZNUU83dA==',
+    },
+    res: {
+        status: 302,
+        headers: {
+            server: [
+                'nginx/1.29.6',
+            ],
+            date: [
+                'Wed, 18 Mar 2026 16:44:23 GMT',
+            ],
+            'content-type': [
+                'text/html; charset=utf-8',
+            ],
+            'content-length': [
+                '0',
+            ],
+            connection: [
+                'keep-alive',
+            ],
+            location: [
+                'https://pulp.local:8443/accounts/profile/',
+            ],
+            expires: [
+                'Wed, 18 Mar 2026 16:44:23 GMT',
+            ],
+            'cache-control': [
+                'max-age=0, no-cache, no-store, must-revalidate, private',
+            ],
+            vary: [
+                'Cookie',
+            ],
+            'x-frame-options': [
+                'DENY',
+            ],
+            'x-content-type-options': [
+                'nosniff',
+            ],
+            'referrer-policy': [
+                'same-origin',
+            ],
+            'cross-origin-opener-policy': [
+                'same-origin',
+            ],
+            'correlation-id': [
+                '5c3d2182f2ca44e5984313a14d935065',
+            ],
+            'access-control-expose-headers': [
+                'Correlation-ID',
+            ],
+            'set-cookie': [
+                'csrftoken=wtAAqEw1mHDsmiijWYRx7AFLCWfi3Bro; expires=Wed, 17 Mar 2027 16:44:23 GMT; Max-Age=31449600; Path=/; SameSite=Lax',
+                'sessionid=nh2rq4m24roqtasu442la44uefwipkd7; expires=Wed, 01 Apr 2026 16:44:23 GMT; HttpOnly; Max-Age=1209600; Path=/; SameSite=Lax',
+            ],
+        },
+        body: '',
+    },
+}

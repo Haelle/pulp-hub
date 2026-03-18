@@ -1,0 +1,122 @@
+{
+    meta: {
+        createdAt: '2026-03-18T16:44:36.520Z',
+        host: 'https://pulp.local:8443',
+        resHumanReadable: true,
+    },
+    req: {
+        headers: {
+            connection: 'keep-alive',
+            cookie: 'sessionid=o7a4syi84p1qwpkwee3gwoaxv0gkunit',
+            accept: '*/*',
+            'accept-language': '*',
+            'sec-fetch-mode': 'cors',
+            'user-agent': 'node',
+            'accept-encoding': 'gzip, deflate',
+        },
+        url: '/pulp/api/v3/content/container/tags/?repository_version=%2Fpulp%2Fapi%2Fv3%2Frepositories%2Fcontainer%2Fcontainer%2F019cfdfe-f609-789d-a315-8414a0692aa4%2Fversions%2F3%2F&limit=100',
+        method: 'GET',
+        body: '',
+    },
+    res: {
+        status: 200,
+        headers: {
+            server: [
+                'nginx/1.29.6',
+            ],
+            date: [
+                'Wed, 18 Mar 2026 16:44:36 GMT',
+            ],
+            'content-type': [
+                'application/json',
+            ],
+            'content-length': [
+                '2038',
+            ],
+            connection: [
+                'keep-alive',
+            ],
+            vary: [
+                'Accept, Cookie',
+            ],
+            allow: [
+                'GET, HEAD, OPTIONS',
+            ],
+            'x-frame-options': [
+                'DENY',
+            ],
+            'x-content-type-options': [
+                'nosniff',
+            ],
+            'referrer-policy': [
+                'same-origin',
+            ],
+            'cross-origin-opener-policy': [
+                'same-origin',
+            ],
+            'correlation-id': [
+                '4885d0a3c8e54a2e992b21f62352278f',
+            ],
+            'access-control-expose-headers': [
+                'Correlation-ID',
+            ],
+        },
+        body: {
+            count: 5,
+            next: null,
+            previous: null,
+            results: [
+                {
+                    pulp_href: '/pulp/api/v3/content/container/tags/019d01bb-de13-74a5-9244-8350c3e6747b/',
+                    prn: 'prn:container.tag:019d01bb-de13-74a5-9244-8350c3e6747b',
+                    pulp_created: '2026-03-18T16:16:25.055667Z',
+                    pulp_last_updated: '2026-03-18T16:16:25.055694Z',
+                    pulp_labels: {},
+                    vuln_report: null,
+                    name: 'edge',
+                    tagged_manifest: '/pulp/api/v3/content/container/manifests/019d01bb-de14-79be-a47b-250c76ae110b/',
+                },
+                {
+                    pulp_href: '/pulp/api/v3/content/container/tags/019d01b8-daf6-7906-84a6-6614935da075/',
+                    prn: 'prn:container.tag:019d01b8-daf6-7906-84a6-6614935da075',
+                    pulp_created: '2026-03-18T16:13:06.746976Z',
+                    pulp_last_updated: '2026-03-18T16:13:06.747004Z',
+                    pulp_labels: {},
+                    vuln_report: null,
+                    name: '3.20',
+                    tagged_manifest: '/pulp/api/v3/content/container/manifests/019d01b8-daf7-7b5d-942e-58c51faf506c/',
+                },
+                {
+                    pulp_href: '/pulp/api/v3/content/container/tags/019d016d-e970-7b2b-8f52-9738c74f248e/',
+                    prn: 'prn:container.tag:019d016d-e970-7b2b-8f52-9738c74f248e',
+                    pulp_created: '2026-03-18T14:51:17.323097Z',
+                    pulp_last_updated: '2026-03-18T14:51:17.323105Z',
+                    pulp_labels: {},
+                    vuln_report: null,
+                    name: 'latest',
+                    tagged_manifest: '/pulp/api/v3/content/container/manifests/019d016d-e971-7f5c-90c6-248e3f2a001c/',
+                },
+                {
+                    pulp_href: '/pulp/api/v3/content/container/tags/019d016d-ec3a-720d-ad32-9492c5acf9f4/',
+                    prn: 'prn:container.tag:019d016d-ec3a-720d-ad32-9492c5acf9f4',
+                    pulp_created: '2026-03-18T14:51:17.321629Z',
+                    pulp_last_updated: '2026-03-18T14:51:17.321638Z',
+                    pulp_labels: {},
+                    vuln_report: null,
+                    name: '3.19',
+                    tagged_manifest: '/pulp/api/v3/content/container/manifests/019d016d-ec3b-7559-b2ce-776593e7cc13/',
+                },
+                {
+                    pulp_href: '/pulp/api/v3/content/container/tags/019d016d-ef68-7580-8587-cda12590232a/',
+                    prn: 'prn:container.tag:019d016d-ef68-7580-8587-cda12590232a',
+                    pulp_created: '2026-03-18T14:51:17.319848Z',
+                    pulp_last_updated: '2026-03-18T14:51:17.319857Z',
+                    pulp_labels: {},
+                    vuln_report: null,
+                    name: '3.18',
+                    tagged_manifest: '/pulp/api/v3/content/container/manifests/019d016d-ef69-7578-beb0-0a2bd6e6aefd/',
+                },
+            ],
+        },
+    },
+}

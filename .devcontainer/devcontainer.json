@@ -3,8 +3,8 @@
   "build": {
     "dockerfile": "Dockerfile"
   },
-  "postCreateCommand": "npm install",
-  "forwardPorts": [5173],
+  "postCreateCommand": "npm install && npx playwright install --with-deps chromium",
+  "forwardPorts": [5173, 8787],
   "runArgs": ["-p", "5173:5173", "--add-host=pulp.local:host-gateway"],
   "customizations": {
     "vscode": {

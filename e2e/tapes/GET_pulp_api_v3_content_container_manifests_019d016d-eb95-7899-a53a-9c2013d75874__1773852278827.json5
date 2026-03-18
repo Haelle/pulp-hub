@@ -1,0 +1,97 @@
+{
+    meta: {
+        createdAt: '2026-03-18T16:44:38.411Z',
+        host: 'https://pulp.local:8443',
+        resHumanReadable: true,
+    },
+    req: {
+        headers: {
+            connection: 'keep-alive',
+            cookie: 'sessionid=o7a4syi84p1qwpkwee3gwoaxv0gkunit',
+            accept: '*/*',
+            'accept-language': '*',
+            'sec-fetch-mode': 'cors',
+            'user-agent': 'node',
+            'accept-encoding': 'gzip, deflate',
+        },
+        url: '/pulp/api/v3/content/container/manifests/019d016d-eb95-7899-a53a-9c2013d75874/',
+        method: 'GET',
+        body: '',
+    },
+    res: {
+        status: 200,
+        headers: {
+            server: [
+                'nginx/1.29.6',
+            ],
+            date: [
+                'Wed, 18 Mar 2026 16:44:38 GMT',
+            ],
+            'content-type': [
+                'application/json',
+            ],
+            'content-length': [
+                '1283',
+            ],
+            connection: [
+                'keep-alive',
+            ],
+            vary: [
+                'Accept, Cookie',
+            ],
+            allow: [
+                'GET, HEAD, OPTIONS',
+            ],
+            'x-frame-options': [
+                'DENY',
+            ],
+            'x-content-type-options': [
+                'nosniff',
+            ],
+            'referrer-policy': [
+                'same-origin',
+            ],
+            'cross-origin-opener-policy': [
+                'same-origin',
+            ],
+            'correlation-id': [
+                '8134f354849b4d4c82766cb149007b88',
+            ],
+            'access-control-expose-headers': [
+                'Correlation-ID',
+            ],
+        },
+        body: {
+            pulp_href: '/pulp/api/v3/content/container/manifests/019d016d-eb95-7899-a53a-9c2013d75874/',
+            prn: 'prn:container.manifest:019d016d-eb95-7899-a53a-9c2013d75874',
+            pulp_created: '2026-03-18T14:51:17.154832Z',
+            pulp_last_updated: '2026-03-18T14:51:17.154841Z',
+            pulp_labels: {},
+            vuln_report: null,
+            digest: 'sha256:1529d13528ed05668b2038ffab807ac8633ad6adfe6be8901adda62411f70d29',
+            schema_version: 2,
+            media_type: 'application/vnd.oci.image.manifest.v1+json',
+            listed_manifests: [],
+            config_blob: '/pulp/api/v3/content/container/blobs/019d016d-ec0d-79ee-b55c-8495f7485f03/',
+            blobs: [
+                '/pulp/api/v3/content/container/blobs/019d016d-ec0b-71f6-97c5-7040bacb43d2/',
+            ],
+            annotations: {
+                'org.opencontainers.image.url': 'https://hub.docker.com/_/alpine',
+                'org.opencontainers.image.source': 'https://github.com/alpinelinux/docker-alpine.git#a037d70ba44f91b00dff940019d29a28f7ba1265:aarch64',
+                'org.opencontainers.image.created': '2026-01-28T01:17:47Z',
+                'org.opencontainers.image.version': '3.23.3',
+                'org.opencontainers.image.revision': 'a037d70ba44f91b00dff940019d29a28f7ba1265',
+                'org.opencontainers.image.base.name': 'scratch',
+                'com.docker.official-images.bashbrew.arch': 'arm64v8',
+            },
+            labels: {},
+            is_bootable: false,
+            is_flatpak: false,
+            type: 'image',
+            architecture: 'arm64',
+            os: 'linux',
+            compressed_image_size: 4197091,
+        },
+    },
+}
