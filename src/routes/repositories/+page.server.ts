@@ -9,5 +9,7 @@ export const load: PageServerLoad = async ({ cookies, url }) => {
 
 	const distributions = await getDistributions(pulpUrl, sessionid, limit, offset);
 
-	return { distributions, offset, limit };
+	const pulpHost = new URL(pulpUrl).host;
+
+	return { distributions, offset, limit, pulpHost };
 };

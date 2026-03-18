@@ -135,18 +135,16 @@ Afficher la liste paginée des distributions container Pulp sous forme de grille
 
 ---
 
-## Étape 4 — Page détail d'un repository et ses tags
+## Étape 4 — Page détail d'un repository et ses tags ✅
 
-### Objectif
+### Réalisé
 
-Afficher le détail d'une distribution et la liste de ses tags avec digest et date.
-
-### Contenu
-
-- Appels : distribution par nom → `latest_version_href` → tags
-- `TagRow.svelte` : nom tag, digest tronqué + tooltip, date
-- `PullCommand.svelte` : commande pull + bouton copie clipboard
+- `getDistribution()`, `getRepository()`, `getTags()` dans `pulp.ts`
+- Chaîne distribution → repository → latest_version_href → tags
+- `/repositories/[name]` : nom, registry path, badge Container, table des tags (nom, digest tronqué + tooltip, date)
+- `PullCommand.svelte` : commande podman pull + bouton copie clipboard avec feedback visuel
 - 404 si repo inexistant
+- CLI hint expliquant la logique de chaînage des requêtes
 
 ---
 
@@ -189,6 +187,6 @@ Finaliser l'application : recherche cross-repos, responsive mobile, polish visue
 | 1   | Squelette SvelteKit | ✅ fait    | Projet + dark theme + devcontainer |
 | 2   | Auth login/cookie   | ✅ fait     | Login → session Django → redirect  |
 | 3   | Liste repositories  | ⬜ à faire | Grille de RepoCard paginée         |
-| 4   | Détail repo + tags  | ⬜ à faire | Tableau des tags + pull command    |
+| 4   | Détail repo + tags  | ✅ fait     | Tableau des tags + pull command    |
 | 5   | Détail tag + layers | ⬜ à faire | Manifest + layers + tailles        |
 | 6   | Recherche + polish  | ⬜ à faire | App complète et responsive         |

@@ -2,10 +2,13 @@
 	import * as Card from '$lib/components/ui/card';
 	import { Badge } from '$lib/components/ui/badge';
 	import type { ContainerDistribution } from '$lib/pulp';
+	import { dockerHubUrl } from '$lib/utils';
+	import ExternalLink from '@lucide/svelte/icons/external-link';
 
-	let { distribution }: { distribution: ContainerDistribution } = $props();
+	let { distribution, pulpHost }: { distribution: ContainerDistribution; pulpHost: string } = $props();
 
 	const name = $derived(distribution.name.split('/').pop() ?? distribution.name);
+	const hubUrl = $derived(dockerHubUrl(distribution.name));
 </script>
 
 <a href="/repositories/{encodeURIComponent(distribution.name)}" class="block">
@@ -18,7 +21,13 @@
 			<Card.Description>{distribution.base_path}</Card.Description>
 		</Card.Header>
 		<Card.Content>
-			<p class="text-xs font-mono text-muted-foreground truncate">{distribution.registry_path}</p>
+			<p class="text-xs font-mono text-muted-foreground truncate">{pulpHost}/{distribution.base_path}</p>
+			{#if hubUrl}
+				<button type="button" class="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mt-1 cursor-pointer" onclick={(e) => { e.preventDefault(); e.stopPropagation(); window.open(hubUrl, '_blank'); }}>
+					<ExternalLink class="size-3" />
+					Docker Hub
+				</button>
+			{/if}
 		</Card.Content>
 	</Card.Root>
 </a>

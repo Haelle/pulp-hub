@@ -75,6 +75,19 @@ export interface ContainerDistribution {
 	description: string | null;
 }
 
+export interface ContainerRepository {
+	pulp_href: string;
+	name: string;
+	latest_version_href: string;
+}
+
+export interface ContainerTag {
+	pulp_href: string;
+	name: string;
+	tagged_manifest: string;
+	pulp_created: string;
+}
+
 /**
  * List container distributions with pagination.
  */
@@ -85,6 +98,49 @@ export async function getDistributions(
 	offset = 0
 ): Promise<PulpPaginated<ContainerDistribution>> {
 	const url = `${baseUrl}/pulp/api/v3/distributions/container/container/?limit=${limit}&offset=${offset}`;
+	const res = await pulpFetch(url, sessionid);
+	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
+	return res.json();
+}
+
+/**
+ * Get a single distribution by name. Returns null if not found.
+ */
+export async function getDistribution(
+	baseUrl: string,
+	sessionid: string,
+	name: string
+): Promise<ContainerDistribution | null> {
+	const url = `${baseUrl}/pulp/api/v3/distributions/container/container/?name=${encodeURIComponent(name)}`;
+	const res = await pulpFetch(url, sessionid);
+	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
+	const data: PulpPaginated<ContainerDistribution> = await res.json();
+	return data.results[0] ?? null;
+}
+
+/**
+ * Get a repository by href.
+ */
+export async function getRepository(
+	baseUrl: string,
+	sessionid: string,
+	href: string
+): Promise<ContainerRepository> {
+	const res = await pulpFetch(`${baseUrl}${href}`, sessionid);
+	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
+	return res.json();
+}
+
+/**
+ * Get tags for a repository version.
+ * Chain: distribution → repository → latest_version_href → tags
+ */
+export async function getTags(
+	baseUrl: string,
+	sessionid: string,
+	repoVersionHref: string
+): Promise<PulpPaginated<ContainerTag>> {
+	const url = `${baseUrl}/pulp/api/v3/content/container/tags/?repository_version=${encodeURIComponent(repoVersionHref)}&limit=100`;
 	const res = await pulpFetch(url, sessionid);
 	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
 	return res.json();
