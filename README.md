@@ -68,3 +68,18 @@ Un `pull` sur un tag non synchronisé retournera `manifest unknown`.
 > Chaque tag synchronisé consomme des pulls (manifests + layers).
 > C'est pourquoi `--include-tags` filtre sur un petit nombre de tags dans `seed.sh`.
 > Sans ce filtre, une sync d'`alpine` tirerait des centaines de tags et épuiserait le quota.
+
+## Authentification Docker Hub (optionnel)
+
+Pour contourner le rate limiting, `seed.sh` supporte l'auth Docker Hub via variables d'environnement :
+
+```bash
+cp .env.example .env
+# Éditer .env avec vos credentials
+direnv allow
+make seed
+```
+
+Le `.env` est chargé automatiquement par `direnv` (via `.envrc`). Le password est un [Personal Access Token](https://hub.docker.com/settings/security), pas le mot de passe du compte.
+
+Sans ces variables, `seed.sh` fonctionne normalement en anonyme.

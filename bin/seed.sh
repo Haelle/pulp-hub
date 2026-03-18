@@ -5,15 +5,18 @@ set -euo pipefail
 # seed.sh — Populate a Pulp instance with test container data
 # Idempotent: safe to re-run on an already-seeded instance
 # Requires: pulp-cli configured via `pulp config create`
+#
+# Optional Docker Hub auth (bypasses ~100 pulls/6h rate limit):
+#   DOCKERHUB_USERNAME=user DOCKERHUB_PASSWORD=token ./bin/seed.sh
 # ──────────────────────────────────────────────────────────────
 
 PREFIX="dockerhub/library"
 
 # name|upstream|tags (comma-separated, limits sync to avoid Docker Hub rate limits)
 IMAGES=(
-  "alpine|library/alpine|3.18,3.19,latest"
-  "busybox|library/busybox|1.36,latest"
-  "hello-world|library/hello-world|latest"
+  "alpine|library/alpine|3.18,3.19,latest,edge"
+  "busybox|library/busybox|1.36,1.37,stable,latest"
+  "hello-world|library/hello-world|latest,linux"
 )
 
 # ── Helpers ───────────────────────────────────────────────────
@@ -35,9 +38,17 @@ ensure_remote() {
     echo "  Remote created"
   fi
   # Set include_tags to limit sync scope (avoid Docker Hub rate limits)
+  local update_args=()
   if [[ $# -gt 0 ]]; then
-    echo "  Setting include_tags..."
-    pulp container remote update --name "$name" "$@" >/dev/null 2>&1 || true
+    update_args+=("$@")
+  fi
+  # Optional Docker Hub auth (bypasses rate limits)
+  if [[ -n "${DOCKERHUB_USERNAME:-}" ]]; then
+    update_args+=(--username "$DOCKERHUB_USERNAME" --password "${DOCKERHUB_PASSWORD:-}")
+  fi
+  if [[ ${#update_args[@]} -gt 0 ]]; then
+    echo "  Updating remote${DOCKERHUB_USERNAME:+ (with Docker Hub auth)}..."
+    pulp container remote update --name "$name" "${update_args[@]}" >/dev/null 2>&1 || true
   fi
 }
 
@@ -86,6 +97,10 @@ echo "=== Pulp Seed ==="
 pulp status >/dev/null 2>&1 || { echo "ERROR: Pulp unreachable. Run 'make setup' first."; exit 1; }
 echo "✓ Pulp API OK"
 
+if [[ -n "${DOCKERHUB_USERNAME:-}" ]]; then
+  echo "  Using DockerHub credentials ${DOCKERHUB_USERNAME}:${DOCKERHUB_PASSWORD}"
+fi
+
 for entry in "${IMAGES[@]}"; do
   IFS='|' read -r NAME UPSTREAM TAGS <<< "$entry"
   FULL="${PREFIX}/${NAME}"
@@ -93,12 +108,12 @@ for entry in "${IMAGES[@]}"; do
   echo ""
   echo "── ${FULL} ──"
 
-  # Build --include-tags args
-  TAG_ARGS=()
+  # Build --include-tags as JSON array: '["3.18","3.19","latest"]'
   IFS=',' read -ra TAG_LIST <<< "$TAGS"
-  for t in "${TAG_LIST[@]}"; do TAG_ARGS+=(--include-tags "$t"); done
+  TAG_JSON=$(printf '"%s",' "${TAG_LIST[@]}")
+  TAG_JSON="[${TAG_JSON%,}]"
 
-  ensure_remote "$FULL" "$UPSTREAM" "${TAG_ARGS[@]}"
+  ensure_remote "$FULL" "$UPSTREAM" --include-tags "$TAG_JSON"
   ensure_repo "$FULL"
   sync_repo "$FULL"
   ensure_distribution "$FULL"

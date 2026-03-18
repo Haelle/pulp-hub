@@ -12,7 +12,7 @@ recreate: ## Destroy and rebuild the devcontainer
 	docker rm -f $$(docker ps -aq --filter label=devcontainer.local_folder=$$(pwd)) 2>/dev/null || true
 	devcontainer up --workspace-folder .
 
-setup: ## Install deps + configure pulp-cli (interactive)
+setup: ## Install deps + configure pulp-cli (interactive) in dev container
 	$(DC) ./bin/setup.sh
 
 dev: ## Start the dev server (http://localhost:5173)
@@ -30,11 +30,11 @@ test: ## Run e2e tests (requires Pulp running)
 test-ui: ## Run e2e tests in headed mode with slow-mo (host only)
 	SLOWMO=500 NODE_TLS_REJECT_UNAUTHORIZED=0 npx playwright test --headed
 
-seed: ## Populate Pulp with test data
-	$(DC) ./bin/seed.sh
+seed: ## Populate remote Pulp with test data (supports DOCKERHUB_USERNAME/PASSWORD) (not in devcontainer)
+	./bin/seed.sh
 
-clean: ## Remove seed data from Pulp
-	$(DC) ./bin/clean.sh
+clean: ## Remove seed data from remote Pulp (not in devcontainer)
+	./bin/clean.sh
 
 shell: ## Open a shell inside the devcontainer
 	$(DC) bash
