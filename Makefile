@@ -1,6 +1,6 @@
 DC = devcontainer exec --workspace-folder .
 
-.PHONY: up down recreate setup dev build check test test-ui test-record seed clean shell help
+.PHONY: up down recreate setup dev build check test test-ui test-record screenshots seed clean shell help
 
 up: ## Start the devcontainer
 	devcontainer up --workspace-folder .
@@ -32,6 +32,9 @@ test-record: ## Re-record all tapes from scratch (requires Pulp running)
 
 test-ui: ## Run e2e tests in headed mode with slow-mo (host only)
 	SLOWMO=500 NODE_TLS_REJECT_UNAUTHORIZED=0 npx playwright test --headed
+
+screenshots: ## Capture screenshots for docs
+	$(DC) bash -c "NODE_TLS_REJECT_UNAUTHORIZED=0 npx playwright test e2e/screenshots.test.ts"
 
 seed: ## Populate remote Pulp with test data (supports DOCKERHUB_USERNAME/PASSWORD) (not in devcontainer)
 	./bin/seed.sh

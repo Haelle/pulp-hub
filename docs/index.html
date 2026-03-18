@@ -49,7 +49,26 @@
       color: var(--muted);
       font-size: 1.25rem;
       max-width: 600px;
-      margin: 0 auto 2.5rem;
+      margin: 0 auto 1.5rem;
+    }
+
+    .badges {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 2.5rem;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--muted);
     }
 
     .buttons {
@@ -108,16 +127,75 @@
       font-size: 0.95rem;
     }
 
-    .screenshot {
-      max-width: 900px;
+    .gallery {
+      max-width: 1000px;
       margin: 0 auto;
       padding: 0 2rem 4rem;
     }
 
-    .screenshot img {
-      width: 100%;
-      border-radius: 0.75rem;
+    .gallery h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(440px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .gallery-item {
+      background: var(--surface);
       border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      overflow: hidden;
+    }
+
+    .gallery-item img {
+      width: 100%;
+      display: block;
+      cursor: zoom-in;
+    }
+
+    .gallery-item figcaption {
+      padding: 0.75rem 1rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+      text-align: center;
+    }
+
+    /* Lightbox */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(0, 0, 0, 0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      cursor: zoom-out;
+    }
+
+    .lightbox.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .lightbox img {
+      max-width: 92vw;
+      max-height: 92vh;
+      border-radius: 0.5rem;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      transform: scale(0.92);
+      transition: transform 0.3s ease;
+    }
+
+    .lightbox.active img {
+      transform: scale(1);
     }
 
     .setup {
@@ -153,6 +231,12 @@
       font-size: 0.85rem;
       border-top: 1px solid var(--border);
     }
+
+    @media (max-width: 520px) {
+      .gallery-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
@@ -160,14 +244,16 @@
   <section class="hero">
     <h1>Pulp<span>Hub</span></h1>
     <p>A Docker Hub-inspired web UI for browsing container image repositories hosted on Pulp.</p>
+    <div class="badges">
+      <span class="badge">SvelteKit</span>
+      <span class="badge">Svelte 5</span>
+      <span class="badge">shadcn-svelte</span>
+      <span class="badge">Tailwind CSS v4</span>
+      <span class="badge">TypeScript</span>
+    </div>
     <div class="buttons">
-      <a href="https://pulphub.demo.example.com" class="btn btn-primary">
-        <!-- TODO: replace with actual demo URL -->
-        Live Demo
-      </a>
-      <a href="https://github.com/alexmusic/pulp-hub" class="btn btn-outline">
-        GitHub Repository
-      </a>
+      <a href="https://github.com/alexmusic/pulp-hub" class="btn btn-primary">GitHub Repository</a>
+      <a href="https://github.com/alexmusic/pulp-hub/blob/master/docker-compose.yml" class="btn btn-outline">Quick Start (docker-compose)</a>
     </div>
   </section>
 
@@ -198,25 +284,61 @@
     </div>
   </section>
 
+  <section class="gallery">
+    <h2>Screenshots</h2>
+    <div class="gallery-grid">
+      <figure class="gallery-item">
+        <img src="screenshots/login.png" alt="Login page" loading="lazy">
+        <figcaption>Login — Connect to your Pulp instance</figcaption>
+      </figure>
+      <figure class="gallery-item">
+        <img src="screenshots/repositories.png" alt="Repositories list" loading="lazy">
+        <figcaption>Repositories — Browse all synced container repos</figcaption>
+      </figure>
+      <figure class="gallery-item">
+        <img src="screenshots/repo-detail.png" alt="Repository detail with tags" loading="lazy">
+        <figcaption>Repository Detail — Tags, digests and pull commands</figcaption>
+      </figure>
+      <figure class="gallery-item">
+        <img src="screenshots/repositories-dark.png" alt="Repositories in dark mode" loading="lazy">
+        <figcaption>Dark Mode — Full theme support</figcaption>
+      </figure>
+    </div>
+  </section>
+
   <section class="setup">
     <h2>Quick Start</h2>
-    <pre><span class="comment"># Run with Docker</span>
-<span class="cmd">docker run -p 3000:3000 \
-  -e PULP_URL=https://your-pulp-instance:8443 \
-  -e PULP_USERNAME=admin \
-  -e PULP_PASSWORD=admin \
-  your-dockerhub-user/pulphub:latest</span>
+    <pre><span class="comment"># Clone and run with docker-compose</span>
+<span class="cmd">git clone https://github.com/alexmusic/pulp-hub.git
+cd pulp-hub
+docker compose up</span>
 
-<span class="comment"># Or develop locally</span>
+<span class="comment"># Or develop locally with devcontainer</span>
 <span class="cmd">make up      </span><span class="comment"># Start devcontainer</span>
 <span class="cmd">make setup   </span><span class="comment"># Configure pulp-cli</span>
 <span class="cmd">make seed    </span><span class="comment"># Seed test data</span>
 <span class="cmd">make dev     </span><span class="comment"># Start dev server</span></pre>
   </section>
 
+  <div class="lightbox" id="lightbox" onclick="this.classList.remove('active')">
+    <img id="lightbox-img" src="" alt="">
+  </div>
+
   <footer>
     PulpHub &mdash; Built with SvelteKit, shadcn-svelte &amp; Tailwind CSS
   </footer>
 
+  <script>
+    document.querySelectorAll('.gallery-item img').forEach(img => {
+      img.addEventListener('click', () => {
+        const lb = document.getElementById('lightbox');
+        document.getElementById('lightbox-img').src = img.src;
+        lb.classList.add('active');
+      });
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') document.getElementById('lightbox').classList.remove('active');
+    });
+  </script>
 </body>
 </html>
