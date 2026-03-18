@@ -99,7 +99,7 @@ pulphub/
 
 ---
 
-## Étape 2 — Authentification (login / cookie httpOnly) 🔧 en cours
+## Étape 2 — Authentification (login / cookie httpOnly) ✅
 
 ### Réalisé
 
@@ -111,14 +111,11 @@ pulphub/
 - Page `/status` : affiche le JSON brut de `/pulp/api/v3/status/`
 - Gestion des erreurs : message affiché dans le formulaire (credentials invalides, Pulp injoignable)
 - Trailing slash nettoyé sur l'URL saisie
-
-### Reste à faire
-
-- [ ] Guard global sur `+layout.server.ts` : redirect `/` si pas de session
-- [ ] Route `/logout` : efface les cookies → redirect `/`
-- [ ] Navbar avec username + bouton logout
-- [ ] Cookie `Secure` en production
-- [ ] Gestion de l'expiration de session (sessionid expiré → redirect login)
+- Guard global sur `+layout.server.ts` : redirect `/` si pas de session, valide la session via `/pulp/api/v3/status/`
+- Route `POST /logout` : efface les cookies → redirect `/`
+- `Navbar.svelte` avec URL Pulp + bouton logout (affiché uniquement si authentifié)
+- Cookie `Secure` en production (détecté via `url.protocol`)
+- Gestion de l'expiration de session : le layout vérifie la session à chaque navigation, redirige vers login si expirée
 
 ---
 
@@ -190,7 +187,7 @@ Finaliser l'application : recherche cross-repos, responsive mobile, polish visue
 | --- | ------------------- | --------- | ---------------------------------- |
 | 0   | Script seed         | ✅ fait    | `seed.sh` idempotent               |
 | 1   | Squelette SvelteKit | ✅ fait    | Projet + dark theme + devcontainer |
-| 2   | Auth login/cookie   | 🔧 en cours | Login → session Django → redirect  |
+| 2   | Auth login/cookie   | ✅ fait     | Login → session Django → redirect  |
 | 3   | Liste repositories  | ⬜ à faire | Grille de RepoCard paginée         |
 | 4   | Détail repo + tags  | ⬜ à faire | Tableau des tags + pull command    |
 | 5   | Détail tag + layers | ⬜ à faire | Manifest + layers + tailles        |

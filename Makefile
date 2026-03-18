@@ -24,6 +24,12 @@ build: ## Production build
 check: ## Type-check the project
 	$(DC) npm run check
 
+test: ## Run e2e tests (requires Pulp running)
+	$(DC) bash -c "NODE_TLS_REJECT_UNAUTHORIZED=0 npx playwright test"
+
+test-ui: ## Run e2e tests in headed mode with slow-mo (host only)
+	NODE_TLS_REJECT_UNAUTHORIZED=0 npx playwright test --headed --slowmo=500
+
 seed: ## Populate Pulp with test data
 	$(DC) ./bin/seed.sh
 
