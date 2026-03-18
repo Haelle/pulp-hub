@@ -6,11 +6,15 @@
 	import * as Card from '$lib/components/ui/card';
 	import * as Alert from '$lib/components/ui/alert';
 	import CircleAlert from '@lucide/svelte/icons/circle-alert';
+	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 
 	let { form } = $props();
 </script>
 
-<div class="flex min-h-screen items-center justify-center px-4">
+<div class="flex min-h-screen items-center justify-center px-4 relative">
+	<div class="absolute top-4 right-4">
+		<ThemeToggle />
+	</div>
 	<Card.Root class="w-full max-w-sm">
 		<Card.Header class="text-center">
 			<Card.Title class="text-3xl font-bold text-primary">PulpHub</Card.Title>
