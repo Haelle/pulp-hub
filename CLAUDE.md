@@ -7,6 +7,8 @@ Stack : SvelteKit (Svelte 5 runes) + shadcn-svelte + Tailwind CSS v4 + adapter-n
 
 ## Développement
 
+- utiliser `make` autant que possible, s'il manque des opérations les ajouter
+- ne pas tenter de lancer le serveur ou des tests en dehors du devcontainer
 - Le dev se fait dans un devcontainer (Docker) — toutes les commandes passent par `make`
 - `make dev` lance le serveur avec `NODE_TLS_REJECT_UNAUTHORIZED=0` (certificat auto-signé Pulp)
 - `make recreate` est nécessaire après modification de `devcontainer.json` ou du `Dockerfile`

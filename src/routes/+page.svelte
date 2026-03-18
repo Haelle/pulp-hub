@@ -1,61 +1,48 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { Button } from '$lib/components/ui/button';
+	import { Input } from '$lib/components/ui/input';
+	import { Label } from '$lib/components/ui/label';
+	import * as Card from '$lib/components/ui/card';
+	import * as Alert from '$lib/components/ui/alert';
+	import CircleAlert from '@lucide/svelte/icons/circle-alert';
 
 	let { form } = $props();
 </script>
 
-<div class="flex min-h-screen items-center justify-center">
-	<div class="w-full max-w-sm space-y-6">
-		<div class="text-center">
-			<h1 class="text-4xl font-bold text-primary">PulpHub</h1>
-			<p class="mt-2 text-muted-foreground">Connect to your Pulp instance</p>
-		</div>
+<div class="flex min-h-screen items-center justify-center px-4">
+	<Card.Root class="w-full max-w-sm">
+		<Card.Header class="text-center">
+			<Card.Title class="text-3xl font-bold text-primary">PulpHub</Card.Title>
+			<Card.Description>Connect to your Pulp instance</Card.Description>
+		</Card.Header>
+		<Card.Content>
+			<form method="POST" use:enhance class="space-y-4">
+				<div class="space-y-2">
+					<Label for="url">Pulp URL</Label>
+					<Input id="url" name="url" type="url" placeholder="https://pulp.local:8443" required />
+				</div>
 
-		<form method="POST" use:enhance class="space-y-4">
-			<div class="space-y-2">
-				<label for="url" class="text-sm font-medium">Pulp URL</label>
-				<input
-					id="url"
-					name="url"
-					type="url"
-					placeholder="https://pulp.local:8443"
-					required
-					class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-				/>
-			</div>
+				<div class="space-y-2">
+					<Label for="username">Username</Label>
+					<Input id="username" name="username" type="text" required />
+				</div>
 
-			<div class="space-y-2">
-				<label for="username" class="text-sm font-medium">Username</label>
-				<input
-					id="username"
-					name="username"
-					type="text"
-					required
-					class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-				/>
-			</div>
+				<div class="space-y-2">
+					<Label for="password">Password</Label>
+					<Input id="password" name="password" type="password" required />
+				</div>
 
-			<div class="space-y-2">
-				<label for="password" class="text-sm font-medium">Password</label>
-				<input
-					id="password"
-					name="password"
-					type="password"
-					required
-					class="w-full rounded-md border border-input bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-				/>
-			</div>
+				{#if form?.error}
+					<Alert.Root variant="destructive">
+						<CircleAlert class="size-4" />
+						<Alert.Title>Error</Alert.Title>
+						<Alert.Description>{form.error}</Alert.Description>
+					</Alert.Root>
+				{/if}
 
-			{#if form?.error}
-				<p class="text-sm text-destructive">{form.error}</p>
-			{/if}
-
-			<button
-				type="submit"
-				class="w-full rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring"
-			>
-				Connect
-			</button>
-		</form>
-	</div>
+				<Button type="submit" class="w-full">Connect</Button>
+			</form>
+		</Card.Content>
+	</Card.Root>
 </div>

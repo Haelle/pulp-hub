@@ -17,7 +17,7 @@ test.describe('Login', () => {
 	test('redirects to / when accessing /status without session', async ({ page }) => {
 		await page.goto('/status');
 		await expect(page).toHaveURL('/');
-		await expect(page.locator('h1')).toContainText('PulpHub');
+		await expect(page.locator('[data-slot="card-title"]')).toContainText('PulpHub');
 	});
 
 	test('shows error on invalid credentials', async ({ page }) => {
@@ -55,7 +55,7 @@ test.describe('Logout', () => {
 
 		await page.click('button:has-text("Logout")');
 		await expect(page).toHaveURL('/');
-		await expect(page.locator('h1')).toContainText('PulpHub');
+		await expect(page.locator('[data-slot="card-title"]')).toContainText('PulpHub');
 	});
 
 	test('cannot access /status after logout', async ({ page }) => {
