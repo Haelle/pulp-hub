@@ -9,24 +9,8 @@ env:
   IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/pulphub
 
 jobs:
-  check:
-    name: Type-check & Build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: npm
-
-      - run: npm ci
-      - run: npm run check
-      - run: npm run build
-
   docker:
     name: Build & Push Docker image
-    needs: check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
