@@ -22,6 +22,6 @@ export const actions = {
 			return fail(400, { error: message });
 		}
 
-		redirect(303, '/status');
+		redirect(303, '/repositories');
 	}
 } satisfies Actions;

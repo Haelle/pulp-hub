@@ -58,3 +58,34 @@ export function pulpFetch(url: string, sessionid: string): Promise<Response> {
 		headers: { Cookie: `sessionid=${sessionid}` }
 	});
 }
+
+export interface PulpPaginated<T> {
+	count: number;
+	next: string | null;
+	previous: string | null;
+	results: T[];
+}
+
+export interface ContainerDistribution {
+	pulp_href: string;
+	name: string;
+	base_path: string;
+	repository: string;
+	registry_path: string;
+	description: string | null;
+}
+
+/**
+ * List container distributions with pagination.
+ */
+export async function getDistributions(
+	baseUrl: string,
+	sessionid: string,
+	limit = 20,
+	offset = 0
+): Promise<PulpPaginated<ContainerDistribution>> {
+	const url = `${baseUrl}/pulp/api/v3/distributions/container/container/?limit=${limit}&offset=${offset}`;
+	const res = await pulpFetch(url, sessionid);
+	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
+	return res.json();
+}

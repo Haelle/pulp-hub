@@ -10,12 +10,12 @@ async function login(page: Page) {
 	await page.fill('input[name="username"]', PULP_USER);
 	await page.fill('input[name="password"]', PULP_PASS);
 	await page.click('button[type="submit"]');
-	await expect(page).toHaveURL('/status');
+	await expect(page).toHaveURL('/repositories');
 }
 
 test.describe('Login', () => {
-	test('redirects to / when accessing /status without session', async ({ page }) => {
-		await page.goto('/status');
+	test('redirects to / when accessing protected page without session', async ({ page }) => {
+		await page.goto('/repositories');
 		await expect(page).toHaveURL('/');
 		await expect(page.locator('[data-slot="card-title"]')).toContainText('PulpHub');
 	});
@@ -30,10 +30,10 @@ test.describe('Login', () => {
 		await expect(page.locator('.text-destructive')).toBeVisible();
 	});
 
-	test('logs in with valid credentials and shows status', async ({ page }) => {
+	test('logs in and redirects to repositories', async ({ page }) => {
 		await login(page);
 
-		await expect(page.locator('h1')).toContainText('Pulp Status');
+		await expect(page.locator('h1')).toContainText('Repositories');
 		await expect(page.locator('nav')).toContainText(PULP_URL);
 	});
 });
@@ -41,6 +41,7 @@ test.describe('Login', () => {
 test.describe('Status page', () => {
 	test('displays Pulp status JSON', async ({ page }) => {
 		await login(page);
+		await page.goto('/status');
 
 		const pre = page.locator('pre');
 		await expect(pre).toBeVisible();
@@ -58,13 +59,13 @@ test.describe('Logout', () => {
 		await expect(page.locator('[data-slot="card-title"]')).toContainText('PulpHub');
 	});
 
-	test('cannot access /status after logout', async ({ page }) => {
+	test('cannot access protected page after logout', async ({ page }) => {
 		await login(page);
 
 		await page.click('button:has-text("Logout")');
 		await expect(page).toHaveURL('/');
 
-		await page.goto('/status');
+		await page.goto('/repositories');
 		await expect(page).toHaveURL('/');
 	});
 });
