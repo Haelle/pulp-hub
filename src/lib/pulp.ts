@@ -88,6 +88,25 @@ export interface ContainerTag {
 	pulp_created: string;
 }
 
+export interface ContainerManifest {
+	pulp_href: string;
+	digest: string;
+	schema_version: number;
+	media_type: string;
+	listed_manifests: string[];
+	config_blob: string | null;
+	blobs: string[];
+	type: string;
+	architecture: string | null;
+	os: string | null;
+	compressed_image_size: number | null;
+}
+
+export interface ContainerBlob {
+	pulp_href: string;
+	digest: string;
+}
+
 /**
  * List container distributions with pagination.
  */
@@ -142,6 +161,48 @@ export async function getTags(
 ): Promise<PulpPaginated<ContainerTag>> {
 	const url = `${baseUrl}/pulp/api/v3/content/container/tags/?repository_version=${encodeURIComponent(repoVersionHref)}&limit=100`;
 	const res = await pulpFetch(url, sessionid);
+	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
+	return res.json();
+}
+
+/**
+ * Get a single tag by name within a repository version.
+ */
+export async function getTag(
+	baseUrl: string,
+	sessionid: string,
+	repoVersionHref: string,
+	tagName: string
+): Promise<ContainerTag | null> {
+	const url = `${baseUrl}/pulp/api/v3/content/container/tags/?repository_version=${encodeURIComponent(repoVersionHref)}&name=${encodeURIComponent(tagName)}`;
+	const res = await pulpFetch(url, sessionid);
+	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
+	const data: PulpPaginated<ContainerTag> = await res.json();
+	return data.results[0] ?? null;
+}
+
+/**
+ * Get a manifest by href.
+ */
+export async function getManifest(
+	baseUrl: string,
+	sessionid: string,
+	href: string
+): Promise<ContainerManifest> {
+	const res = await pulpFetch(`${baseUrl}${href}`, sessionid);
+	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
+	return res.json();
+}
+
+/**
+ * Get a blob by href.
+ */
+export async function getBlob(
+	baseUrl: string,
+	sessionid: string,
+	href: string
+): Promise<ContainerBlob> {
+	const res = await pulpFetch(`${baseUrl}${href}`, sessionid);
 	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
 	return res.json();
 }

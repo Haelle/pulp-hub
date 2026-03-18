@@ -148,18 +148,19 @@ Afficher la liste paginée des distributions container Pulp sous forme de grille
 
 ---
 
-## Étape 5 — Page détail d'un tag (manifest + layers)
+## Étape 5 — Page détail d'un tag (manifest + layers) ✅
 
-### Objectif
+### Réalisé
 
-Afficher le manifest complet d'un tag : architecture, OS, liste des layers avec taille.
-
-### Contenu
-
-- Appels : tag → manifest → config blob (arch, OS)
-- `LayerList.svelte` : digest tronqué, taille human-readable, media_type
-- Taille totale, badges architecture + OS
-- Support manifests multi-arch sans crash
+- `getTag()`, `getManifest()`, `getBlob()` dans `pulp.ts`
+- `/repositories/[name]/tags/[tag]` : nom, digest, badges type/arch/OS, pull command, taille
+- Multi-arch (index) : table des plateformes avec arch, OS, digest, taille
+- Single-arch (image) : table des layers (blobs) avec digest et media type
+- Message explicite si layers non disponibles (mode on_demand, pas encore pullées)
+- `formatBytes()` dans `utils.ts`
+- CLI hint expliquant le chaînage tag → manifest
+- 404 si tag inexistant
+- Navigation depuis la table des tags du repo détail (liens sur les noms de tags)
 
 ---
 
@@ -188,5 +189,5 @@ Finaliser l'application : recherche cross-repos, responsive mobile, polish visue
 | 2   | Auth login/cookie   | ✅ fait     | Login → session Django → redirect  |
 | 3   | Liste repositories  | ⬜ à faire | Grille de RepoCard paginée         |
 | 4   | Détail repo + tags  | ✅ fait     | Tableau des tags + pull command    |
-| 5   | Détail tag + layers | ⬜ à faire | Manifest + layers + tailles        |
+| 5   | Détail tag + layers | ✅ fait     | Manifest + layers + tailles        |
 | 6   | Recherche + polish  | ⬜ à faire | App complète et responsive         |

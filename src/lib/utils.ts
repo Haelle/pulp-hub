@@ -13,6 +13,16 @@ export type WithoutChildrenOrChild<T> = WithoutChildren<WithoutChild<T>>;
 export type WithElementRef<T, U extends HTMLElement = HTMLElement> = T & { ref?: U | null };
 
 /**
+ * Format bytes to human-readable string.
+ */
+export function formatBytes(bytes: number): string {
+	if (bytes === 0) return '0 B';
+	const units = ['B', 'KB', 'MB', 'GB'];
+	const i = Math.floor(Math.log(bytes) / Math.log(1024));
+	return `${(bytes / Math.pow(1024, i)).toFixed(i > 0 ? 1 : 0)} ${units[i]}`;
+}
+
+/**
  * Derive a Docker Hub URL from a distribution name like "dockerhub/library/alpine".
  * Returns null if the name doesn't look like a Docker Hub repo.
  */
