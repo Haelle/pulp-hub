@@ -3,6 +3,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import RepoCard from '$lib/components/RepoCard.svelte';
 	import PackageOpen from '@lucide/svelte/icons/package-open';
+	import CliHint from '$lib/components/CliHint.svelte';
 
 	let { data } = $props();
 
@@ -21,9 +22,8 @@
 </script>
 
 <div class="mx-auto max-w-6xl p-6 space-y-6">
-	<div class="flex items-center justify-between">
-		<h1 class="text-2xl font-bold">Repositories</h1>
-	</div>
+	<h1 class="text-2xl font-bold">Repositories</h1>
+	<CliHint command="pulp container distribution list" />
 
 	<Input
 		placeholder="Filter repositories..."

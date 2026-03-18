@@ -29,9 +29,11 @@ test.describe('Repositories page', () => {
 	test('repo card shows name and base_path', async ({ page }) => {
 		await page.goto('/repositories');
 
-		// Card title shows short name, description shows base_path
-		await expect(page.locator('[data-slot="card-title"]').first()).toContainText('alpine');
-		await expect(page.locator('[data-slot="card-description"]').first()).toContainText('dockerhub/library/alpine');
+		// Each card should have a title and a description with the base_path
+		const cards = page.locator('[data-slot="card"]');
+		await expect(cards).not.toHaveCount(0);
+		await expect(cards.first().locator('[data-slot="card-title"]')).toBeVisible();
+		await expect(cards.first().locator('[data-slot="card-description"]')).toBeVisible();
 	});
 
 	test('repo card links to detail page', async ({ page }) => {

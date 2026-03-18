@@ -13,6 +13,7 @@ Stack : SvelteKit (Svelte 5 runes) + shadcn-svelte + Tailwind CSS v4 + adapter-n
 - `make dev` lance le serveur avec `NODE_TLS_REJECT_UNAUTHORIZED=0` (certificat auto-signé Pulp)
 - `make recreate` est nécessaire après modification de `devcontainer.json` ou du `Dockerfile`
 - `forwardPorts` dans `devcontainer.json` ne fonctionne qu'avec VS Code — utiliser `-p` dans `runArgs` pour la CLI
+- Utilise la TDD quand c'est possible
 
 ## Pulp
 
@@ -29,3 +30,4 @@ Stack : SvelteKit (Svelte 5 runes) + shadcn-svelte + Tailwind CSS v4 + adapter-n
 - Voir PLAN.md pour le plan de développement et l'avancement
 - Une étape à la fois, tester avant de soumettre
 - Pas de BDD — l'app est 100% read-only, toutes les données viennent de l'API Pulp
+- sur TOUTES les pages indiquer la commande Pulp CLI qui permet d'obtenir le même résultat quand elle est disponible et qu'elle est unique (par exemple la liste des tags il faut combiner des requêtes), dans le cas où il faut combiner des requêtes ne pas détailler les requête mais expliquer la logique, prévoir un encart juste sous la navbar je pense qu'un composant alert me semble approprié

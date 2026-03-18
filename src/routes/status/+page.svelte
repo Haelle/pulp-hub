@@ -1,14 +1,11 @@
 <script lang="ts">
+	import CliHint from '$lib/components/CliHint.svelte';
+
 	let { data } = $props();
 </script>
 
-<div class="min-h-screen p-8">
-	<div class="mx-auto max-w-3xl space-y-4">
-		<div>
-			<h1 class="text-3xl font-bold text-primary">Pulp Status</h1>
-			<p class="mt-1 text-sm text-muted-foreground">{data.url}</p>
-		</div>
-
-		<pre class="overflow-auto rounded-lg border border-border bg-card p-4 text-sm font-mono">{JSON.stringify(data.status, null, 2)}</pre>
-	</div>
+<div class="mx-auto max-w-3xl p-6 space-y-4">
+	<h1 class="text-2xl font-bold">Pulp Status</h1>
+	<CliHint command="pulp status" />
+	<pre class="overflow-auto rounded-lg border border-border bg-card p-4 text-sm font-mono">{JSON.stringify(data.status, null, 2)}</pre>
 </div>

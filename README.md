@@ -37,3 +37,34 @@ pulp container repository list
 pulp --format json container repository version list \
   --repository dockerhub/library/alpine
 ```
+
+## Gestion des tags et mode on_demand
+
+Pulp fonctionne en mode `on_demand` : lors d'un `sync`, seules les **metadata** (manifests, tags) sont téléchargées. Les **layers** (blobs) sont tirés à la demande lors d'un `pull`.
+
+Conséquence : seuls les tags synchronisés sont disponibles. Pour ajouter un nouveau tag :
+
+```bash
+# Ajouter un tag au filtre du remote
+pulp container remote update \
+  --name "dockerhub/library/alpine" \
+  --include-tags '["3.17","3.18","3.19","latest"]'
+
+# Re-synchroniser le repo
+pulp container repository sync \
+  --name "dockerhub/library/alpine" \
+  --remote "dockerhub/library/alpine"
+```
+
+Ensuite le tag est disponible via le registry Pulp :
+
+```bash
+podman pull pulp.local:8443/dockerhub/library/alpine:3.17 --tls-verify=false
+```
+
+Un `pull` sur un tag non synchronisé retournera `manifest unknown`.
+
+> **Rate limiting Docker Hub** : sans authentification, Docker Hub limite à ~100 pulls/6h.
+> Chaque tag synchronisé consomme des pulls (manifests + layers).
+> C'est pourquoi `--include-tags` filtre sur un petit nombre de tags dans `seed.sh`.
+> Sans ce filtre, une sync d'`alpine` tirerait des centaines de tags et épuiserait le quota.
