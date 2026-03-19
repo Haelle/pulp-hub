@@ -11,7 +11,7 @@
 
 services:
   pulphub:
-    build: .
+    build: docker.io/estb/pulp-hub
     ports:
       - "${PULPHUB_PORT:-443}:443"
     volumes:
