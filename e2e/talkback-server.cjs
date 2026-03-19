@@ -1,11 +1,8 @@
-// Talkback forwards to Pulp which may use a self-signed certificate
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-
 const http = require('http');
 const talkback = require('talkback');
 const path = require('path');
 
-const PULP_HOST = process.env.PULP_HOST ?? 'https://pulp.local:8443';
+const PULP_HOST = process.env.PULP_HOST ?? 'http://localhost:8081';
 const TALKBACK_PORT = parseInt(process.env.TALKBACK_PORT ?? '8787');
 const RECORD_MODE = process.env.TALKBACK_RECORD ?? 'NEW';
 

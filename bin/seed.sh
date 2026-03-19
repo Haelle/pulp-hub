@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+source "./.env"
 source "./bin/lib/seed_oci"
 source "./bin/lib/seed_file"
 

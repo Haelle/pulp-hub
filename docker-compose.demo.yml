@@ -1,0 +1,36 @@
+services:
+  pulp:
+    image: pulp/pulp
+    container_name: pulp-demo
+    volumes:
+      - pulp-settings:/etc/pulp
+      - pulp-storage:/var/lib/pulp
+      - pulp-db:/var/lib/pgsql
+    environment:
+      PULP_DEFAULT_ADMIN_PASSWORD: admin
+      PULP_CONTENT_ORIGIN: http://localhost:8081
+    devices:
+      - /dev/fuse:/dev/fuse
+
+  pulp-proxy:
+    image: nginx:alpine
+    container_name: pulp-demo-nginx
+    ports:
+      - "8081:80"
+    volumes:
+      - ./nginx/pulp-cors-proxy.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - pulp
+
+  pulphub:
+    image: docker.io/estb/pulp-hub:latest
+    container_name: pulphub-demo
+    ports:
+      - "8080:80"
+    depends_on:
+      - pulp
+
+volumes:
+  pulp-settings:
+  pulp-storage:
+  pulp-db:

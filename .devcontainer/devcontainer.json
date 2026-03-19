@@ -5,7 +5,7 @@
   },
   "postCreateCommand": "npm install && npx playwright install --with-deps chromium",
   "forwardPorts": [5173, 8787],
-  "runArgs": ["-p", "5173:5173", "--add-host=pulp.local:host-gateway"],
+  "runArgs": ["-p", "5173:5173", "--add-host=host.docker.internal:host-gateway"],
   "customizations": {
     "vscode": {
       "extensions": [

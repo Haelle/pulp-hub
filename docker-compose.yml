@@ -1,18 +1,20 @@
-## PulpHub — docker compose up
+## PulpHub + reverse proxy for an existing Pulp instance.
 ##
-## Requires:
-##   - npm run build (or make build) before docker compose build
-##   - TLS certs in ./certs/ (cert.pem + key.pem)
+## Edit nginx/pulp-cors-proxy.conf to set your Pulp upstream address,
+## then: docker compose up -d
 ##
-## Generate self-signed certs for testing:
-##   mkdir -p certs && openssl req -x509 -nodes -days 365 \
-##     -newkey rsa:2048 -keyout certs/key.pem -out certs/cert.pem \
-##     -subj "/CN=pulphub.local"
+## PulpHub: http://localhost:8080
+## Pulp API (via proxy): http://localhost:8081
 
 services:
-  pulphub:
-    build: docker.io/estb/pulp-hub
+  pulp-proxy:
+    image: nginx:alpine
     ports:
-      - "${PULPHUB_PORT:-443}:443"
+      - "8081:80"
     volumes:
-      - ./certs:/etc/nginx/certs:ro
+      - ./nginx/pulp-cors-proxy.conf:/etc/nginx/nginx.conf:ro
+
+  pulphub:
+    image: docker.io/estb/pulp-hub:latest
+    ports:
+      - "8080:80"
