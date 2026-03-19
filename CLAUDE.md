@@ -13,6 +13,7 @@ Stack : SvelteKit (Svelte 5 runes) + shadcn-svelte + Tailwind CSS v4 + adapter-n
 - `make dev` lance le serveur avec `NODE_TLS_REJECT_UNAUTHORIZED=0` (certificat auto-signé Pulp)
 - `make recreate` est nécessaire après modification de `devcontainer.json` ou du `Dockerfile`
 - `forwardPorts` dans `devcontainer.json` ne fonctionne qu'avec VS Code — utiliser `-p` dans `runArgs` pour la CLI
+- ne pas utiliser de `SCRIPT_DIR` dans les fichiers bash
 - Utilise la TDD quand c'est possible
 
 ## Pulp

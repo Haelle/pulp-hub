@@ -32,6 +32,16 @@
 					href="/repositories"
 					>Repositories</Button
 				>
+				<Button
+					variant={$page.url.pathname.startsWith(
+						"/files",
+					)
+						? "secondary"
+						: "ghost"}
+					size="sm"
+					href="/files"
+					>Files</Button
+				>
 			</div>
 		</div>
 

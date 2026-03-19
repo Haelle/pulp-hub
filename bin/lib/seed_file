@@ -1,0 +1,113 @@
+#!/usr/bin/env bash
+# seed_file — Seed file repositories in Pulp
+# Sourced by seed.sh — do not execute directly
+
+FILE_REPOS=(
+  "test-docs|README.md:Hello from test-docs,CHANGELOG.md:v1.0 - Initial release,LICENSE:MIT License"
+  "test-data|config.json:{\"key\":\"value\"},data.csv:name;score\nalice;42\nbob;87"
+)
+
+# ── Helpers ───────────────────────────────────────────────────
+
+file_exists() { pulp file "$@" >/dev/null 2>&1; }
+
+ensure_file_repo() {
+  local name="$1"
+  if file_exists repository show --name "$name"; then
+    echo -e "  ${YELLOW}Repository exists${NC}"
+  else
+    echo -e "  ${BLUE}Creating repository...${NC}"
+    pulp file repository create --name "$name" --autopublish >/dev/null
+    echo -e "  ${GREEN}Repository created${NC}"
+  fi
+}
+
+ensure_file_distribution() {
+  local name="$1"
+  if file_exists distribution show --name "$name"; then
+    echo -e "  ${YELLOW}Distribution exists${NC}"
+  else
+    echo -e "  ${BLUE}Creating distribution...${NC}"
+    pulp file distribution create \
+      --name "$name" \
+      --base-path "$name" \
+      --repository "file:file:${name}" >/dev/null
+    echo -e "  ${GREEN}Distribution created${NC}"
+  fi
+}
+
+upload_file_content() {
+  local repo="$1" rel_path="$2" content="$3"
+  local tmpfile="/tmp/pulp_seed_${rel_path//\//_}"
+
+  # Check if content already exists in the repo
+  local existing
+  existing=$(pulp --format json file content list \
+    --repository-version "$(pulp --format json file repository show --name "$repo" | python3 -c "import sys,json; print(json.load(sys.stdin).get('latest_version_href',''))" 2>/dev/null)" \
+    --relative-path "$rel_path" 2>/dev/null | \
+    python3 -c "import sys,json; d=json.load(sys.stdin); print(d[0]['pulp_href'] if d else '')" 2>/dev/null) || true
+
+  if [[ -n "$existing" ]]; then
+    echo -e "    ${YELLOW}${rel_path} exists${NC}"
+    return
+  fi
+
+  printf '%s' "$content" > "$tmpfile"
+  echo -e "    ${BLUE}Uploading ${rel_path}...${NC}"
+  pulp file content upload \
+    --repository "file:file:${repo}" \
+    --relative-path "$rel_path" \
+    --file "$tmpfile" >/dev/null 2>&1
+  rm -f "$tmpfile"
+  echo -e "    ${GREEN}${rel_path} uploaded${NC}"
+}
+
+# ── Main ──────────────────────────────────────────────────────
+
+seed_file() {
+  echo ""
+  echo -e "${BOLD}=== File Repositories ===${NC}"
+
+  for entry in "${FILE_REPOS[@]}"; do
+    IFS='|' read -r REPO_NAME FILES_SPEC <<< "$entry"
+
+    echo ""
+    echo -e "${BOLD}── ${REPO_NAME} ──${NC}"
+
+    ensure_file_repo "$REPO_NAME"
+    ensure_file_distribution "$REPO_NAME"
+
+    # Upload files: spec is "path:content,path:content,..."
+    IFS=',' read -ra FILE_LIST <<< "$FILES_SPEC"
+    for file_entry in "${FILE_LIST[@]}"; do
+      local rel_path="${file_entry%%:*}"
+      local content="${file_entry#*:}"
+      upload_file_content "$REPO_NAME" "$rel_path" "$content"
+    done
+  done
+}
+
+verify_file() {
+  echo ""
+  echo -e "${BOLD}--- File Verification ---${NC}"
+
+  local count
+  count=$(pulp --format json file distribution list | \
+    python3 -c "import sys,json; print(len(json.load(sys.stdin)))")
+  echo -e "File distributions: ${BOLD}${count}/2${NC}"
+
+  for entry in "${FILE_REPOS[@]}"; do
+    IFS='|' read -r REPO_NAME _ <<< "$entry"
+    local files
+    files=$(pulp --format json file repository version list \
+      --repository "file:file:${REPO_NAME}" 2>/dev/null | \
+      python3 -c "
+import sys,json
+v=json.load(sys.stdin)
+print(v[0]['content_summary']['present'].get('file.file',{}).get('count',0) if v else 'no version')
+" 2>/dev/null || echo "?")
+    echo -e "  ${REPO_NAME}: ${GREEN}${files} files${NC}"
+  done
+
+  [[ "$count" -ge 2 ]] || { echo -e "${RED}⚠ Missing file distributions${NC}"; return 1; }
+}

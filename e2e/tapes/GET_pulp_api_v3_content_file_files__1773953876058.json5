@@ -1,0 +1,135 @@
+{
+    meta: {
+        createdAt: '2026-03-19T20:57:55.775Z',
+        host: 'https://pulp.local:8443',
+        resHumanReadable: true,
+    },
+    req: {
+        headers: {
+            connection: 'keep-alive',
+            'sec-ch-ua-platform': '"Linux"',
+            'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36',
+            'sec-ch-ua': '"Not:A-Brand";v="99", "HeadlessChrome";v="145", "Chromium";v="145"',
+            'accept-language': 'en-US',
+            'sec-ch-ua-mobile': '?0',
+            accept: '*/*',
+            origin: 'http://localhost:5173',
+            'sec-fetch-site': 'same-site',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-dest': 'empty',
+            referer: 'http://localhost:5173/',
+            'accept-encoding': 'gzip, deflate, br, zstd',
+        },
+        url: '/pulp/api/v3/content/file/files/?repository_version=%2Fpulp%2Fapi%2Fv3%2Frepositories%2Ffile%2Ffile%2F019d07d1-40c3-71a0-8aa5-41641bc38167%2Fversions%2F3%2F&limit=100&offset=0',
+        method: 'GET',
+        body: '',
+    },
+    res: {
+        status: 200,
+        headers: {
+            server: [
+                'nginx/1.29.6',
+            ],
+            date: [
+                'Thu, 19 Mar 2026 20:57:56 GMT',
+            ],
+            'content-type': [
+                'application/json',
+            ],
+            'content-length': [
+                '2452',
+            ],
+            connection: [
+                'keep-alive',
+            ],
+            vary: [
+                'Accept',
+            ],
+            allow: [
+                'GET, POST, HEAD, OPTIONS',
+            ],
+            'x-frame-options': [
+                'DENY',
+            ],
+            'x-content-type-options': [
+                'nosniff',
+            ],
+            'referrer-policy': [
+                'same-origin',
+            ],
+            'cross-origin-opener-policy': [
+                'same-origin',
+            ],
+            'correlation-id': [
+                'c3085ac92c794bb2b6e09c423639be1d',
+            ],
+            'access-control-expose-headers': [
+                'Correlation-ID, Content-Length, Content-Range, Docker-Content-Digest',
+            ],
+            'access-control-allow-origin': [
+                '*',
+            ],
+            'access-control-allow-methods': [
+                'GET, POST, PUT, PATCH, DELETE, OPTIONS',
+            ],
+            'access-control-allow-headers': [
+                'Authorization, Content-Type, Accept, X-Requested-With',
+            ],
+        },
+        body: {
+            count: 3,
+            next: null,
+            previous: null,
+            results: [
+                {
+                    pulp_href: '/pulp/api/v3/content/file/files/019d07d1-6e77-7e06-8df8-643961e7b148/',
+                    prn: 'prn:file.filecontent:019d07d1-6e77-7e06-8df8-643961e7b148',
+                    pulp_created: '2026-03-19T20:37:39.065259Z',
+                    pulp_last_updated: '2026-03-19T20:37:39.065272Z',
+                    pulp_labels: {},
+                    vuln_report: null,
+                    artifact: '/pulp/api/v3/artifacts/019d07d1-6d6e-79e0-863a-7be07e102844/',
+                    relative_path: 'LICENSE',
+                    md5: null,
+                    sha1: null,
+                    sha224: '1182ef494e61388ee3849a5d1d5db51efd5a1c49393366066c56310a',
+                    sha256: 'abb2896dc3c2a9402f901b88d5035cf0a83d5cf7c17e73642cdf562b0b9d3bc5',
+                    sha384: '90ac0f6b5c1e96e315ce9f193ca01e518f4992a348186bca54738eddbbd30709ca9b66d4886225c81201d52d35ffb1f7',
+                    sha512: '0dfede4bba4ab50788f8f1e0ec3080b9d18910773de197f40ad37f9bbbc6fc3b2829afbbffa9fdbc8f1a7e2cb38495f48427dcfea47549ddeda7579b7fa0870c',
+                },
+                {
+                    pulp_href: '/pulp/api/v3/content/file/files/019d07d1-616b-707a-bba9-8c69c06fcb6d/',
+                    prn: 'prn:file.filecontent:019d07d1-616b-707a-bba9-8c69c06fcb6d',
+                    pulp_created: '2026-03-19T20:37:35.725315Z',
+                    pulp_last_updated: '2026-03-19T20:37:35.725335Z',
+                    pulp_labels: {},
+                    vuln_report: null,
+                    artifact: '/pulp/api/v3/artifacts/019d07d1-6075-734b-aa2e-d73581773685/',
+                    relative_path: 'CHANGELOG.md',
+                    md5: null,
+                    sha1: null,
+                    sha224: 'aaeeec755795cd6ee0a986946416e6cbcb07fc3c5e70855d6a3d98a3',
+                    sha256: 'c579f910de29b51dfa5709dd05f4df290576df6444a87c08e1b951766a40ec79',
+                    sha384: 'c7d9965049b417c2f12bba252b128b517e2275763333dc536583c039acd55acb85279f1b67e2541d40bd2272986957eb',
+                    sha512: '54ef841689235a2a0cc33c64352f70791a9af7ceb9f968ffdb540d7a5063f4a1e252076b8063794e5585c184ae893ee1b6360773a5de75463e7f56fa28a7a859',
+                },
+                {
+                    pulp_href: '/pulp/api/v3/content/file/files/019d07d1-542a-736b-89ab-002cce393cce/',
+                    prn: 'prn:file.filecontent:019d07d1-542a-736b-89ab-002cce393cce',
+                    pulp_created: '2026-03-19T20:37:32.331861Z',
+                    pulp_last_updated: '2026-03-19T20:37:32.331874Z',
+                    pulp_labels: {},
+                    vuln_report: null,
+                    artifact: '/pulp/api/v3/artifacts/019d07d1-5333-7ebf-b541-acaf3405d8f0/',
+                    relative_path: 'README.md',
+                    md5: null,
+                    sha1: null,
+                    sha224: '39dd4a5b307bcd57e386e3b0e55a70145a7e661eefb5952eb46b3e5d',
+                    sha256: 'dfee55f6880293fa67f58b3023ee7865c66230c449aba504708d1f186857f568',
+                    sha384: 'c4642ebcd0c8a7c5b9a8aa1a2b7093f83948f88cc4c09309f2d817e1874d590559ddcbdfaf8e09e04cc51974d98bf673',
+                    sha512: 'd192771ff960e136434e99fb2f6cd19d88b208bacf7801534d43bea554ba07956760b74dcd4be1287ee78f7e145b36e95d5a407e371223f07d56e9aa74e5113a',
+                },
+            ],
+        },
+    },
+}
