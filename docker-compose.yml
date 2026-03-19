@@ -1,0 +1,18 @@
+## PulpHub — docker compose up
+##
+## Requires:
+##   - npm run build (or make build) before docker compose build
+##   - TLS certs in ./certs/ (cert.pem + key.pem)
+##
+## Generate self-signed certs for testing:
+##   mkdir -p certs && openssl req -x509 -nodes -days 365 \
+##     -newkey rsa:2048 -keyout certs/key.pem -out certs/cert.pem \
+##     -subj "/CN=pulphub.local"
+
+services:
+  pulphub:
+    build: .
+    ports:
+      - "${PULPHUB_PORT:-443}:443"
+    volumes:
+      - ./certs:/etc/nginx/certs:ro

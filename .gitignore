@@ -27,3 +27,6 @@ test-results/
 
 # Generated screenshots
 docs/screenshots/*.png
+
+# TLS certs
+certs/

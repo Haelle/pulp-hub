@@ -1,20 +1,9 @@
-FROM node:24-alpine AS build
+FROM docker.io/library/nginx:alpine
 
-WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci
-COPY . .
-RUN npm run build
+RUN mkdir -p /var/www
+RUN rm /etc/nginx/nginx.conf /etc/nginx/conf.d/default.conf
 
-FROM node:24-alpine
-
-WORKDIR /app
-COPY --from=build /app/build ./build
-COPY --from=build /app/package.json ./
-COPY --from=build /app/node_modules ./node_modules
-
-ENV NODE_ENV=production
-ENV PORT=3000
-EXPOSE 3000
-
-CMD ["node", "build"]
+COPY conf /etc/nginx
+COPY conf.d /etc/nginx/conf.d
+COPY entrypoint.d /docker-entrypoint.d
+COPY build /var/www
