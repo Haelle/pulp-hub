@@ -149,3 +149,55 @@ test.describe('File detail page', () => {
 		await expect(page.locator('h1')).toContainText('test-docs');
 	});
 });
+
+test.describe('File content detail page', () => {
+	test.beforeEach(async ({ page }) => {
+		await login(page);
+	});
+
+	test('displays file name and sha256', async ({ page }) => {
+		await page.goto('/files/test-docs');
+		// Click on first file to navigate to content detail
+		await page.locator('tbody tr').first().locator('a').click();
+		await expect(page).toHaveURL(/\/files\/test-docs\/content\//);
+
+		// Should show the relative path as heading
+		await expect(page.locator('h1')).toBeVisible();
+		// Should show full sha256
+		await expect(page.getByText(/^[a-f0-9]{64}$/)).toBeVisible();
+	});
+
+	test('displays file size', async ({ page }) => {
+		await page.goto('/files/test-docs');
+		await page.locator('tbody tr').first().locator('a').click();
+
+		// Size should be displayed (e.g. "20 B", "1.2 KB")
+		await expect(page.getByText(/\d+(\.\d+)?\s*(B|KB|MB|GB)/)).toBeVisible();
+	});
+
+	test('shows cli hint', async ({ page }) => {
+		await page.goto('/files/test-docs');
+		await page.locator('tbody tr').first().locator('a').click();
+
+		await expect(page.locator('[data-slot="alert-title"]')).toContainText('pulp-cli');
+		await expect(page.getByText(/pulp file content list/)).toBeVisible();
+	});
+
+	test('shows copy button for sha256', async ({ page }) => {
+		await page.goto('/files/test-docs');
+		await page.locator('tbody tr').first().locator('a').click();
+
+		const copyButton = page.getByRole('button', { name: /copy/i });
+		await expect(copyButton.first()).toBeVisible();
+	});
+
+	test('navigable from file detail table', async ({ page }) => {
+		await page.goto('/files/test-docs');
+
+		const firstFileLink = page.locator('tbody tr').first().locator('a');
+		const fileName = await firstFileLink.textContent();
+		await firstFileLink.click();
+
+		await expect(page.locator('h1')).toContainText(fileName!.trim());
+	});
+});
