@@ -3,10 +3,10 @@ name: Release
 on:
   push:
     tags:
-      - "v*"
+      - "*"
 
 env:
-  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/pulphub
+  IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/pulp-hub
 
 jobs:
   docker:

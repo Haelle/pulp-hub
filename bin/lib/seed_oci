@@ -1,0 +1,133 @@
+#!/usr/bin/env bash
+# seed_oci — Seed container (OCI) repositories in Pulp
+# Sourced by seed.sh — do not execute directly
+
+PREFIX="dockerhub/library"
+
+IMAGES=(
+  "alpine|library/alpine|3.18,3.19,latest,edge"
+  "busybox|library/busybox|1.36,1.37,stable,latest"
+  "hello-world|library/hello-world|latest,linux"
+)
+
+# ── Helpers ───────────────────────────────────────────────────
+
+oci_exists() { pulp container "$@" >/dev/null 2>&1; }
+
+ensure_remote() {
+  local name="$1" upstream="$2"; shift 2
+  if oci_exists remote show --name "$name"; then
+    echo -e "  ${YELLOW}Remote exists${NC}"
+  else
+    echo -e "  ${BLUE}Creating remote...${NC}"
+    pulp container remote create \
+      --name "$name" \
+      --url "https://registry-1.docker.io" \
+      --upstream-name "$upstream" \
+      --policy "on_demand"
+    echo -e "  ${GREEN}Remote created${NC}"
+  fi
+  local update_args=()
+  if [[ $# -gt 0 ]]; then
+    update_args+=("$@")
+  fi
+  if [[ -n "${DOCKERHUB_USERNAME:-}" ]]; then
+    update_args+=(--username "$DOCKERHUB_USERNAME" --password "${DOCKERHUB_PASSWORD:-}")
+  fi
+  if [[ ${#update_args[@]} -gt 0 ]]; then
+    echo -e "  ${BLUE}Updating remote${DOCKERHUB_USERNAME:+ (with Docker Hub auth)}...${NC}"
+    pulp container remote update --name "$name" "${update_args[@]}" >/dev/null 2>&1 || true
+  fi
+}
+
+ensure_repo() {
+  local name="$1"
+  if oci_exists repository show --name "$name"; then
+    echo -e "  ${YELLOW}Repository exists${NC}"
+  else
+    echo -e "  ${BLUE}Creating repository...${NC}"
+    pulp container repository create \
+      --name "$name" \
+      --remote "container:container:${name}" >/dev/null
+    echo -e "  ${GREEN}Repository created${NC}"
+  fi
+}
+
+sync_repo() {
+  local name="$1"
+  echo -e "  ${BLUE}Syncing...${NC}"
+  if pulp container repository sync \
+    --name "$name" \
+    --remote "container:container:${name}" 2>&1; then
+    echo -e "  ${GREEN}Sync complete${NC}"
+  else
+    echo -e "  ${RED}⚠ Sync failed (Docker Hub rate limit?), skipping${NC}"
+  fi
+}
+
+ensure_distribution() {
+  local name="$1"
+  if oci_exists distribution show --name "$name"; then
+    echo -e "  ${YELLOW}Distribution exists${NC}"
+  else
+    echo -e "  ${BLUE}Creating distribution...${NC}"
+    pulp container distribution create \
+      --name "$name" \
+      --base-path "$name" \
+      --repository "container:container:${name}" >/dev/null
+    echo -e "  ${GREEN}Distribution created${NC}"
+  fi
+}
+
+# ── Main ──────────────────────────────────────────────────────
+
+seed_oci() {
+  echo ""
+  echo -e "${BOLD}=== OCI Container Repositories ===${NC}"
+
+  if [[ -n "${DOCKERHUB_USERNAME:-}" ]]; then
+    echo -e "  Using DockerHub credentials ${BLUE}${DOCKERHUB_USERNAME}${NC}"
+  fi
+
+  for entry in "${IMAGES[@]}"; do
+    IFS='|' read -r NAME UPSTREAM TAGS <<< "$entry"
+    FULL="${PREFIX}/${NAME}"
+
+    echo ""
+    echo -e "${BOLD}── ${FULL} ──${NC}"
+
+    IFS=',' read -ra TAG_LIST <<< "$TAGS"
+    TAG_JSON=$(printf '"%s",' "${TAG_LIST[@]}")
+    TAG_JSON="[${TAG_JSON%,}]"
+
+    ensure_remote "$FULL" "$UPSTREAM" --include-tags "$TAG_JSON"
+    ensure_repo "$FULL"
+    sync_repo "$FULL"
+    ensure_distribution "$FULL"
+  done
+}
+
+verify_oci() {
+  echo ""
+  echo -e "${BOLD}--- OCI Verification ---${NC}"
+
+  local count
+  count=$(pulp --format json container distribution list | \
+    python3 -c "import sys,json; print(sum(1 for d in json.load(sys.stdin) if d['name'].startswith('$PREFIX/')))")
+  echo -e "Container distributions: ${BOLD}${count}/3${NC}"
+
+  for entry in "${IMAGES[@]}"; do
+    IFS='|' read -r NAME _ _ <<< "$entry"
+    FULL="${PREFIX}/${NAME}"
+    tags=$(pulp --format json container repository version list \
+      --repository "container:container:${FULL}" 2>/dev/null | \
+      python3 -c "
+import sys,json
+v=json.load(sys.stdin)
+print(v[0]['content_summary']['present'].get('container.tag',{}).get('count',0) if v else 'not synced')
+" 2>/dev/null || echo "?")
+    echo -e "  ${FULL}: ${GREEN}${tags} tags${NC}"
+  done
+
+  [[ "$count" -ge 3 ]] || { echo -e "${RED}⚠ Missing container distributions${NC}"; return 1; }
+}
