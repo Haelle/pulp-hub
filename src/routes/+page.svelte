@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { enhance } from "$app/forms";
+	import { goto } from "$app/navigation";
+	import { auth } from "$lib/auth.svelte";
 	import { Button } from "$lib/components/ui/button";
 	import { Input } from "$lib/components/ui/input";
 	import { Label } from "$lib/components/ui/label";
@@ -9,7 +10,35 @@
 	import ThemeToggle from "$lib/components/ThemeToggle.svelte";
 	import CliHint from "$lib/components/CliHint.svelte";
 
-	let { form } = $props();
+	let error = $state('');
+	let loading = $state(false);
+
+	$effect(() => {
+		if (auth.authenticated) {
+			goto('/repositories');
+		}
+	});
+
+	async function handleSubmit(e: SubmitEvent) {
+		e.preventDefault();
+		const form = e.target as HTMLFormElement;
+		const data = new FormData(form);
+		const url = (data.get('url') as string).replace(/\/+$/, '');
+		const username = data.get('username') as string;
+		const password = data.get('password') as string;
+
+		error = '';
+		loading = true;
+
+		try {
+			await auth.login(url, username, password);
+			goto('/repositories');
+		} catch (e) {
+			error = e instanceof Error ? e.message : 'Unknown error';
+		} finally {
+			loading = false;
+		}
+	}
 </script>
 
 <div class="flex min-h-screen items-center justify-center px-4 relative">
@@ -26,14 +55,14 @@
 			>
 		</Card.Header>
 		<Card.Content>
-			<form method="POST" use:enhance class="space-y-4">
+			<form onsubmit={handleSubmit} class="space-y-4">
 				<div class="space-y-2">
 					<Label for="url">Pulp URL</Label>
 					<Input
 						id="url"
 						name="url"
 						type="url"
-						placeholder="https://pulp.local:8443"
+						placeholder="https://your.pulp.com"
 						required
 					/>
 				</div>
@@ -58,18 +87,18 @@
 					/>
 				</div>
 
-				{#if form?.error}
+				{#if error}
 					<Alert.Root variant="destructive">
 						<CircleAlert class="size-4" />
 						<Alert.Title>Error</Alert.Title>
 						<Alert.Description
-							>{form.error}</Alert.Description
+							>{error}</Alert.Description
 						>
 					</Alert.Root>
 				{/if}
 
-				<Button type="submit" class="w-full"
-					>Connect</Button
+				<Button type="submit" class="w-full" disabled={loading}
+					>{loading ? 'Connecting...' : 'Connect'}</Button
 				>
 			</form>
 			<div class="pt-4">

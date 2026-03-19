@@ -16,7 +16,7 @@ setup: ## Install deps + configure pulp-cli (interactive) in dev container
 	$(DC) ./bin/setup.sh
 
 dev: ## Start the dev server (http://localhost:5173)
-	$(DC) bash -c "NODE_TLS_REJECT_UNAUTHORIZED=0 npm run dev -- --host 0.0.0.0"
+	$(DC) bash -c "npm run dev -- --host 0.0.0.0"
 
 build: ## Production build
 	$(DC) npm run build
@@ -25,16 +25,16 @@ check: ## Type-check the project
 	$(DC) npm run check
 
 test: ## Run e2e tests (records new tapes, replays existing)
-	$(DC) bash -c "NODE_TLS_REJECT_UNAUTHORIZED=0 npx playwright test"
+	$(DC) bash -c "npx playwright test"
 
 test-record: ## Re-record all tapes from scratch (requires Pulp running)
-	$(DC) bash -c "rm -rf e2e/tapes && NODE_TLS_REJECT_UNAUTHORIZED=0 TALKBACK_RECORD=NEW npx playwright test"
+	$(DC) bash -c "rm -rf e2e/tapes && TALKBACK_RECORD=NEW npx playwright test"
 
 test-ui: ## Run e2e tests in headed mode with slow-mo (host only)
-	SLOWMO=500 NODE_TLS_REJECT_UNAUTHORIZED=0 npx playwright test --headed
+	SLOWMO=500 npx playwright test --headed
 
 screenshots: ## Capture screenshots for docs
-	$(DC) bash -c "NODE_TLS_REJECT_UNAUTHORIZED=0 npx playwright test e2e/screenshots.test.ts"
+	$(DC) bash -c "npx playwright test e2e/screenshots.test.ts"
 
 seed: ## Populate remote Pulp with test data (supports DOCKERHUB_USERNAME/PASSWORD) (not in devcontainer)
 	./bin/seed.sh

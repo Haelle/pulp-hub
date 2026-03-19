@@ -3,12 +3,14 @@
 	import { Badge } from '$lib/components/ui/badge';
 	import type { ContainerDistribution } from '$lib/pulp';
 	import { dockerHubUrl } from '$lib/utils';
+	import { auth } from '$lib/auth.svelte';
 	import ExternalLink from '@lucide/svelte/icons/external-link';
 
-	let { distribution, pulpHost }: { distribution: ContainerDistribution; pulpHost: string } = $props();
+	let { distribution }: { distribution: ContainerDistribution } = $props();
 
 	const name = $derived(distribution.name.split('/').pop() ?? distribution.name);
 	const hubUrl = $derived(dockerHubUrl(distribution.name));
+	const pulpHost = $derived(new URL(auth.pulpUrl).host);
 </script>
 
 <a href="/repositories/{encodeURIComponent(distribution.name)}" class="block">

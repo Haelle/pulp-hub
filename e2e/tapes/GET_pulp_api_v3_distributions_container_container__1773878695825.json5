@@ -1,0 +1,144 @@
+{
+    meta: {
+        createdAt: '2026-03-19T00:04:55.060Z',
+        host: 'https://pulp.local:8443',
+        resHumanReadable: true,
+    },
+    req: {
+        headers: {
+            connection: 'keep-alive',
+            'sec-ch-ua-platform': '"Linux"',
+            'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36',
+            'sec-ch-ua': '"Not:A-Brand";v="99", "HeadlessChrome";v="145", "Chromium";v="145"',
+            'accept-language': 'en-US',
+            'sec-ch-ua-mobile': '?0',
+            accept: '*/*',
+            origin: 'http://localhost:5173',
+            'sec-fetch-site': 'same-site',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-dest': 'empty',
+            referer: 'http://localhost:5173/',
+            'accept-encoding': 'gzip, deflate, br, zstd',
+        },
+        url: '/pulp/api/v3/distributions/container/container/?limit=0',
+        method: 'GET',
+        body: '',
+    },
+    res: {
+        status: 200,
+        headers: {
+            server: [
+                'nginx/1.29.6',
+            ],
+            date: [
+                'Thu, 19 Mar 2026 00:04:55 GMT',
+            ],
+            'content-type': [
+                'application/json',
+            ],
+            'content-length': [
+                '2577',
+            ],
+            connection: [
+                'keep-alive',
+            ],
+            vary: [
+                'Accept',
+            ],
+            allow: [
+                'GET, POST, HEAD, OPTIONS',
+            ],
+            'x-frame-options': [
+                'DENY',
+            ],
+            'x-content-type-options': [
+                'nosniff',
+            ],
+            'referrer-policy': [
+                'same-origin',
+            ],
+            'cross-origin-opener-policy': [
+                'same-origin',
+            ],
+            'correlation-id': [
+                '51dff059ec134b8b90492be42391c8e5',
+            ],
+            'access-control-expose-headers': [
+                'Correlation-ID, Content-Length, Content-Range, Docker-Content-Digest',
+            ],
+            'access-control-allow-origin': [
+                '*',
+            ],
+            'access-control-allow-methods': [
+                'GET, POST, PUT, PATCH, DELETE, OPTIONS',
+            ],
+            'access-control-allow-headers': [
+                'Authorization, Content-Type, Accept, X-Requested-With',
+            ],
+        },
+        body: {
+            count: 3,
+            next: null,
+            previous: null,
+            results: [
+                {
+                    pulp_href: '/pulp/api/v3/distributions/container/container/019d0350-8cec-7a5f-984a-1f9262a83534/',
+                    hidden: false,
+                    repository: '/pulp/api/v3/repositories/container/container/019d0350-6bef-7ade-ad82-c7ef6100fcb1/',
+                    pulp_labels: {},
+                    content_guard: '/pulp/api/v3/contentguards/core/content_redirect/019d0350-1cf4-7445-8d0e-3a094c662972/',
+                    pulp_created: '2026-03-18T23:38:23.853442Z',
+                    name: 'dockerhub/library/hello-world',
+                    prn: 'prn:container.containerdistribution:019d0350-8cec-7a5f-984a-1f9262a83534',
+                    pulp_last_updated: '2026-03-18T23:38:23.853456Z',
+                    base_path: 'dockerhub/library/hello-world',
+                    no_content_change_since: null,
+                    repository_version: null,
+                    registry_path: 'localhost/dockerhub/library/hello-world',
+                    remote: null,
+                    namespace: '/pulp/api/v3/pulp_container/namespaces/019d0350-1d00-7fb9-b566-eae0ab6ed3df/',
+                    private: false,
+                    description: null,
+                },
+                {
+                    pulp_href: '/pulp/api/v3/distributions/container/container/019d0350-5755-7187-ae18-7c03dc2e9881/',
+                    hidden: false,
+                    repository: '/pulp/api/v3/repositories/container/container/019d0350-3225-759d-b56c-010006ddfac8/',
+                    pulp_labels: {},
+                    content_guard: '/pulp/api/v3/contentguards/core/content_redirect/019d0350-1cf4-7445-8d0e-3a094c662972/',
+                    pulp_created: '2026-03-18T23:38:10.134877Z',
+                    name: 'dockerhub/library/busybox',
+                    prn: 'prn:container.containerdistribution:019d0350-5755-7187-ae18-7c03dc2e9881',
+                    pulp_last_updated: '2026-03-18T23:38:10.134891Z',
+                    base_path: 'dockerhub/library/busybox',
+                    no_content_change_since: null,
+                    repository_version: null,
+                    registry_path: 'localhost/dockerhub/library/busybox',
+                    remote: null,
+                    namespace: '/pulp/api/v3/pulp_container/namespaces/019d0350-1d00-7fb9-b566-eae0ab6ed3df/',
+                    private: false,
+                    description: null,
+                },
+                {
+                    pulp_href: '/pulp/api/v3/distributions/container/container/019d0350-1eb0-7657-b2e3-2fdcfc0e10a7/',
+                    hidden: false,
+                    repository: '/pulp/api/v3/repositories/container/container/019d034f-f97a-71a8-906d-c49941cdd363/',
+                    pulp_labels: {},
+                    content_guard: '/pulp/api/v3/contentguards/core/content_redirect/019d0350-1cf4-7445-8d0e-3a094c662972/',
+                    pulp_created: '2026-03-18T23:37:55.634786Z',
+                    name: 'dockerhub/library/alpine',
+                    prn: 'prn:container.containerdistribution:019d0350-1eb0-7657-b2e3-2fdcfc0e10a7',
+                    pulp_last_updated: '2026-03-18T23:37:55.634806Z',
+                    base_path: 'dockerhub/library/alpine',
+                    no_content_change_since: null,
+                    repository_version: null,
+                    registry_path: 'localhost/dockerhub/library/alpine',
+                    remote: null,
+                    namespace: '/pulp/api/v3/pulp_container/namespaces/019d0350-1d00-7fb9-b566-eae0ab6ed3df/',
+                    private: false,
+                    description: null,
+                },
+            ],
+        },
+    },
+}

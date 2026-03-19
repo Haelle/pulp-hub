@@ -53,9 +53,9 @@ test.describe('Repository detail page', () => {
 		await expect(page.locator('[data-slot="alert-title"]')).toContainText('pulp-cli');
 	});
 
-	test('returns 404 for nonexistent repo', async ({ page }) => {
-		const response = await page.goto('/repositories/nonexistent-repo');
-		expect(response?.status()).toBe(404);
+	test('shows not found for nonexistent repo', async ({ page }) => {
+		await page.goto('/repositories/nonexistent-repo');
+		await expect(page.getByText(/not found/i)).toBeVisible();
 	});
 
 	test('navigable from repositories list', async ({ page }) => {

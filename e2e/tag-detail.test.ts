@@ -52,9 +52,9 @@ test.describe('Tag detail page', () => {
 		await expect(page.locator('[data-slot="alert-title"]')).toContainText('pulp-cli');
 	});
 
-	test('returns 404 for nonexistent tag', async ({ page }) => {
-		const response = await page.goto('/repositories/dockerhub%2Flibrary%2Falpine/tags/nonexistent');
-		expect(response?.status()).toBe(404);
+	test('shows not found for nonexistent tag', async ({ page }) => {
+		await page.goto('/repositories/dockerhub%2Flibrary%2Falpine/tags/nonexistent');
+		await expect(page.getByText(/not found/i)).toBeVisible();
 	});
 
 	test('navigable from repository detail', async ({ page }) => {

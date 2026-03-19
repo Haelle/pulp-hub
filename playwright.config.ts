@@ -15,7 +15,7 @@ export default defineConfig({
 			}
 		},
 		{
-			command: 'NODE_TLS_REJECT_UNAUTHORIZED=0 npm run dev',
+			command: 'npm run dev',
 			url: 'http://localhost:5173',
 			reuseExistingServer: true,
 			timeout: 15000

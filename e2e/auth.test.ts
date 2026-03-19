@@ -21,13 +21,18 @@ test.describe('Login', () => {
 	});
 
 	test('shows error on invalid credentials', async ({ page }) => {
+		// Mock the login endpoint to return 401
+		await page.route('**/pulp/api/v3/distributions/container/container/?limit=0', (route) =>
+			route.fulfill({ status: 401, body: '{"detail":"Authentication credentials were not provided."}' })
+		);
+
 		await page.goto('/');
 		await page.fill('input[name="url"]', PULP_URL);
 		await page.fill('input[name="username"]', 'wrong');
 		await page.fill('input[name="password"]', 'wrong');
 		await page.click('button[type="submit"]');
 
-		await expect(page.locator('.text-destructive')).toBeVisible();
+		await expect(page.getByText('Invalid credentials')).toBeVisible();
 	});
 
 	test('logs in and redirects to repositories', async ({ page }) => {

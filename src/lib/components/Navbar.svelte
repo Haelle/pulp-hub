@@ -2,8 +2,7 @@
 	import { page } from "$app/stores";
 	import { Button } from "$lib/components/ui/button";
 	import ThemeToggle from "$lib/components/ThemeToggle.svelte";
-
-	let { pulpUrl }: { pulpUrl: string } = $props();
+	import { auth } from "$lib/auth.svelte";
 </script>
 
 <nav class="border-b border-border bg-card">
@@ -38,16 +37,14 @@
 
 		<div class="flex items-center gap-3">
 			<span class="text-sm text-muted-foreground"
-				>{pulpUrl}</span
+				>{auth.pulpUrl}</span
 			>
 			<ThemeToggle />
-			<form method="POST" action="/logout">
-				<Button
-					type="submit"
-					variant="outline"
-					size="sm">Logout</Button
-				>
-			</form>
+			<Button
+				variant="outline"
+				size="sm"
+				onclick={() => auth.logout()}>Logout</Button
+			>
 		</div>
 	</div>
 </nav>
