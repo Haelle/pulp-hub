@@ -7,6 +7,6 @@ RUN apt-get update \
 
 # Install pulp-cli via pipx as the node user
 USER node
-RUN pipx install "pulp-cli[container]"
+RUN pipx install "pulp-cli[container,file]"
 ENV PATH="/home/node/.local/bin:${PATH}"
 USER root
