@@ -145,3 +145,93 @@ export async function getBlob(href: string): Promise<ContainerBlob> {
 	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
 	return res.json();
 }
+
+// ── File plugin types ────────────────────────────────────────
+
+export interface FileDistribution {
+	pulp_href: string;
+	name: string;
+	base_path: string;
+	base_url: string | null;
+	repository: string;
+	publication: string | null;
+}
+
+export interface FileRepository {
+	pulp_href: string;
+	name: string;
+	latest_version_href: string;
+}
+
+export interface FileContent {
+	pulp_href: string;
+	relative_path: string;
+	sha256: string;
+	artifact: string;
+}
+
+export interface PulpArtifact {
+	pulp_href: string;
+	size: number;
+	sha256: string;
+}
+
+// ── File plugin functions ────────────────────────────────────
+
+/**
+ * List file distributions with pagination.
+ */
+export async function getFileDistributions(
+	limit = 20,
+	offset = 0
+): Promise<PulpPaginated<FileDistribution>> {
+	const url = `${auth.pulpUrl}/pulp/api/v3/distributions/file/file/?limit=${limit}&offset=${offset}`;
+	const res = await pulpFetch(url);
+	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
+	return res.json();
+}
+
+/**
+ * Get a single file distribution by name. Returns null if not found.
+ */
+export async function getFileDistribution(
+	name: string
+): Promise<FileDistribution | null> {
+	const url = `${auth.pulpUrl}/pulp/api/v3/distributions/file/file/?name=${encodeURIComponent(name)}`;
+	const res = await pulpFetch(url);
+	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
+	const data: PulpPaginated<FileDistribution> = await res.json();
+	return data.results[0] ?? null;
+}
+
+/**
+ * Get a file repository by href.
+ */
+export async function getFileRepository(href: string): Promise<FileRepository> {
+	const res = await pulpFetch(`${auth.pulpUrl}${href}`);
+	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
+	return res.json();
+}
+
+/**
+ * Get file contents for a repository version.
+ */
+export async function getFileContents(
+	repoVersionHref: string,
+	limit = 100,
+	offset = 0
+): Promise<PulpPaginated<FileContent>> {
+	const url = `${auth.pulpUrl}/pulp/api/v3/content/file/files/?repository_version=${encodeURIComponent(repoVersionHref)}&limit=${limit}&offset=${offset}`;
+	const res = await pulpFetch(url);
+	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
+	return res.json();
+}
+
+/**
+ * Get an artifact by href.
+ */
+export async function getArtifact(href: string): Promise<PulpArtifact> {
+	const res = await pulpFetch(`${auth.pulpUrl}${href}`);
+	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
+	return res.json();
+}
