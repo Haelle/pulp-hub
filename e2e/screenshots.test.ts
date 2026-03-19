@@ -34,7 +34,19 @@ test('capture screenshots for docs', async ({ page }) => {
 	await expect(page.locator('h1')).toBeVisible();
 	await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'repo-detail.png'), fullPage: false });
 
-	// 4. Repositories in dark mode
+	// 4. File distributions list
+	await page.goto('/files');
+	await expect(page.locator('[data-slot="card"]').first()).toBeVisible();
+	await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'files.png'), fullPage: false });
+
+	// 5. File content detail
+	await page.goto('/files/test-docs');
+	await expect(page.locator('table')).toBeVisible();
+	await page.locator('tbody tr').first().locator('a').click();
+	await expect(page.locator('h1')).toBeVisible();
+	await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'file-content.png'), fullPage: false });
+
+	// 6. Repositories in dark mode
 	await page.goto('/repositories');
 	await expect(page.locator('[data-slot="card"]').first()).toBeVisible();
 	await page.evaluate(() => {

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PulpHub — Container Registry UI for Pulp</title>
+  <title>PulpHub — Web UI for Pulp</title>
   <style>
     :root {
       --bg: #0a0a0a;
@@ -243,7 +243,7 @@
 
   <section class="hero">
     <h1>Pulp<span>Hub</span></h1>
-    <p>A Docker Hub-inspired web UI for browsing container image repositories hosted on Pulp.</p>
+    <p>A Docker Hub-inspired web UI for browsing container and file repositories hosted on Pulp.</p>
     <div class="badges">
       <span class="badge">SvelteKit</span>
       <span class="badge">Svelte 5</span>
@@ -252,8 +252,8 @@
       <span class="badge">TypeScript</span>
     </div>
     <div class="buttons">
-      <a href="https://github.com/alexmusic/pulp-hub" class="btn btn-primary">GitHub Repository</a>
-      <a href="https://github.com/alexmusic/pulp-hub/blob/master/docker-compose.yml" class="btn btn-outline">Quick Start (docker-compose)</a>
+      <a href="https://github.com/Haelle/pulp-hub" class="btn btn-primary">GitHub Repository</a>
+      <a href="https://github.com/Haelle/pulp-hub?tab=readme-ov-file#d%C3%A9marrage-rapide" class="btn btn-outline">Quick Start</a>
     </div>
   </section>
 
@@ -267,8 +267,8 @@
       <p>Browse tags for each repository. View digests, architecture details, and pull commands at a glance.</p>
     </div>
     <div class="card">
-      <h3>Multi-arch Support</h3>
-      <p>Inspect manifest lists with OS and architecture badges for multi-platform images.</p>
+      <h3>File Repository Support</h3>
+      <p>Browse Pulp file repositories, inspect file contents with checksums, sizes and download URLs.</p>
     </div>
     <div class="card">
       <h3>CLI Hints</h3>
@@ -303,21 +303,15 @@
         <img src="screenshots/repositories-dark.png" alt="Repositories in dark mode" loading="lazy">
         <figcaption>Dark Mode — Full theme support</figcaption>
       </figure>
-    </div>
-  </section>
-
-  <section class="setup">
-    <h2>Quick Start</h2>
-    <pre><span class="comment"># Clone and run with docker-compose</span>
-<span class="cmd">git clone https://github.com/alexmusic/pulp-hub.git
-cd pulp-hub
-docker compose up</span>
-
-<span class="comment"># Or develop locally with devcontainer</span>
-<span class="cmd">make up      </span><span class="comment"># Start devcontainer</span>
-<span class="cmd">make setup   </span><span class="comment"># Configure pulp-cli</span>
-<span class="cmd">make seed    </span><span class="comment"># Seed test data</span>
-<span class="cmd">make dev     </span><span class="comment"># Start dev server</span></pre>
+      <figure class="gallery-item">
+        <img src="screenshots/files.png" alt="File repositories list" loading="lazy">
+        <figcaption>Files — Browse file repositories</figcaption>
+      </figure>
+      <figure class="gallery-item">
+        <img src="screenshots/file-content.png" alt="File content detail" loading="lazy">
+        <figcaption>File Detail — Checksums, size and download URL</figcaption>
+      </figure>
+   </div>
   </section>
 
   <div class="lightbox" id="lightbox" onclick="this.classList.remove('active')">
