@@ -31,3 +31,6 @@ jobs:
         run: npx playwright test
         env:
           TALKBACK_RECORD: DISABLED
+
+      - name: Test coverage ratio
+        run: ./bin/test-coverage-ratio.sh
