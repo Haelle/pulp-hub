@@ -10,6 +10,8 @@ set -euo pipefail
 #   DOCKERHUB_USERNAME=user DOCKERHUB_PASSWORD=token ./bin/seed.sh
 # ──────────────────────────────────────────────────────────────
 
+source "./.env"
+
 PREFIX="dockerhub/library"
 
 # name|upstream|tags (comma-separated, limits sync to avoid Docker Hub rate limits)

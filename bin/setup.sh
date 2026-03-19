@@ -13,8 +13,14 @@ config_file="${XDG_CONFIG_HOME:-$HOME/.config}/pulp/cli.toml"
 if [[ ! -f "$config_file" ]]; then
   echo ""
   echo "No pulp config found. Creating one..."
-  read -rp "  Pulp URL [https://pulp.local:8443]: " pulp_url
-  pulp_url="${pulp_url:-https://pulp.local:8443}"
+  # Inside a container (devcontainer), reach Pulp on the host via host.docker.internal
+  if [ -f /.dockerenv ]; then
+    default_url="http://host.docker.internal:8081"
+  else
+    default_url="http://localhost:8081"
+  fi
+  read -rp "  Pulp URL [$default_url]: " pulp_url
+  pulp_url="${pulp_url:-$default_url}"
   read -rp "  Username [admin]: " username
   username="${username:-admin}"
   read -rsp "  Password [admin]: " password

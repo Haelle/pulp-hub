@@ -2,43 +2,105 @@
 
 UI de visualisation des dépôts d'images container Pulp, inspirée de Docker Hub.
 
-## Prérequis
+Image sur [DockerHub](https://hub.docker.com/repository/docker/estb/pulp-hub/)
 
-- [Dev Containers CLI](https://github.com/devcontainers/cli) (`npm install -g @devcontainers/cli`) (`.tool-versions` indique pour asdf quelle node a été utilisé)
+## Installation
+
+### Prérequis
+
+- Docker avec Docker Compose
+- pip/pipx (pour pulp-cli)
+
+### Démarrage rapide
+
+```bash
+# 1. Lancer Pulp + PulpHub
+docker compose -f docker-compose.demo.yml up -d
+# Attendre ~30s que Pulp démarre complètement
+
+# 2. Peupler Pulp avec des données de test
+pip install pulp-cli[container]
+# configuré par défaut pour fonctionner avec le pulp du docker-compose
+./bin/setup.sh
+# peuple le Pulp configuré via ./bin/setup.sh
+./bin/seed.sh
+
+# 3. Ouvrir PulpHub
+# http://localhost:8080
+# Pulp URL : http://localhost:8081
+# Identifiants : admin / admin
+```
+
+### Utiliser avec une instance Pulp existante
+
+```bash
+docker run -d -p 8080:80 docker.io/estb/pulp-hub:latest
+```
+
+Ouvrir http://localhost:8080 et pointer le login vers l'URL de votre instance Pulp.
+
+> **CORS** : l'instance Pulp doit autoriser les requêtes cross-origin.
+
+### Authentification Docker Hub (optionnel)
+
+Pour contourner le rate limiting Docker Hub lors du seed, `seed.sh` supporte l'auth via variables d'environnement :
+
+```bash
+# Éditer .env avec vos credentials
+cp .env.example .env
+./bin/seed.sh
+```
+
+Le password est un [Personal Access Token](https://hub.docker.com/settings/security), pas le mot de passe du compte.
+Sans ces variables, `seed.sh` fonctionne normalement en anonyme.
+
+## Développement
+
+### Prérequis pour le dev
+
+- [Dev Containers CLI](https://github.com/devcontainers/cli) (`npm install -g @devcontainers/cli`)
 - Docker
 
-## Démarrage rapide
+### Lancer Pulp pour le dev
 
 ```bash
-make up      # Démarre le devcontainer
-make setup   # Installe pulp-cli + configure l'accès Pulp (interactif)
-make seed    # Peuple Pulp avec des images de test
-make dev     # Lance le serveur de dev (http://localhost:5173)
+make create-pulp   # Première fois : crée Pulp + proxy CORS sur http://localhost:8081
+# Attendre ~30s que Pulp démarre
+
+make start-pulp    # Relancer après un stop
 ```
 
-> Ce projet a besoin d'une instance de Pulp joignable
-> `make setup` lance `pulp config create` qui demande l'URL, le login et le mot de passe
-> de l'instance Pulp (par défaut : `https://pulp.local:8443`, `admin`/`admin`).
-> Cette étape est nécessaire avant `make seed`.
-
-## Makefile
-
-Toutes les commandes passent par le devcontainer via `devcontainer exec`.
-`make help` affiche la liste complète.
-
-## Vérifier les données de test
+### Devcontainer
 
 ```bash
-make shell
-
-# Puis dans le conteneur :
-pulp container distribution list
-pulp container repository list
-pulp --format json container repository version list \
-  --repository dockerhub/library/alpine
+make up            # Démarre le devcontainer
+make setup         # Configure pulp-cli (URL par défaut : http://host.docker.internal:8081)
+make seed          # Peuple Pulp avec des données de test
+make dev           # Lance le serveur de dev (http://localhost:5173)
 ```
 
-## Gestion des tags et mode on_demand
+### Arrêter Pulp
+
+```bash
+make stop-pulp
+```
+
+### Commandes
+
+```bash
+make help
+```
+
+### Tests
+
+```bash
+make test          # E2E Playwright
+make test-record   # Re-enregistrer les cassettes
+```
+
+## Référence Pulp
+
+### Mode on_demand
 
 Pulp fonctionne en mode `on_demand` : lors d'un `sync`, seules les **metadata** (manifests, tags) sont téléchargées. Les **layers** (blobs) sont tirés à la demande lors d'un `pull`.
 
@@ -56,30 +118,14 @@ pulp container repository sync \
   --remote "dockerhub/library/alpine"
 ```
 
-Ensuite le tag est disponible via le registry Pulp :
+### Gestion des tags
 
-```bash
-podman pull pulp.local:8443/dockerhub/library/alpine:3.17 --tls-verify=false
-```
-
+Seuls les tags filtrés via `--include-tags` sur le remote sont synchronisés.
 Un `pull` sur un tag non synchronisé retournera `manifest unknown`.
 
-> **Rate limiting Docker Hub** : sans authentification, Docker Hub limite à ~100 pulls/6h.
-> Chaque tag synchronisé consomme des pulls (manifests + layers).
-> C'est pourquoi `--include-tags` filtre sur un petit nombre de tags dans `seed.sh`.
-> Sans ce filtre, une sync d'`alpine` tirerait des centaines de tags et épuiserait le quota.
+### Rate limiting Docker Hub
 
-## Authentification Docker Hub (optionnel)
-
-Pour contourner le rate limiting, `seed.sh` supporte l'auth Docker Hub via variables d'environnement :
-
-```bash
-cp .env.example .env
-# Éditer .env avec vos credentials
-direnv allow
-make seed
-```
-
-Le `.env` est chargé automatiquement par `direnv` (via `.envrc`). Le password est un [Personal Access Token](https://hub.docker.com/settings/security), pas le mot de passe du compte.
-
-Sans ces variables, `seed.sh` fonctionne normalement en anonyme.
+Sans authentification, Docker Hub limite à ~100 pulls/6h.
+Chaque tag synchronisé consomme des pulls (manifests + layers).
+C'est pourquoi `--include-tags` filtre sur un petit nombre de tags dans `seed.sh`.
+Sans ce filtre, une sync d'`alpine` tirerait des centaines de tags et épuiserait le quota.
