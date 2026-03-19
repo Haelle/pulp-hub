@@ -54,8 +54,8 @@ test.describe('Files page', () => {
 	test('file card links to detail page', async ({ page }) => {
 		await page.goto('/files');
 
-		await page.locator('[data-slot="card"]').first().click();
-		await expect(page).toHaveURL(/\/files\//);
+		await page.locator('[data-slot="card"]', { hasText: 'test-docs' }).click();
+		await expect(page).toHaveURL(/\/files\/test-docs/);
 	});
 
 	test('filter narrows results', async ({ page }) => {
@@ -88,5 +88,64 @@ test.describe('Files page', () => {
 		// The active button uses "secondary" variant which has distinct styling
 		const filesButton = page.getByRole('link', { name: 'Files' });
 		await expect(filesButton).toBeVisible();
+	});
+});
+
+test.describe('File detail page', () => {
+	test.beforeEach(async ({ page }) => {
+		await login(page);
+	});
+
+	test('displays file repo name and File badge', async ({ page }) => {
+		await page.goto('/files/test-docs');
+
+		await expect(page.locator('h1')).toContainText('test-docs');
+		await expect(page.locator('[data-slot="badge"]', { hasText: 'File' })).toBeVisible();
+	});
+
+	test('displays files table with relative paths', async ({ page }) => {
+		await page.goto('/files/test-docs');
+
+		await expect(page.locator('table')).toBeVisible();
+		await expect(page.locator('tbody tr')).not.toHaveCount(0);
+		// Should show at least one of the seeded files
+		await expect(page.getByText('README.md')).toBeVisible();
+	});
+
+	test('file rows link to content detail', async ({ page }) => {
+		await page.goto('/files/test-docs');
+
+		await page.locator('tbody tr').first().locator('a').click();
+		await expect(page).toHaveURL(/\/files\/test-docs\/content\//);
+	});
+
+	test('shows sha256 truncated in table', async ({ page }) => {
+		await page.goto('/files/test-docs');
+
+		// sha256 cells should show truncated hashes (12 chars)
+		const hashCell = page.locator('tbody tr').first().locator('td').nth(1);
+		const text = await hashCell.textContent();
+		// Should be a short hex string (12 chars) not the full 64
+		expect(text!.trim().length).toBeLessThanOrEqual(12);
+	});
+
+	test('shows cli hint with chaining explanation', async ({ page }) => {
+		await page.goto('/files/test-docs');
+
+		await expect(page.locator('[data-slot="alert-title"]')).toContainText('pulp-cli');
+		await expect(page.getByText(/chaining|chain/i)).toBeVisible();
+	});
+
+	test('shows not found for nonexistent file repo', async ({ page }) => {
+		await page.goto('/files/nonexistent-repo');
+		await expect(page.getByText(/not found/i)).toBeVisible();
+	});
+
+	test('navigable from files list', async ({ page }) => {
+		await page.goto('/files');
+
+		await page.locator('[data-slot="card"]', { hasText: 'test-docs' }).click();
+		await expect(page).toHaveURL(/\/files\/test-docs/);
+		await expect(page.locator('h1')).toContainText('test-docs');
 	});
 });
