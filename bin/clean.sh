@@ -58,4 +58,58 @@ for name in "${FILE_NAMES[@]}"; do
 done
 
 echo ""
+echo -e "${BOLD}--- Pull-Through ---${NC}"
+
+# Pull-through uses the REST API (pulp-cli doesn't support pull-through types)
+PULP_URL="${PULP_URL:-http://localhost:8081}"
+PULP_USERNAME="${PULP_USERNAME:-admin}"
+PULP_PASSWORD="${PULP_PASSWORD:-admin}"
+
+# Read credentials from pulp-cli config if available
+if command -v pulp >/dev/null 2>&1; then
+  cli_url=$(pulp config show 2>/dev/null | python3 -c "import sys,json; print(json.load(sys.stdin).get('base_url',''))" 2>/dev/null) || true
+  cli_user=$(pulp config show 2>/dev/null | python3 -c "import sys,json; print(json.load(sys.stdin).get('username',''))" 2>/dev/null) || true
+  cli_pass=$(pulp config show 2>/dev/null | python3 -c "import sys,json; print(json.load(sys.stdin).get('password',''))" 2>/dev/null) || true
+  [[ -n "$cli_url" ]] && PULP_URL="$cli_url"
+  [[ -n "$cli_user" ]] && PULP_USERNAME="$cli_user"
+  [[ -n "$cli_pass" ]] && PULP_PASSWORD="$cli_pass"
+fi
+
+destroy_pullthrough() {
+  local type="$1" endpoint="$2" name="$3"
+  local href
+  href=$(curl -s -u "${PULP_USERNAME}:${PULP_PASSWORD}" \
+    "${PULP_URL}/pulp/api/v3${endpoint}?name=${name}" \
+    | python3 -c "
+import sys,json
+r=json.load(sys.stdin).get('results',[])
+print(r[0]['pulp_href'] if r else '')
+" 2>/dev/null) || true
+
+  if [[ -n "$href" ]]; then
+    echo -e "  ${RED}Destroying ${type}: ${name}${NC}"
+    curl -s -u "${PULP_USERNAME}:${PULP_PASSWORD}" -X DELETE "${PULP_URL}${href}" >/dev/null
+  fi
+}
+
+PULLTHROUGH_CONTAINER_NAMES=("dockerhub-cache" "quay-cache")
+for name in "${PULLTHROUGH_CONTAINER_NAMES[@]}"; do
+  echo ""
+  echo -e "${BOLD}── ${name} ──${NC}"
+  destroy_pullthrough "distribution" "/distributions/container/pull-through/" "$name"
+  destroy_pullthrough "remote" "/remotes/container/pull-through/" "$name"
+done
+
+echo ""
+echo -e "${BOLD}── pypi-cache ──${NC}"
+destroy_pullthrough "distribution" "/distributions/python/pypi/" "pypi-cache"
+destroy_pullthrough "repository" "/repositories/python/python/" "pypi-cache"
+destroy_pullthrough "remote" "/remotes/python/python/" "pypi-cache"
+
+echo ""
+echo -e "${BOLD}── npmjs-cache ──${NC}"
+destroy_pullthrough "distribution" "/distributions/npm/npm/" "npmjs-cache"
+destroy_pullthrough "remote" "/remotes/npm/npm/" "npmjs-cache"
+
+echo ""
 echo -e "${GREEN}✓ Cleanup complete${NC}"

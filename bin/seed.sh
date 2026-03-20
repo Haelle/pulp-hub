@@ -22,6 +22,13 @@ echo -e "${GREEN}✓ Pulp API OK${NC}"
 seed_oci
 seed_file
 
+# Pull-through setup (standalone script, needs env vars to skip prompts)
+export PULP_URL PULP_USERNAME PULP_PASSWORD
+PULP_URL="${PULP_URL:-$(pulp config show 2>/dev/null | python3 -c "import sys,json; print(json.load(sys.stdin).get('base_url','http://localhost:8081'))" 2>/dev/null || echo "http://localhost:8081")}"
+PULP_USERNAME="${PULP_USERNAME:-$(pulp config show 2>/dev/null | python3 -c "import sys,json; print(json.load(sys.stdin).get('username','admin'))" 2>/dev/null || echo "admin")}"
+PULP_PASSWORD="${PULP_PASSWORD:-$(pulp config show 2>/dev/null | python3 -c "import sys,json; print(json.load(sys.stdin).get('password','admin'))" 2>/dev/null || echo "admin")}"
+./bin/setup-pullthrough.sh
+
 # ── Verify ────────────────────────────────────────────────────
 echo ""
 echo -e "${BOLD}=== Verification ===${NC}"
