@@ -5,9 +5,9 @@
 PREFIX="dockerhub/library"
 
 IMAGES=(
-  "alpine|library/alpine|3.18,3.19,latest,edge"
-  "busybox|library/busybox|1.36,1.37,stable,latest"
-  "hello-world|library/hello-world|latest,linux"
+  "alpine|library/alpine|3.19,latest"
+  "busybox|library/busybox|1.37latest"
+  "hello-world|library/hello-world|latest"
 )
 
 # ── Helpers ───────────────────────────────────────────────────
