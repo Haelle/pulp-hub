@@ -26,6 +26,97 @@ Stack : SvelteKit (Svelte 5 runes) + shadcn-svelte + Tailwind CSS v4 + adapter-n
 - `pulp-cli` : `remote create` ne supporte pas `--include-tags`, utiliser `remote update` après le create
 - Les tags sont limités dans seed.sh pour éviter les 429 Docker Hub (rate limit ~100 pulls/6h sans auth)
 
+## pulp-cli — Arbre des commandes
+
+`pulp-cli` v0.38.2 — les commandes sont découvertes dynamiquement depuis le schéma API du serveur.
+Lancer `pulp --refresh-api` si les sous-commandes ne sont pas trouvées.
+
+```
+pulp
+├── config          create | edit | validate
+├── status
+├── show            --href (affiche n'importe quelle ressource par href)
+│
+├── container
+│   ├── remote        create | destroy | list | show | update | label | role
+│   │                   create: --name --url --upstream-name (requis) --policy [immediate|on_demand|streamed]
+│   │                           --include-tags --exclude-tags --username --password
+│   │                   ⚠ --include-tags n'est pas supporté au create, utiliser update après
+│   ├── repository    create | list | show | sync | tag | untag | label | role | task | version
+│   │                   create: --name (requis) --remote --description
+│   │                   sync: --name/--href --remote
+│   ├── distribution  create | destroy | list | show | update | label | role
+│   │                   create: --name --base-path (requis) --repository --private/--public
+│   │                   ⚠ pas de --type pull-through, le pull-through passe par l'API REST
+│   ├── content       list | show | label  (--type [blob|manifest|tag])
+│   └── namespace     create | destroy | list | show | role
+│
+├── file
+│   ├── remote        create | destroy | list | show | update | label | role
+│   │                   create: --name --url (requis) --policy [immediate|on_demand|streamed]
+│   ├── repository    create | destroy | list | show | sync | update | content | label | role | task | version
+│   │                   create: --name (requis) --remote --autopublish/--no-autopublish
+│   │                   sync: --name/--href --remote --mirror/--no-mirror
+│   ├── distribution  create | destroy | list | show | update | label | role
+│   │                   create: --name --base-path (requis) --repository --publication
+│   ├── content       create | list | show | upload | label
+│   │                   upload: --relative-path --file (requis) --repository
+│   ├── publication   create | destroy | list | show | role
+│   └── acs           create | destroy | list | show | update | refresh | path | role
+│
+├── python
+│   ├── remote        create | destroy | list | show | update | label | role
+│   │                   create: --name --url (requis) --policy --includes --excludes --prereleases
+│   ├── repository    create | destroy | list | show | sync | update | content | label | role | task | version
+│   │                   create: --name (requis) --remote --autopublish/--no-autopublish
+│   ├── distribution  create | destroy | list | show | update | label | role
+│   │                   create: --name --base-path (requis) --repository --remote --allow-uploads/--block-uploads
+│   ├── content       create | list | show | label  (--type [package|provenance])
+│   └── publication   create | destroy | list | show | role
+│
+├── task              list | show | cancel | destroy | purge | summary | role | profile-artifact-urls
+├── task-group        list | show
+├── worker            list | show
+├── user              create | destroy | list | show | update | role-assignment
+├── group             create | destroy | list | show | permission | role | role-assignment | user
+├── role              create | destroy | list | show | update
+├── artifact          list | show | upload
+├── orphan            cleanup
+├── domain            create | destroy | list | show | update | role
+├── content           list (générique, cross-plugin)
+├── distribution      list (générique, cross-plugin)
+├── publication       list (générique, cross-plugin)
+├── remote            list (générique, cross-plugin)
+├── repository        list | reclaim | version (générique, cross-plugin)
+├── content-guard     list | composite | header | rbac | redirect | rhsm | x509
+├── access-policy
+├── signing-service   list | show
+├── upload            destroy | list | show
+├── export            pulp
+├── exporter          pulp
+├── importer          pulp
+├── upstream-pulp     create | destroy | list | show | update | replicate
+├── debug
+└── vulnerability-report
+```
+
+### Patterns récurrents
+
+- Toutes les ressources supportent `--name` pour identifier et `--href` pour référencer par URL
+- Référencement cross-plugin : `--remote "container:container:mon-remote"` ou `--repository "file:file:mon-repo"`
+- `--format json` sur toutes les commandes pour parser la sortie
+- `--labels` accepte du JSON ou `@fichier.json`
+- Les `sync`, `create`, `destroy` sont des tâches async (attendre avec `-T 0` pour infini)
+
+### Pull-through (non supporté par pulp-cli)
+
+Le pull-through cache utilise des endpoints API REST dédiés que pulp-cli ne couvre pas :
+- `POST /pulp/api/v3/remotes/container/pull-through/`
+- `POST /pulp/api/v3/distributions/container/pull-through/`
+- Pour Python/npm : distributions standard avec un `remote` attaché
+
+→ voir `bin/setup-pullthrough.sh` qui utilise curl directement
+
 ## Conventions
 
 - Voir PLAN.md pour le plan de développement et l'avancement
