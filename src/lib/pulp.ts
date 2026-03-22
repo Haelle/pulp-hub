@@ -258,6 +258,21 @@ export interface NpmDistribution {
 	name: string;
 	base_path: string;
 	remote: string | null;
+	repository: string | null;
+}
+
+export interface NpmRemote {
+	pulp_href: string;
+	name: string;
+	url: string;
+}
+
+export interface NpmRepository {
+	pulp_href: string;
+	name: string;
+	latest_version_href: string;
+	description: string | null;
+	remote: string | null;
 }
 
 export interface PulpStatus {
@@ -310,6 +325,47 @@ export async function getNpmDistributions(): Promise<PulpPaginated<NpmDistributi
  * Get a remote by href (works for any plugin type).
  */
 export async function getRemote(href: string): Promise<PullThroughRemote> {
+	const res = await pulpFetch(`${auth.pulpUrl}${href}`);
+	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
+	return res.json();
+}
+
+// ── npm repositories ─────────────────────────────────────────
+
+/**
+ * List npm distributions with pagination (excludes pull-through: only those with a repository).
+ */
+export async function getNpmRepoDistributions(
+	limit = 20,
+	offset = 0
+): Promise<PulpPaginated<NpmDistribution>> {
+	const res = await pulpFetch(
+		`${auth.pulpUrl}/pulp/api/v3/distributions/npm/npm/?limit=${limit}&offset=${offset}`
+	);
+	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
+	const data: PulpPaginated<NpmDistribution> = await res.json();
+	// Filter out pull-through distributions (no repository, only remote)
+	data.results = data.results.filter((d) => d.repository !== null);
+	data.count = data.results.length;
+	return data;
+}
+
+/**
+ * Get a single npm distribution by name.
+ */
+export async function getNpmDistribution(name: string): Promise<NpmDistribution | null> {
+	const res = await pulpFetch(
+		`${auth.pulpUrl}/pulp/api/v3/distributions/npm/npm/?name=${encodeURIComponent(name)}`
+	);
+	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
+	const data: PulpPaginated<NpmDistribution> = await res.json();
+	return data.results[0] ?? null;
+}
+
+/**
+ * Get an npm remote by href.
+ */
+export async function getNpmRemote(href: string): Promise<NpmRemote> {
 	const res = await pulpFetch(`${auth.pulpUrl}${href}`);
 	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
 	return res.json();
