@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# seed_pull_pypi — Install Python packages through Pulp pull-through cache
+# Sourced by seed.sh — do not execute directly
+
+PYPI_PACKAGES="requests flask"
+
+# ── Main ──────────────────────────────────────────────────────
+
+seed_pull_pypi() {
+  echo ""
+  echo -e "${BOLD}=== PyPI packages (pull-through) ===${NC}"
+
+  local index_url="${PULP_URL}/pulp/content/pypi-cache/simple/"
+  local tmpdir
+  tmpdir=$(mktemp -d)
+
+  echo -e "  ${BLUE}uv pip install --index-url ${index_url} ${PYPI_PACKAGES}${NC}"
+  if uv pip install --index-url "$index_url" --target "$tmpdir" $PYPI_PACKAGES >/dev/null 2>&1; then
+    echo -e "  ${GREEN}✓ Cached PyPI packages${NC}"
+  else
+    echo -e "  ${RED}⚠ uv pip install failed${NC}"
+  fi
+  rm -rf "$tmpdir"
+}
+
+verify_pull_pypi() {
+  echo ""
+  echo -e "${BOLD}--- PyPI Verification ---${NC}"
+  local count
+  count=$(pulp_get "/distributions/python/pypi/" \
+    | python3 -c "import sys,json; print(json.load(sys.stdin).get('count',0))" 2>/dev/null || echo 0)
+  echo -e "  PyPI distributions: ${GREEN}${count}${NC}"
+}
