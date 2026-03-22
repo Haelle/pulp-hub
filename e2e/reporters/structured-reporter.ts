@@ -40,8 +40,9 @@ class RSpecReporter implements Reporter {
 					: `${RED}F${RESET}`;
 		process.stdout.write(dot);
 
+		const isShared = test.location.file.includes('helpers/');
 		this.results.push({
-			title: test.title,
+			title: isShared ? `[Shared] ${test.title}` : test.title,
 			titlePath: test.titlePath().filter((s) => s.length > 0),
 			status: result.status,
 			duration: result.duration,
