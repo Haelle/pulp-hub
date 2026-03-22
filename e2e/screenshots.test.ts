@@ -1,20 +1,8 @@
-import { test, expect, type Page } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 import path from 'path';
-
-const PULP_URL = process.env.PULP_URL ?? `http://localhost:${process.env.TALKBACK_PORT ?? '8787'}`;
-const PULP_USER = process.env.PULP_USER ?? 'admin';
-const PULP_PASS = process.env.PULP_PASS ?? 'admin';
+import { login } from './helpers/login';
 
 const SCREENSHOT_DIR = path.join('docs', 'screenshots');
-
-async function login(page: Page) {
-	await page.goto('/');
-	await page.fill('input[name="url"]', PULP_URL);
-	await page.fill('input[name="username"]', PULP_USER);
-	await page.fill('input[name="password"]', PULP_PASS);
-	await page.click('button[type="submit"]');
-	await expect(page).toHaveURL('/images');
-}
 
 test('capture screenshots for docs', async ({ page }) => {
 	await page.setViewportSize({ width: 1280, height: 720 });
