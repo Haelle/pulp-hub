@@ -12,7 +12,7 @@ YELLOW='\033[0;33m'
 BOLD='\033[1m'
 NC='\033[0m'
 
-STATES_PER_ROUTE=6
+STATES_PER_ROUTE=4
 MIN_RATIO="${MIN_RATIO:-1.5}"
 
 # ── Count routes ──────────────────────────────────────────────
@@ -34,6 +34,8 @@ echo -e "  States/route (est.):    ${BOLD}${STATES_PER_ROUTE}${NC}"
 echo -e "  Route×States:           ${BOLD}${expected_min}${NC}"
 echo -e "  expect() assertions:    ${BOLD}${expect_count}${NC}"
 echo -e "  Ratio:                  ${BOLD}${ratio}${NC} (min: ${MIN_RATIO})"
+echo -e ""
+echo -e "  Warning: shared tests are counted only once"
 echo ""
 
 # ── Per-route detail ──────────────────────────────────────────

@@ -1,6 +1,7 @@
 import { expect, type Page } from '@playwright/test';
 
-export const PULP_URL = process.env.PULP_URL ?? `http://localhost:${process.env.TALKBACK_PORT ?? '8787'}`;
+export const PULP_URL =
+	process.env.PULP_URL ?? `http://localhost:${process.env.TALKBACK_PORT ?? '8787'}`;
 export const PULP_USER = process.env.PULP_USER ?? 'admin';
 export const PULP_PASS = process.env.PULP_PASS ?? 'admin';
 
