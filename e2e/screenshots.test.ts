@@ -43,7 +43,7 @@ test('capture screenshots for docs', async ({ page }) => {
 	await page.goto('/files/test-docs');
 	await expect(page.locator('table')).toBeVisible();
 	await page.locator('tbody tr').first().locator('a').click();
-	await expect(page.locator('h1')).toBeVisible();
+	await expect(page.locator('div.rounded-md.border')).toBeVisible();
 	await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'file-content.png'), fullPage: false });
 
 	// 6. Pull-through list
@@ -53,25 +53,27 @@ test('capture screenshots for docs', async ({ page }) => {
 
 	// 7. Pull-through detail — Container (OCI)
 	await page.locator('[data-slot="card"]', { hasText: 'Container' }).first().click();
-	await expect(page.locator('h1')).toBeVisible();
+	await expect(page.locator('h2', { hasText: 'Quick pull' })).toBeVisible();
 	await page.screenshot({
 		path: path.join(SCREENSHOT_DIR, 'pull-through-container.png'),
 		fullPage: true
 	});
-	await page.goBack();
 
 	// 8. Pull-through detail — PyPI
+	await page.goto('/pull-through');
+	await expect(page.locator('[data-slot="card"]').first()).toBeVisible();
 	await page.locator('[data-slot="card"]', { hasText: 'PyPI' }).first().click();
-	await expect(page.locator('h1')).toBeVisible();
+	await expect(page.locator('h2', { hasText: 'Quick install' })).toBeVisible();
 	await page.screenshot({
 		path: path.join(SCREENSHOT_DIR, 'pull-through-pypi.png'),
 		fullPage: true
 	});
-	await page.goBack();
 
 	// 9. Pull-through detail — npm
+	await page.goto('/pull-through');
+	await expect(page.locator('[data-slot="card"]').first()).toBeVisible();
 	await page.locator('[data-slot="card"]', { hasText: 'npm' }).first().click();
-	await expect(page.locator('h1')).toBeVisible();
+	await expect(page.locator('h2', { hasText: 'Quick install' })).toBeVisible();
 	await page.screenshot({
 		path: path.join(SCREENSHOT_DIR, 'pull-through-npm.png'),
 		fullPage: true
