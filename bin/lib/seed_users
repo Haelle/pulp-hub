@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# seed_users — Seed test users in Pulp
+# Sourced by seed.sh — do not execute directly
+
+SEED_USERS=(
+  "captain-container:captain@pulp.local"
+  "jean-docker:jean@pulp.local"
+)
+
+# ── Helpers ───────────────────────────────────────────────────
+
+user_exists() { pulp user show --username "$1" >/dev/null 2>&1; }
+
+ensure_user() {
+  local username="$1" email="$2"
+  echo -e "  ${BLUE}User:${NC} $username"
+  if user_exists "$username"; then
+    echo -e "  ${YELLOW}Already exists${NC}"
+  else
+    pulp user create --username "$username" --password "Pulp1234!" --email "$email" >/dev/null
+    echo -e "  ${GREEN}Created${NC}"
+  fi
+}
+
+# ── Main ─────────────────────────────────────────────────────
+
+seed_users() {
+  echo ""
+  echo -e "${BOLD}── Users ──${NC}"
+  for entry in "${SEED_USERS[@]}"; do
+    IFS=':' read -r username email <<< "$entry"
+    ensure_user "$username" "$email"
+  done
+}
+
+verify_users() {
+  local count
+  count=$(pulp user list 2>/dev/null | python3 -c "import sys,json; print(len(json.load(sys.stdin)))" 2>/dev/null || echo 0)
+  echo -e "  Users: ${GREEN}$count${NC}"
+}

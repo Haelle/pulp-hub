@@ -4,6 +4,7 @@ set -euo pipefail
 source "./.env"
 source "./bin/lib/seed_oci"
 source "./bin/lib/seed_file"
+source "./bin/lib/seed_users"
 
 # ── Colors ────────────────────────────────────────────────────
 RED='\033[0;31m'
@@ -21,6 +22,7 @@ echo -e "${GREEN}✓ Pulp API OK${NC}"
 
 seed_oci
 seed_file
+seed_users
 
 # Pull-through setup (standalone script, needs env vars to skip prompts)
 export PULP_URL PULP_USERNAME PULP_PASSWORD
@@ -35,5 +37,6 @@ echo -e "${BOLD}=== Verification ===${NC}"
 
 verify_oci
 verify_file
+verify_users
 
 echo -e "\n${GREEN}✓ Done${NC}"
