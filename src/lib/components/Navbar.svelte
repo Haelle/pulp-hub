@@ -42,6 +42,16 @@
 					href="/files"
 					>Files</Button
 				>
+				<Button
+					variant={$page.url.pathname.startsWith(
+						"/pull-through",
+					)
+						? "secondary"
+						: "ghost"}
+					size="sm"
+					href="/pull-through"
+					>Pull-through</Button
+				>
 			</div>
 		</div>
 
