@@ -38,20 +38,23 @@ test.describe('npm packages list page', () => {
 		await expect(page.locator('[data-slot="alert-title"]')).toContainText('pulp-cli');
 	});
 
-	test('displays package cards', async ({ page }) => {
+	test('displays one card per package name', async ({ page }) => {
 		await page.goto('/npm');
 		const cards = page.locator('[data-testid="npm-package-card"]');
 		await expect(cards.first()).toBeVisible();
+		// is-odd has multiple versions but should appear only once
+		const isOddCards = page.locator('[data-testid="npm-package-card"]', { hasText: 'is-odd' });
+		await expect(isOddCards).toHaveCount(1);
 	});
 
-	test('package card shows name and version', async ({ page }) => {
+	test('card shows latest version', async ({ page }) => {
 		await page.goto('/npm');
 		const card = page.locator('[data-testid="npm-package-card"]').first();
 		await expect(card.locator('[data-slot="card-title"]')).toBeVisible();
 		await expect(card.locator('[data-slot="card-description"]')).toBeVisible();
 	});
 
-	test('package card shows source distribution', async ({ page }) => {
+	test('card shows source distribution badge', async ({ page }) => {
 		await page.goto('/npm');
 		const card = page.locator('[data-testid="npm-package-card"]').first();
 		await expect(card.locator('[data-slot="badge"]')).toBeVisible();
@@ -63,7 +66,7 @@ test.describe('npm packages list page', () => {
 		const filterInput = page.getByPlaceholder(/search|filter/i);
 		await filterInput.fill('is-odd');
 		const cards = page.locator('[data-testid="npm-package-card"]');
-		await expect(cards.first()).toBeVisible();
+		await expect(cards).toHaveCount(1);
 	});
 
 	test('text filter with no match shows empty state', async ({ page }) => {
@@ -81,7 +84,7 @@ test.describe('npm packages list page', () => {
 		await expect(checkbox).toBeVisible();
 	});
 
-	test('package card links to detail page', async ({ page }) => {
+	test('card links to package detail page', async ({ page }) => {
 		await page.goto('/npm');
 		await page.locator('[data-testid="npm-package-card"]').first().click();
 		await expect(page).toHaveURL(/\/npm\/packages\//);
@@ -109,42 +112,42 @@ test.describe('npm package detail page', () => {
 		await expect(page.locator('h1')).toBeVisible();
 	});
 
-	test('displays package name and version badge', async ({ page }) => {
-		await page.goto('/npm');
-		await expect(page.locator('[data-testid="npm-package-card"]').first()).toBeVisible();
-		await page.locator('[data-testid="npm-package-card"]').first().click();
-		await expect(page).toHaveURL(/\/npm\/packages\//);
-		await expect(page.locator('h1')).toBeVisible();
-		await expect(page.locator('[data-slot="badge"]').first()).toBeVisible();
+	test('displays package name', async ({ page }) => {
+		await page.goto('/npm/packages/is-odd');
+		await expect(page.locator('h1')).toContainText('is-odd');
 	});
 
-	test('shows tarball path', async ({ page }) => {
-		await page.goto('/npm');
-		await expect(page.locator('[data-testid="npm-package-card"]').first()).toBeVisible();
-		await page.locator('[data-testid="npm-package-card"]').first().click();
-		await expect(page).toHaveURL(/\/npm\/packages\//);
-		await expect(page.getByText(/\.tgz/).first()).toBeVisible();
+	test('shows versions table', async ({ page }) => {
+		await page.goto('/npm/packages/is-odd');
+		await expect(page.locator('h1')).toBeVisible();
+		const rows = page.locator('table tbody tr');
+		await expect(rows.first()).toBeVisible();
+		// is-odd has 2 cached versions
+		await expect(rows).toHaveCount(2);
+	});
+
+	test('version row shows version and tarball', async ({ page }) => {
+		await page.goto('/npm/packages/is-odd');
+		await expect(page.locator('h1')).toBeVisible();
+		const row = page.locator('table tbody tr').first();
+		await expect(row.locator('[data-slot="badge"]')).toBeVisible();
+		await expect(row.getByText(/\.tgz/)).toBeVisible();
+	});
+
+	test('shows install command', async ({ page }) => {
+		await page.goto('/npm/packages/is-odd');
+		await expect(page.locator('h1')).toBeVisible();
+		await expect(page.getByText(/npm install.*--registry/).first()).toBeVisible();
 	});
 
 	test('shows source distribution', async ({ page }) => {
-		await page.goto('/npm');
-		await expect(page.locator('[data-testid="npm-package-card"]').first()).toBeVisible();
-		await page.locator('[data-testid="npm-package-card"]').first().click();
-		await expect(page).toHaveURL(/\/npm\/packages\//);
-		// Source distribution should be visible (e.g. npmjs-cache or npm-registry)
+		await page.goto('/npm/packages/is-odd');
+		await expect(page.locator('h1')).toBeVisible();
 		await expect(page.getByText('Source:').first()).toBeVisible();
 	});
 
-	test('shows other cached versions when available', async ({ page }) => {
-		// is-odd has multiple versions (0.1.2 and 3.0.1)
-		await page.goto('/npm/packages/is-odd%403.0.1');
-		await expect(page.locator('h1')).toBeVisible();
-		await expect(page.getByText('Other cached versions')).toBeVisible();
-		await expect(page.getByText('0.1.2')).toBeVisible();
-	});
-
 	test('shows not found for nonexistent package', async ({ page }) => {
-		await page.goto('/npm/packages/zzz-fake%403.0.0');
+		await page.goto('/npm/packages/zzz-fake-pkg');
 		await expect(page.getByText(/not found/i)).toBeVisible();
 	});
 });

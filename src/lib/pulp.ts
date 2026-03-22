@@ -287,6 +287,14 @@ export interface NpmPackageWithSource extends NpmPackage {
 	distribution: string;
 }
 
+/** Grouped view: one entry per package name with all versions. */
+export interface NpmPackageGroup {
+	name: string;
+	latestVersion: string;
+	distribution: string;
+	versions: NpmPackageWithSource[];
+}
+
 export interface PulpStatus {
 	versions: { component: string; version: string }[];
 }

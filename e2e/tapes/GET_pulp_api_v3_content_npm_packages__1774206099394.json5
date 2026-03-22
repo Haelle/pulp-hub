@@ -1,6 +1,6 @@
 {
     meta: {
-        createdAt: '2026-03-22T17:59:04.605Z',
+        createdAt: '2026-03-22T19:01:38.883Z',
         host: 'http://host.docker.internal:8081',
         resHumanReadable: true,
     },
@@ -31,13 +31,13 @@
                 'nginx/1.29.6',
             ],
             date: [
-                'Sun, 22 Mar 2026 17:59:05 GMT',
+                'Sun, 22 Mar 2026 19:01:39 GMT',
             ],
             'content-type': [
                 'application/json',
             ],
             'content-length': [
-                '10242',
+                '11138',
             ],
             connection: [
                 'keep-alive',
@@ -61,7 +61,7 @@
                 'same-origin',
             ],
             'correlation-id': [
-                'c96547d103504b4ba07f36634a7a01f8',
+                'ffae9695bcf747419539b1078830f35b',
             ],
             'access-control-expose-headers': [
                 'Correlation-ID, Content-Length, Content-Range, Docker-Content-Digest',
@@ -77,10 +77,34 @@
             ],
         },
         body: {
-            count: 23,
+            count: 25,
             next: null,
             previous: null,
             results: [
+                {
+                    pulp_href: '/pulp/api/v3/content/npm/packages/019d16b9-59a3-738c-958d-1ebe292a3a8e/',
+                    prn: 'prn:npm.package:019d16b9-59a3-738c-958d-1ebe292a3a8e',
+                    pulp_created: '2026-03-22T18:05:39.108176Z',
+                    pulp_last_updated: '2026-03-22T18:05:39.108186Z',
+                    pulp_labels: {},
+                    vuln_report: null,
+                    artifact: '/pulp/api/v3/artifacts/019d16b9-59a0-71d5-98a6-b2d40d6ac2b5/',
+                    relative_path: '@colors/colors/-/colors-1.6.0.tgz',
+                    name: '@colors/colors',
+                    version: '1.6.0',
+                },
+                {
+                    pulp_href: '/pulp/api/v3/content/npm/packages/019d16b9-3933-7a00-bb8e-3ed1768e641a/',
+                    prn: 'prn:npm.package:019d16b9-3933-7a00-bb8e-3ed1768e641a',
+                    pulp_created: '2026-03-22T18:05:30.804422Z',
+                    pulp_last_updated: '2026-03-22T18:05:30.804430Z',
+                    pulp_labels: {},
+                    vuln_report: null,
+                    artifact: '/pulp/api/v3/artifacts/019d16b9-3930-7aaf-8534-e4740ead7f2d/',
+                    relative_path: '@colors/colors/-/colors-1.4.0.tgz',
+                    name: '@colors/colors',
+                    version: '1.4.0',
+                },
                 {
                     pulp_href: '/pulp/api/v3/content/npm/packages/019d160f-1ae3-75ba-a3d7-24c9b9277429/',
                     prn: 'prn:npm.package:019d160f-1ae3-75ba-a3d7-24c9b9277429',
