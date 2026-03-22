@@ -1,0 +1,150 @@
+#!/usr/bin/env bash
+# seed_npm — Seed npm repositories in Pulp
+# Sourced by seed.sh — do not execute directly
+#
+# Uses curl (pulp-cli does not support npm)
+#
+# NOTE: pulp-npm sync is broken (upstream bug parsing npmjs.org responses),
+# so we populate content by running `npm install --registry` against the
+# Pulp distribution. This forces Pulp to fetch and cache the packages
+# on-demand, achieving the same result as a sync.
+
+NPM_REPOS=(
+  "npm-utils|https://registry.npmjs.org/|is-odd,is-even"
+  "npm-tools|https://registry.npmjs.org/|is-number"
+)
+
+# ── HTTP helpers ───────────────────────────────────────────────
+
+npm_api() {
+  local method="$1" endpoint="$2"
+  shift 2
+  curl -s -u "${PULP_USERNAME}:${PULP_PASSWORD}" \
+    -X "$method" \
+    -H "Content-Type: application/json" \
+    "${PULP_URL}/pulp/api/v3${endpoint}" \
+    "$@"
+}
+
+npm_get()  { npm_api GET  "$1"; }
+npm_post() { npm_api POST "$1" -d "$2"; }
+
+npm_resource_exists() {
+  local endpoint="$1" name="$2"
+  local count
+  count=$(npm_get "${endpoint}?name=${name}" | python3 -c "import sys,json; print(json.load(sys.stdin).get('count',0))")
+  [[ "$count" -gt 0 ]]
+}
+
+npm_wait_task() {
+  local task_href="$1"
+  [[ -z "$task_href" || "$task_href" == "null" ]] && return 0
+  while true; do
+    local state
+    state=$(curl -s -u "${PULP_USERNAME}:${PULP_PASSWORD}" "${PULP_URL}${task_href}" \
+      | python3 -c "import sys,json; print(json.load(sys.stdin).get('state',''))")
+    case "$state" in
+      completed) return 0 ;;
+      failed|canceled|cancelled) return 1 ;;
+      *) sleep 1 ;;
+    esac
+  done
+}
+
+# ── Resource creation ─────────────────────────────────────────
+
+ensure_npm_remote() {
+  local name="$1" url="$2"
+  if npm_resource_exists "/remotes/npm/npm/" "$name"; then
+    echo -e "  ${YELLOW}Remote exists${NC}"
+  else
+    echo -e "  ${BLUE}Creating remote...${NC}"
+    npm_post "/remotes/npm/npm/" \
+      "{\"name\":\"${name}\",\"url\":\"${url}\",\"policy\":\"immediate\"}" >/dev/null
+    echo -e "  ${GREEN}Remote created${NC}"
+  fi
+}
+
+ensure_npm_repo() {
+  local name="$1"
+  if npm_resource_exists "/repositories/npm/npm/" "$name"; then
+    echo -e "  ${YELLOW}Repository exists${NC}"
+  else
+    echo -e "  ${BLUE}Creating repository...${NC}"
+    local remote_href
+    remote_href=$(npm_get "/remotes/npm/npm/?name=${name}" \
+      | python3 -c "import sys,json; print(json.load(sys.stdin)['results'][0]['pulp_href'])")
+    npm_post "/repositories/npm/npm/" \
+      "{\"name\":\"${name}\",\"remote\":\"${remote_href}\"}" >/dev/null
+    echo -e "  ${GREEN}Repository created${NC}"
+  fi
+}
+
+ensure_npm_distribution() {
+  local name="$1"
+  local remote_href repo_href
+  remote_href=$(npm_get "/remotes/npm/npm/?name=${name}" \
+    | python3 -c "import sys,json; print(json.load(sys.stdin)['results'][0]['pulp_href'])")
+  repo_href=$(npm_get "/repositories/npm/npm/?name=${name}" \
+    | python3 -c "import sys,json; print(json.load(sys.stdin)['results'][0]['pulp_href'])")
+  if npm_resource_exists "/distributions/npm/npm/" "$name"; then
+    echo -e "  ${YELLOW}Distribution exists${NC}"
+  else
+    echo -e "  ${BLUE}Creating distribution...${NC}"
+    local task_href
+    task_href=$(npm_post "/distributions/npm/npm/" \
+      "{\"name\":\"${name}\",\"base_path\":\"${name}\",\"repository\":\"${repo_href}\",\"remote\":\"${remote_href}\"}" \
+      | python3 -c "import sys,json; print(json.load(sys.stdin).get('task',''))")
+    npm_wait_task "$task_href"
+    echo -e "  ${GREEN}Distribution created${NC}"
+  fi
+}
+
+populate_npm_cache() {
+  local name="$1" packages="$2"
+  local registry_url="${PULP_URL}/pulp/content/${name}/"
+  # Sync is broken (upstream bug), so we populate by installing packages
+  # against the Pulp registry — this triggers on-demand caching
+  echo -e "  ${BLUE}Populating cache via npm install (sync unavailable)...${NC}"
+  IFS=',' read -ra PKGS <<< "$packages"
+  local tmpdir
+  tmpdir=$(mktemp -d)
+  (
+    cd "$tmpdir"
+    npm init -y --silent >/dev/null 2>&1
+    if npm install --registry="$registry_url" --no-save "${PKGS[@]}" >/dev/null 2>&1; then
+      echo -e "  ${GREEN}Cached ${#PKGS[@]} package(s)${NC}"
+    else
+      echo -e "  ${RED}⚠ npm install failed (registry may not be reachable)${NC}"
+    fi
+  )
+  rm -rf "$tmpdir"
+}
+
+# ── Main ─────────────────────────────────────────────────────
+
+seed_npm() {
+  echo ""
+  echo -e "${BOLD}=== NPM Repositories ===${NC}"
+
+  for entry in "${NPM_REPOS[@]}"; do
+    IFS='|' read -r name url packages <<< "$entry"
+
+    echo ""
+    echo -e "${BOLD}── ${name} ──${NC}"
+
+    ensure_npm_remote "$name" "$url"
+    ensure_npm_repo "$name"
+    ensure_npm_distribution "$name"
+    populate_npm_cache "$name" "$packages"
+  done
+}
+
+verify_npm() {
+  echo ""
+  echo -e "${BOLD}--- NPM Verification ---${NC}"
+  local count
+  count=$(npm_get "/distributions/npm/npm/" \
+    | python3 -c "import sys,json; print(json.load(sys.stdin).get('count',0))" 2>/dev/null || echo 0)
+  echo -e "  NPM distributions: ${GREEN}${count}${NC}"
+}
