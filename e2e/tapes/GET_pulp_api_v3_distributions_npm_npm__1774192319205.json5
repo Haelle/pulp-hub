@@ -1,0 +1,132 @@
+{
+    meta: {
+        createdAt: '2026-03-22T15:11:57.907Z',
+        host: 'http://host.docker.internal:8081',
+        resHumanReadable: true,
+    },
+    req: {
+        headers: {
+            connection: 'keep-alive',
+            'sec-ch-ua-platform': '"Linux"',
+            'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36',
+            'sec-ch-ua': '"Not:A-Brand";v="99", "HeadlessChrome";v="145", "Chromium";v="145"',
+            'accept-language': 'en-US',
+            'sec-ch-ua-mobile': '?0',
+            accept: '*/*',
+            origin: 'http://localhost:5173',
+            'sec-fetch-site': 'same-site',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-dest': 'empty',
+            referer: 'http://localhost:5173/',
+            'accept-encoding': 'gzip, deflate, br, zstd',
+        },
+        url: '/pulp/api/v3/distributions/npm/npm/?limit=20&offset=0',
+        method: 'GET',
+        body: '',
+    },
+    res: {
+        status: 200,
+        headers: {
+            server: [
+                'nginx/1.29.6',
+            ],
+            date: [
+                'Sun, 22 Mar 2026 15:11:59 GMT',
+            ],
+            'content-type': [
+                'application/json',
+            ],
+            'content-length': [
+                '1800',
+            ],
+            connection: [
+                'keep-alive',
+            ],
+            vary: [
+                'Accept',
+            ],
+            allow: [
+                'GET, POST, HEAD, OPTIONS',
+            ],
+            'x-frame-options': [
+                'DENY, DENY',
+            ],
+            'x-content-type-options': [
+                'nosniff, nosniff',
+            ],
+            'referrer-policy': [
+                'same-origin, same-origin',
+            ],
+            'cross-origin-opener-policy': [
+                'same-origin',
+            ],
+            'correlation-id': [
+                '66563b49a8b2451187b49256bc1807d5',
+            ],
+            'access-control-expose-headers': [
+                'Correlation-ID, Content-Length, Content-Range, Docker-Content-Digest',
+            ],
+            'access-control-allow-origin': [
+                '*',
+            ],
+            'access-control-allow-methods': [
+                'GET, POST, PUT, PATCH, DELETE, OPTIONS',
+            ],
+            'access-control-allow-headers': [
+                'Authorization, Content-Type, Accept, X-Requested-With',
+            ],
+        },
+        body: {
+            count: 3,
+            next: null,
+            previous: null,
+            results: [
+                {
+                    pulp_href: '/pulp/api/v3/distributions/npm/npm/019d160f-27a9-746e-bcf2-a51f29a41c37/',
+                    prn: 'prn:npm.npmdistribution:019d160f-27a9-746e-bcf2-a51f29a41c37',
+                    pulp_created: '2026-03-22T14:59:45.194873Z',
+                    pulp_last_updated: '2026-03-22T14:59:45.194890Z',
+                    base_path: 'npm-tools',
+                    base_url: 'http://localhost:8081/pulp/content/npm-tools/',
+                    content_guard: null,
+                    no_content_change_since: null,
+                    hidden: false,
+                    pulp_labels: {},
+                    name: 'npm-tools',
+                    repository: '/pulp/api/v3/repositories/npm/npm/019d160f-2165-7c00-9802-52277001b33d/',
+                    remote: '/pulp/api/v3/remotes/npm/npm/019d160f-1e17-746f-bd5c-3435f15650c5/',
+                },
+                {
+                    pulp_href: '/pulp/api/v3/distributions/npm/npm/019d160f-0c09-70c1-9a4a-273e4b3e419b/',
+                    prn: 'prn:npm.npmdistribution:019d160f-0c09-70c1-9a4a-273e4b3e419b',
+                    pulp_created: '2026-03-22T14:59:38.123566Z',
+                    pulp_last_updated: '2026-03-22T14:59:38.123585Z',
+                    base_path: 'npm-utils',
+                    base_url: 'http://localhost:8081/pulp/content/npm-utils/',
+                    content_guard: null,
+                    no_content_change_since: null,
+                    hidden: false,
+                    pulp_labels: {},
+                    name: 'npm-utils',
+                    repository: '/pulp/api/v3/repositories/npm/npm/019d160f-0613-7c20-80a8-30e9457a17ff/',
+                    remote: '/pulp/api/v3/remotes/npm/npm/019d160f-02b2-703c-a2ad-f4e966e195b7/',
+                },
+                {
+                    pulp_href: '/pulp/api/v3/distributions/npm/npm/019d0a8e-bfa3-7356-af6f-7d878dca12d0/',
+                    prn: 'prn:npm.npmdistribution:019d0a8e-bfa3-7356-af6f-7d878dca12d0',
+                    pulp_created: '2026-03-20T09:23:40.580469Z',
+                    pulp_last_updated: '2026-03-20T09:23:40.580482Z',
+                    base_path: 'npmjs-cache',
+                    base_url: 'http://localhost:8081/pulp/content/npmjs-cache/',
+                    content_guard: null,
+                    no_content_change_since: null,
+                    hidden: false,
+                    pulp_labels: {},
+                    name: 'npmjs-cache',
+                    repository: null,
+                    remote: '/pulp/api/v3/remotes/npm/npm/019d0a8e-bbd8-711a-aa15-1f6283ecfaa1/',
+                },
+            ],
+        },
+    },
+}
