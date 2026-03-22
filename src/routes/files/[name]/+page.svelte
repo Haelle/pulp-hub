@@ -35,9 +35,7 @@
 
 				const repo = await getFileRepository(dist.repository);
 				const contentsData = await getFileContents(repo.latest_version_href);
-				files = contentsData.results.sort((a, b) =>
-					a.relative_path.localeCompare(b.relative_path)
-				);
+				files = contentsData.results.sort((a, b) => a.relative_path.localeCompare(b.relative_path));
 			} catch (e) {
 				error = e instanceof Error ? e.message : 'Unknown error';
 			} finally {
@@ -106,17 +104,16 @@
 							<tr class="border-b last:border-0 hover:bg-muted/50">
 								<td class="px-4 py-2">
 									<a
-										href="/files/{encodeURIComponent(distribution.name)}/content/{file.relative_path}"
+										href="/files/{encodeURIComponent(
+											distribution.name
+										)}/content/{file.relative_path}"
 										class="flex items-center gap-2 hover:underline"
 									>
 										<FileIcon class="size-3.5 text-muted-foreground" />
 										{file.relative_path}
 									</a>
 								</td>
-								<td
-									class="px-4 py-2 font-mono text-xs text-muted-foreground"
-									title={file.sha256}
-								>
+								<td class="px-4 py-2 font-mono text-xs text-muted-foreground" title={file.sha256}>
 									{file.sha256.slice(0, 12)}
 								</td>
 							</tr>

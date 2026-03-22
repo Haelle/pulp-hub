@@ -23,7 +23,10 @@ test.describe('Login', () => {
 	test('shows error on invalid credentials', async ({ page }) => {
 		// Mock the login endpoint to return 401
 		await page.route('**/pulp/api/v3/distributions/container/container/?limit=0', (route) =>
-			route.fulfill({ status: 401, body: '{"detail":"Authentication credentials were not provided."}' })
+			route.fulfill({
+				status: 401,
+				body: '{"detail":"Authentication credentials were not provided."}'
+			})
 		);
 
 		await page.goto('/');

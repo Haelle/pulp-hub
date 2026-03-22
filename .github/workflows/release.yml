@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-      - "*"
+      - '*'
 
 env:
   IMAGE_NAME: ${{ secrets.DOCKERHUB_USERNAME }}/pulp-hub

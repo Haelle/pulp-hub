@@ -1,7 +1,5 @@
 # TODO
 
-- liens vers doc api cli
-- numero de version
 - linter en ci et code quality
 - user
 - valider les conf nginx

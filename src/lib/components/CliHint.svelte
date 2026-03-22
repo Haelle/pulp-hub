@@ -3,7 +3,11 @@
 	import * as Alert from '$lib/components/ui/alert';
 	import Terminal from '@lucide/svelte/icons/terminal';
 
-	let { command, description, children }: { command?: string; description?: string; children?: Snippet } = $props();
+	let {
+		command,
+		description,
+		children
+	}: { command?: string; description?: string; children?: Snippet } = $props();
 </script>
 
 <Alert.Root class="font-mono text-xs">

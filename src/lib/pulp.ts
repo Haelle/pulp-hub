@@ -83,9 +83,7 @@ export async function getDistributions(
 /**
  * Get a single distribution by name. Returns null if not found.
  */
-export async function getDistribution(
-	name: string
-): Promise<ContainerDistribution | null> {
+export async function getDistribution(name: string): Promise<ContainerDistribution | null> {
 	const url = `${auth.pulpUrl}/pulp/api/v3/distributions/container/container/?name=${encodeURIComponent(name)}`;
 	const res = await pulpFetch(url);
 	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
@@ -105,9 +103,7 @@ export async function getRepository(href: string): Promise<ContainerRepository> 
 /**
  * Get tags for a repository version.
  */
-export async function getTags(
-	repoVersionHref: string
-): Promise<PulpPaginated<ContainerTag>> {
+export async function getTags(repoVersionHref: string): Promise<PulpPaginated<ContainerTag>> {
 	const url = `${auth.pulpUrl}/pulp/api/v3/content/container/tags/?repository_version=${encodeURIComponent(repoVersionHref)}&limit=100`;
 	const res = await pulpFetch(url);
 	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
@@ -194,9 +190,7 @@ export async function getFileDistributions(
 /**
  * Get a single file distribution by name. Returns null if not found.
  */
-export async function getFileDistribution(
-	name: string
-): Promise<FileDistribution | null> {
+export async function getFileDistribution(name: string): Promise<FileDistribution | null> {
 	const url = `${auth.pulpUrl}/pulp/api/v3/distributions/file/file/?name=${encodeURIComponent(name)}`;
 	const res = await pulpFetch(url);
 	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
@@ -298,9 +292,7 @@ export async function getContainerPullThroughDistributions(): Promise<
  * List Python distributions that have a remote (= pull-through).
  */
 export async function getPythonDistributions(): Promise<PulpPaginated<PythonDistribution>> {
-	const res = await pulpFetch(
-		`${auth.pulpUrl}/pulp/api/v3/distributions/python/pypi/?limit=100`
-	);
+	const res = await pulpFetch(`${auth.pulpUrl}/pulp/api/v3/distributions/python/pypi/?limit=100`);
 	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
 	return res.json();
 }

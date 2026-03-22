@@ -35,6 +35,11 @@
 	{:else if error}
 		<p class="text-destructive">{error}</p>
 	{:else}
-		<pre class="overflow-auto rounded-lg border border-border bg-card p-4 text-sm font-mono">{JSON.stringify(status, null, 2)}</pre>
+		<pre
+			class="overflow-auto rounded-lg border border-border bg-card p-4 text-sm font-mono">{JSON.stringify(
+				status,
+				null,
+				2
+			)}</pre>
 	{/if}
 </div>

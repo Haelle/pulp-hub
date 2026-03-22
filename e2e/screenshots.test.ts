@@ -54,19 +54,28 @@ test('capture screenshots for docs', async ({ page }) => {
 	// 7. Pull-through detail — Container (OCI)
 	await page.locator('[data-slot="card"]', { hasText: 'Container' }).first().click();
 	await expect(page.locator('h1')).toBeVisible();
-	await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'pull-through-container.png'), fullPage: true });
+	await page.screenshot({
+		path: path.join(SCREENSHOT_DIR, 'pull-through-container.png'),
+		fullPage: true
+	});
 	await page.goBack();
 
 	// 8. Pull-through detail — PyPI
 	await page.locator('[data-slot="card"]', { hasText: 'PyPI' }).first().click();
 	await expect(page.locator('h1')).toBeVisible();
-	await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'pull-through-pypi.png'), fullPage: true });
+	await page.screenshot({
+		path: path.join(SCREENSHOT_DIR, 'pull-through-pypi.png'),
+		fullPage: true
+	});
 	await page.goBack();
 
 	// 9. Pull-through detail — npm
 	await page.locator('[data-slot="card"]', { hasText: 'npm' }).first().click();
 	await expect(page.locator('h1')).toBeVisible();
-	await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'pull-through-npm.png'), fullPage: true });
+	await page.screenshot({
+		path: path.join(SCREENSHOT_DIR, 'pull-through-npm.png'),
+		fullPage: true
+	});
 
 	// 10. Repositories in dark mode
 	await page.goto('/repositories');
@@ -76,5 +85,8 @@ test('capture screenshots for docs', async ({ page }) => {
 	});
 	// Small delay for styles to apply
 	await page.waitForTimeout(200);
-	await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'repositories-dark.png'), fullPage: false });
+	await page.screenshot({
+		path: path.join(SCREENSHOT_DIR, 'repositories-dark.png'),
+		fullPage: false
+	});
 });

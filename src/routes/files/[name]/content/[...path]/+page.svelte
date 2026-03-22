@@ -135,7 +135,9 @@
 				{#if downloadUrl}
 					<div>
 						<span class="text-sm font-medium">Download URL</span>
-						<div class="flex items-center gap-2 mt-1 rounded-md border border-border bg-muted px-3 py-2">
+						<div
+							class="flex items-center gap-2 mt-1 rounded-md border border-border bg-muted px-3 py-2"
+						>
 							<code class="flex-1 text-sm font-mono truncate">{downloadUrl}</code>
 							<Button
 								variant="ghost"

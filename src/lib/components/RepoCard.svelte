@@ -22,7 +22,15 @@
 		</Card.Header>
 		{#if upstream}
 			<Card.Content>
-				<button type="button" class="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground cursor-pointer" onclick={(e) => { e.preventDefault(); e.stopPropagation(); window.open(upstream.url, '_blank'); }}>
+				<button
+					type="button"
+					class="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground cursor-pointer"
+					onclick={(e) => {
+						e.preventDefault();
+						e.stopPropagation();
+						window.open(upstream.url, '_blank');
+					}}
+				>
 					<ExternalLink class="size-3" />
 					{upstream.label}
 				</button>

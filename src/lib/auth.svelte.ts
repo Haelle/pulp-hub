@@ -54,10 +54,9 @@ export const auth = {
 
 		// Use a protected endpoint to validate credentials
 		// (status/ is public and returns 200 even with bad credentials)
-		const res = await fetch(
-			`${base}/pulp/api/v3/distributions/container/container/?limit=0`,
-			{ headers: { Authorization: header } }
-		);
+		const res = await fetch(`${base}/pulp/api/v3/distributions/container/container/?limit=0`, {
+			headers: { Authorization: header }
+		});
 
 		if (!res.ok) {
 			if (res.status === 401 || res.status === 403) {

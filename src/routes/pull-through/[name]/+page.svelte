@@ -136,11 +136,17 @@
 
 		<CliHint>
 			{#if entry.type === 'Container'}
-				<code class="bg-muted px-1.5 py-0.5 rounded">GET /pulp/api/v3/distributions/container/pull-through/?name={entry.name}</code>
+				<code class="bg-muted px-1.5 py-0.5 rounded"
+					>GET /pulp/api/v3/distributions/container/pull-through/?name={entry.name}</code
+				>
 			{:else if entry.type === 'PyPI'}
-				<code class="bg-muted px-1.5 py-0.5 rounded">GET /pulp/api/v3/distributions/python/pypi/?name={entry.name}</code>
+				<code class="bg-muted px-1.5 py-0.5 rounded"
+					>GET /pulp/api/v3/distributions/python/pypi/?name={entry.name}</code
+				>
 			{:else if entry.type === 'npm'}
-				<code class="bg-muted px-1.5 py-0.5 rounded">GET /pulp/api/v3/distributions/npm/npm/?name={entry.name}</code>
+				<code class="bg-muted px-1.5 py-0.5 rounded"
+					>GET /pulp/api/v3/distributions/npm/npm/?name={entry.name}</code
+				>
 			{/if}
 		</CliHint>
 
@@ -183,14 +189,8 @@ location = "${upstreamHost}"
 
 			<section class="space-y-4">
 				<h2 class="text-lg font-semibold">Quick install</h2>
-				<CopyBlock
-					label="pip"
-					code={`pip install --index-url ${indexUrl} <package>`}
-				/>
-				<CopyBlock
-					label="uv"
-					code={`uv add --index-url ${indexUrl} <package>`}
-				/>
+				<CopyBlock label="pip" code={`pip install --index-url ${indexUrl} <package>`} />
+				<CopyBlock label="uv" code={`uv add --index-url ${indexUrl} <package>`} />
 			</section>
 
 			<section class="space-y-4">
@@ -222,23 +222,14 @@ index-url = ${indexUrl}`}
 
 			<section class="space-y-4">
 				<h2 class="text-lg font-semibold">Quick install</h2>
-				<CopyBlock
-					label="npm"
-					code={`npm install --registry ${registryUrl} <package>`}
-				/>
-				<CopyBlock
-					label="pnpm"
-					code={`pnpm add --registry ${registryUrl} <package>`}
-				/>
+				<CopyBlock label="npm" code={`npm install --registry ${registryUrl} <package>`} />
+				<CopyBlock label="pnpm" code={`pnpm add --registry ${registryUrl} <package>`} />
 			</section>
 
 			<section class="space-y-4">
 				<h2 class="text-lg font-semibold">Configuration</h2>
 
-				<CopyBlock
-					label=".npmrc — project or global (~/.npmrc)"
-					code={`registry=${registryUrl}`}
-				/>
+				<CopyBlock label=".npmrc — project or global (~/.npmrc)" code={`registry=${registryUrl}`} />
 
 				<CopyBlock
 					label=".yarnrc.yml — Yarn Berry (v2+)"
