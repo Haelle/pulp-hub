@@ -1,10 +1,5 @@
 # TODO
 
-- toujours bug sur les screenshots générés
-
-- tester python pull-through
-  - et pages dédiées
-
 - et comment ça marche pour le reste ? pas d'authent du coup ?
 - configurer TOKEN_SERVER Pulp (`PULP_TOKEN_SERVER=http://<host>/token/`) au lieu de TOKEN_AUTH_DISABLED pour un usage prod
   - TOKEN_AUTH_DISABLED=true = registry ouvert, pas de podman login nécessaire (dev only)
