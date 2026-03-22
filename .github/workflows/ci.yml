@@ -4,7 +4,7 @@ on:
   pull_request:
   push:
     tags:
-      - '*'
+      - "*"
   workflow_dispatch:
 
 jobs:
@@ -27,7 +27,7 @@ jobs:
 
       - run: npx prettier --check .
 
-      - run: npm audit --audit-level=high
+      - run: npm audit --audit-level=moderate
 
       - run: npm run build
 
