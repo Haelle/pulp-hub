@@ -5,6 +5,7 @@ source "./.env"
 source "./bin/lib/seed_oci"
 source "./bin/lib/seed_file"
 source "./bin/lib/seed_users"
+source "./bin/lib/seed_npm"
 
 # ── Colors ────────────────────────────────────────────────────
 RED='\033[0;31m'
@@ -30,6 +31,7 @@ PULP_URL="${PULP_URL:-$(pulp config show 2>/dev/null | python3 -c "import sys,js
 PULP_USERNAME="${PULP_USERNAME:-$(pulp config show 2>/dev/null | python3 -c "import sys,json; print(json.load(sys.stdin).get('username','admin'))" 2>/dev/null || echo "admin")}"
 PULP_PASSWORD="${PULP_PASSWORD:-$(pulp config show 2>/dev/null | python3 -c "import sys,json; print(json.load(sys.stdin).get('password','admin'))" 2>/dev/null || echo "admin")}"
 ./bin/setup-pullthrough.sh
+seed_npm
 
 # ── Verify ────────────────────────────────────────────────────
 echo ""
@@ -38,5 +40,6 @@ echo -e "${BOLD}=== Verification ===${NC}"
 verify_oci
 verify_file
 verify_users
+verify_npm
 
 echo -e "\n${GREEN}✓ Done${NC}"
