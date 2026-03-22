@@ -39,14 +39,14 @@ check: ## Type-check (svelte-check + TypeScript)
 lint: ## Lint with ESLint (TS + Svelte rules)
 	$(DC) npx eslint .
 
+audit: ## Security audit of npm dependencies
+	$(DC) npm audit --audit-level=moderate
+
 format: ## Format code with Prettier
 	$(DC) npx prettier --write .
 
 format-check: ## Check formatting (no modifications)
 	$(DC) npx prettier --check .
-
-audit: ## Security audit of npm dependencies
-	$(DC) npm audit --audit-level=moderate
 
 quality: check lint audit format-check ## All quality checks at once
 

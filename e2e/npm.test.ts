@@ -65,4 +65,11 @@ test.describe('npm package detail page', () => {
 		await page.goto('/npm/packages/is-odd');
 		await expect(page.getByText('Source:').first()).toBeVisible();
 	});
+
+	test('links to npmjs.com', async ({ page }) => {
+		await page.goto('/npm/packages/is-odd');
+		const link = page.locator('a[href="https://www.npmjs.com/package/is-odd"]');
+		await expect(link).toBeVisible();
+		await expect(link).toHaveText('npmjs.com');
+	});
 });
