@@ -25,6 +25,12 @@ Stack : SvelteKit (Svelte 5 runes) + shadcn-svelte + Tailwind CSS v4 + adapter-n
 - Pulp doit avoir `PULP_CORS_ALLOW_ALL_ORIGINS=true` (déjà configuré dans `make start-pulp` et `docker-compose.yml`)
 - `pulp-cli` : `remote create` ne supporte pas `--include-tags`, utiliser `remote update` après le create
 - Les tags sont limités dans seed.sh pour éviter les 429 Docker Hub (rate limit ~100 pulls/6h sans auth)
+- **API Swagger** (documentation publique) :
+  - Container : https://pulpproject.org/pulp_container/restapi/
+  - File : https://pulpproject.org/pulp_file/restapi/
+  - Python : https://pulpproject.org/pulp_python/restapi/
+  - Core : https://pulpproject.org/pulpcore/restapi/
+  - Toujours consulter le Swagger pour découvrir les endpoints, paramètres et réponses avant de coder un nouveau service dans `src/lib/pulp.ts`
 
 ## pulp-cli — Arbre des commandes
 
