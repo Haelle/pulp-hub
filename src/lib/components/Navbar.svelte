@@ -29,6 +29,11 @@
 					href="/files">Files</Button
 				>
 				<Button
+					variant={$page.url.pathname.startsWith('/npm') ? 'secondary' : 'ghost'}
+					size="sm"
+					href="/npm">npm</Button
+				>
+				<Button
 					variant={$page.url.pathname.startsWith('/pull-through') ? 'secondary' : 'ghost'}
 					size="sm"
 					href="/pull-through">Pull-through</Button
