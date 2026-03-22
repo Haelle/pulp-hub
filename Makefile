@@ -3,8 +3,9 @@ PULP_DEV_NAME = pulp-dev
 PULP_PROXY_NAME = pulp-proxy-dev
 PULP_DEV_NET = pulp-dev-net
 
-.PHONY: up down recreate setup dev build check test test-ui test-record screenshots seed clean shell create-pulp start-pulp stop-pulp help
+.PHONY: up down recreate setup shell dev build check lint format format-check audit quality test test-record test-ui screenshots seed clean create-pulp start-pulp stop-pulp help
 
+# ── Devcontainer ─────────────────────────────────────────────
 
 up: ## Start the devcontainer
 	devcontainer up --workspace-folder .
@@ -16,8 +17,13 @@ recreate: ## Destroy and rebuild the devcontainer
 	docker rm -f $$(docker ps -aq --filter label=devcontainer.local_folder=$$(pwd)) 2>/dev/null || true
 	devcontainer up --workspace-folder .
 
-setup: ## Install deps + configure pulp-cli (interactive) in dev container
+setup: ## Install deps + configure pulp-cli (interactive)
 	$(DC) ./bin/setup.sh
+
+shell: ## Open a shell inside the devcontainer
+	$(DC) bash
+
+# ── Development ──────────────────────────────────────────────
 
 dev: ## Start the dev server (http://localhost:5173)
 	$(DC) bash -c "npm run dev -- --host 0.0.0.0"
@@ -25,31 +31,48 @@ dev: ## Start the dev server (http://localhost:5173)
 build: ## Production build
 	$(DC) npm run build
 
-check: ## Type-check the project
+# ── Code quality ─────────────────────────────────────────────
+
+check: ## Type-check (svelte-check + TypeScript)
 	$(DC) npm run check
 
-test: ## Run e2e tests (records new tapes, replays existing)
-	$(DC) bash -c "npx playwright test"
+lint: ## Lint with ESLint (TS + Svelte rules)
+	$(DC) npx eslint .
 
-test-record: ## Re-record all tapes from scratch (requires Pulp running)
+format: ## Format code with Prettier
+	$(DC) npx prettier --write .
+
+format-check: ## Check formatting (no modifications)
+	$(DC) npx prettier --check .
+
+audit: ## Security audit of npm dependencies
+	$(DC) npm audit --audit-level=moderate
+
+quality: check lint audit format-check ## All quality checks at once
+
+# ── Tests ────────────────────────────────────────────────────
+
+test: ## Run e2e tests (records new tapes, replays existing)
+	$(DC) bash -c "npx playwright test $(FILE)"
+
+test-record: ## Re-record all tapes from scratch (requires Pulp)
 	$(DC) bash -c "rm -rf e2e/tapes && TALKBACK_RECORD=NEW npx playwright test"
 
-test-ui: ## Run e2e tests in headed mode with slow-mo (host only)
+test-ui: ## Run e2e tests in headed mode with slow-mo (host)
 	SLOWMO=500 npx playwright test --headed
 
 screenshots: ## Capture screenshots for docs
 	$(DC) bash -c "npx playwright test e2e/screenshots.test.ts"
 
-seed: ## Populate remote Pulp with test data (supports DOCKERHUB_USERNAME/PASSWORD)
+# ── Pulp instance ────────────────────────────────────────────
+
+seed: ## Populate Pulp with test data
 	./bin/seed.sh
 
-clean: ## Remove seed data from remote Pulp
+clean: ## Remove seed data from Pulp
 	./bin/clean.sh
 
-shell: ## Open a shell inside the devcontainer
-	$(DC) bash
-
-create-pulp: ## Create Pulp + CORS proxy containers for development (first time)
+create-pulp: ## Create Pulp + CORS proxy containers (first time)
 	docker network create $(PULP_DEV_NET) 2>/dev/null || true
 	docker run -d \
 		--name $(PULP_DEV_NAME) \
@@ -76,7 +99,9 @@ start-pulp: ## Start existing Pulp + proxy containers
 stop-pulp: ## Stop Pulp + proxy containers
 	docker stop $(PULP_PROXY_NAME) $(PULP_DEV_NAME) 2>/dev/null || true
 
+# ── Help ─────────────────────────────────────────────────────
+
 help: ## Show this help
-	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
 
 .DEFAULT_GOAL := help
