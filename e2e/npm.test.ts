@@ -123,6 +123,22 @@ test.describe('npm detail page', () => {
 		await expect(page.locator('[data-slot="alert-title"]')).toContainText('pulp-cli');
 	});
 
+	test('displays packages table', async ({ page }) => {
+		await page.goto('/npm/npm-utils');
+		await expect(page.locator('h1')).toBeVisible();
+		const rows = page.locator('table tbody tr');
+		await expect(rows.first()).toBeVisible();
+	});
+
+	test('package row shows name and version', async ({ page }) => {
+		await page.goto('/npm/npm-utils');
+		await expect(page.locator('h1')).toBeVisible();
+		const row = page.locator('table tbody tr').first();
+		await expect(row).toBeVisible();
+		await expect(row.locator('td').first()).not.toBeEmpty();
+		await expect(row.locator('td').nth(1)).not.toBeEmpty();
+	});
+
 	test('shows not found for nonexistent entry', async ({ page }) => {
 		await page.goto('/npm/zzz-nonexistent-zzz');
 		await expect(page.getByText(/not found/i)).toBeVisible();
