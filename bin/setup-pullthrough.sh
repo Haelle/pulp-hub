@@ -244,7 +244,7 @@ else
 fi
 
 if [[ "$plugins" == *"python"* ]]; then
-  setup_python_pullthrough "pypi-cache" "https://pypi.org/simple/"
+  setup_python_pullthrough "pypi-cache" "https://pypi.org/"
 else
   echo -e "\n  ${YELLOW}⚠ Skipping PyPI: pulp_python not installed${NC}"
 fi

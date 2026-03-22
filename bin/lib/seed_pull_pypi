@@ -10,7 +10,7 @@ seed_pull_pypi() {
   echo ""
   echo -e "${BOLD}=== PyPI packages (pull-through) ===${NC}"
 
-  local index_url="${PULP_URL}/pulp/content/pypi-cache/"
+  local index_url="${PULP_URL}/pypi/pypi-cache/simple/"
   local tmpdir
   tmpdir=$(mktemp -d)
 
