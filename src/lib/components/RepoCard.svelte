@@ -2,15 +2,13 @@
 	import * as Card from '$lib/components/ui/card';
 	import { Badge } from '$lib/components/ui/badge';
 	import type { ContainerDistribution } from '$lib/pulp';
-	import { dockerHubUrl } from '$lib/utils';
-	import { auth } from '$lib/auth.svelte';
+	import { upstreamRegistryUrl } from '$lib/utils';
 	import ExternalLink from '@lucide/svelte/icons/external-link';
 
 	let { distribution }: { distribution: ContainerDistribution } = $props();
 
 	const name = $derived(distribution.name.split('/').pop() ?? distribution.name);
-	const hubUrl = $derived(dockerHubUrl(distribution.name));
-	const pulpHost = $derived(new URL(auth.pulpUrl).host);
+	const upstream = $derived(upstreamRegistryUrl(distribution.name));
 </script>
 
 <a href="/repositories/{encodeURIComponent(distribution.name)}" class="block">
@@ -22,14 +20,13 @@
 			</div>
 			<Card.Description>{distribution.base_path}</Card.Description>
 		</Card.Header>
-		<Card.Content>
-			<p class="text-xs font-mono text-muted-foreground truncate">{pulpHost}/{distribution.base_path}</p>
-			{#if hubUrl}
-				<button type="button" class="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground mt-1 cursor-pointer" onclick={(e) => { e.preventDefault(); e.stopPropagation(); window.open(hubUrl, '_blank'); }}>
+		{#if upstream}
+			<Card.Content>
+				<button type="button" class="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground cursor-pointer" onclick={(e) => { e.preventDefault(); e.stopPropagation(); window.open(upstream.url, '_blank'); }}>
 					<ExternalLink class="size-3" />
-					Docker Hub
+					{upstream.label}
 				</button>
-			{/if}
-		</Card.Content>
+			</Card.Content>
+		{/if}
 	</Card.Root>
 </a>

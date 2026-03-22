@@ -18,7 +18,6 @@
 	import { auth } from '$lib/auth.svelte';
 
 	let distribution = $state<ContainerDistribution | null>(null);
-	let registryPath = $state('');
 	let tag = $state<ContainerTag | null>(null);
 	let manifest = $state<ContainerManifest | null>(null);
 	let platforms = $state<ContainerManifest[]>([]);
@@ -41,9 +40,6 @@
 					return;
 				}
 				distribution = dist;
-
-				const pulpHost = new URL(auth.pulpUrl).host;
-				registryPath = `${pulpHost}/${dist.base_path}`;
 
 				const repo = await getRepository(dist.repository);
 				const t = await getTag(repo.latest_version_href, tagName);
@@ -100,7 +96,7 @@
 			<span class="text-muted-foreground">Requires chaining: tag → manifest href → manifest details</span>
 		</CliHint>
 
-		<PullCommand {registryPath} tag={tag.name} />
+		<PullCommand basePath={distribution.base_path} tag={tag.name} />
 
 		{#if manifest.compressed_image_size}
 			<p class="text-sm text-muted-foreground">

@@ -3,14 +3,13 @@
 	import { Badge } from "$lib/components/ui/badge";
 	import PullCommand from "$lib/components/PullCommand.svelte";
 	import CliHint from "$lib/components/CliHint.svelte";
-	import { dockerHubUrl } from "$lib/utils";
+	import { upstreamRegistryUrl } from "$lib/utils";
 	import Tag from "@lucide/svelte/icons/tag";
 	import ExternalLink from "@lucide/svelte/icons/external-link";
 	import Loader from "@lucide/svelte/icons/loader";
 	import { getDistribution, getRepository, getTags, type ContainerDistribution, type ContainerTag } from '$lib/pulp';
 
 	let distribution = $state<ContainerDistribution | null>(null);
-	let registryPath = $state('');
 	let tags = $state<ContainerTag[]>([]);
 	let loading = $state(true);
 	let error = $state('');
@@ -30,7 +29,6 @@
 					return;
 				}
 				distribution = dist;
-				registryPath = dist.registry_path;
 
 				const repo = await getRepository(dist.repository);
 				const tagsData = await getTags(repo.latest_version_href);
@@ -49,7 +47,7 @@
 		distribution?.name.split("/").pop() ?? distribution?.name ?? ''
 	);
 	const firstTag = $derived(tags[0]?.name ?? "latest");
-	const hubUrl = $derived(distribution ? dockerHubUrl(distribution.name) : null);
+	const upstream = $derived(distribution ? upstreamRegistryUrl(distribution.name) : null);
 </script>
 
 <div class="mx-auto max-w-4xl p-6 space-y-6">
@@ -66,15 +64,15 @@
 			<div class="flex items-center gap-3">
 				<h1 class="text-2xl font-bold">{shortName}</h1>
 				<Badge variant="secondary">Container</Badge>
-				{#if hubUrl}
-					<a href={hubUrl} target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+				{#if upstream}
+					<a href={upstream.url} target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
 						<ExternalLink class="size-3.5" />
-						Docker Hub
+						{upstream.label}
 					</a>
 				{/if}
 			</div>
 			<p class="mt-1 text-sm text-muted-foreground font-mono">
-				{registryPath}
+				{distribution.base_path}
 			</p>
 		</div>
 
@@ -111,7 +109,7 @@
 			</ol>
 		</CliHint>
 
-		<PullCommand {registryPath} tag={firstTag} />
+		<PullCommand basePath={distribution.base_path} tag={firstTag} />
 
 		{#if tags.length > 0}
 			<div class="rounded-md border">

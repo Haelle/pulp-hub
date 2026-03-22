@@ -23,20 +23,44 @@ export function formatBytes(bytes: number): string {
 }
 
 /**
- * Derive a Docker Hub URL from a distribution name like "dockerhub/library/alpine".
+ * Derive a Docker Hub URL from a distribution name.
+ * Supports patterns like "dockerhub/library/alpine" or "dockerhub-cache/kizaing/kavita".
  * Returns null if the name doesn't look like a Docker Hub repo.
  */
 export function dockerHubUrl(distributionName: string): string | null {
-	// Expected pattern: dockerhub/<upstream>
-	const match = distributionName.match(/^dockerhub\/(.+)$/);
+	const match = distributionName.match(/^dockerhub(?:-cache)?\/(.+)$/);
 	if (!match) return null;
 
 	const upstream = match[1];
-	// Official images: library/<name> → hub.docker.com/_/<name>
 	const libMatch = upstream.match(/^library\/(.+)$/);
 	if (libMatch) {
 		return `https://hub.docker.com/_/${libMatch[1]}`;
 	}
-	// User images: <namespace>/<name> → hub.docker.com/r/<namespace>/<name>
 	return `https://hub.docker.com/r/${upstream}`;
+}
+
+/**
+ * Derive a Quay.io URL from a distribution name.
+ * Supports patterns like "quay-cache/namespace/image".
+ * Returns null if the name doesn't look like a Quay repo.
+ */
+export function quayUrl(distributionName: string): string | null {
+	const match = distributionName.match(/^quay(?:-cache)?\/(.+)$/);
+	if (!match) return null;
+
+	return `https://quay.io/repository/${match[1]}`;
+}
+
+/**
+ * Derive an upstream registry URL from a distribution name.
+ * Returns { url, label } or null.
+ */
+export function upstreamRegistryUrl(distributionName: string): { url: string; label: string } | null {
+	const hub = dockerHubUrl(distributionName);
+	if (hub) return { url: hub, label: 'Docker Hub' };
+
+	const quay = quayUrl(distributionName);
+	if (quay) return { url: quay, label: 'Quay.io' };
+
+	return null;
 }
