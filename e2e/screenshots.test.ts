@@ -31,7 +31,7 @@ test('capture screenshots for docs', async ({ page }) => {
 	await page.goto('/files/test-docs');
 	await expect(page.locator('table')).toBeVisible();
 	await page.locator('tbody tr').first().locator('a').click();
-	await expect(page.locator('div.rounded-md.border')).toBeVisible();
+	await expect(page.locator('h1')).toBeVisible();
 	await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'file-content.png'), fullPage: false });
 
 	// 6. Pull-through list
