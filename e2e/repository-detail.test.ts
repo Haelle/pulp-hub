@@ -10,7 +10,7 @@ async function login(page: Page) {
 	await page.fill('input[name="username"]', PULP_USER);
 	await page.fill('input[name="password"]', PULP_PASS);
 	await page.click('button[type="submit"]');
-	await expect(page).toHaveURL('/repositories');
+	await expect(page).toHaveURL('/images');
 }
 
 test.describe('Repository detail page', () => {
@@ -19,7 +19,7 @@ test.describe('Repository detail page', () => {
 	});
 
 	test('displays repo name and registry path', async ({ page }) => {
-		await page.goto('/repositories/dockerhub%2Flibrary%2Falpine');
+		await page.goto('/images/dockerhub%2Flibrary%2Falpine');
 
 		await expect(page.locator('h1')).toContainText('alpine');
 		// Pull command contains the registry path with the Pulp host
@@ -27,7 +27,7 @@ test.describe('Repository detail page', () => {
 	});
 
 	test('displays tags table', async ({ page }) => {
-		await page.goto('/repositories/dockerhub%2Flibrary%2Falpine');
+		await page.goto('/images/dockerhub%2Flibrary%2Falpine');
 
 		// Should show tags in the table
 		await expect(page.locator('table')).toBeVisible();
@@ -35,35 +35,35 @@ test.describe('Repository detail page', () => {
 	});
 
 	test('displays pull command', async ({ page }) => {
-		await page.goto('/repositories/dockerhub%2Flibrary%2Falpine');
+		await page.goto('/images/dockerhub%2Flibrary%2Falpine');
 
 		await expect(page.getByText(/podman pull/)).toBeVisible();
 	});
 
 	test('pull command has copy button', async ({ page }) => {
-		await page.goto('/repositories/dockerhub%2Flibrary%2Falpine');
+		await page.goto('/images/dockerhub%2Flibrary%2Falpine');
 
 		const copyButton = page.getByRole('button', { name: /copy/i }).first();
 		await expect(copyButton).toBeVisible();
 	});
 
 	test('shows cli hint', async ({ page }) => {
-		await page.goto('/repositories/dockerhub%2Flibrary%2Falpine');
+		await page.goto('/images/dockerhub%2Flibrary%2Falpine');
 
 		await expect(page.locator('[data-slot="alert-title"]')).toContainText('pulp-cli');
 	});
 
 	test('shows not found for nonexistent repo', async ({ page }) => {
-		await page.goto('/repositories/nonexistent-repo');
+		await page.goto('/images/nonexistent-repo');
 		await expect(page.getByText(/not found/i)).toBeVisible();
 	});
 
 	test('navigable from repositories list', async ({ page }) => {
-		await page.goto('/repositories');
+		await page.goto('/images');
 
 		// Click on the alpine card
 		await page.locator('[data-slot="card"]', { hasText: 'alpine' }).click();
-		await expect(page).toHaveURL(/\/repositories\/dockerhub/);
+		await expect(page).toHaveURL(/\/images\/dockerhub/);
 		await expect(page.locator('h1')).toContainText('alpine');
 	});
 });

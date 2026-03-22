@@ -13,7 +13,7 @@ async function login(page: Page) {
 	await page.fill('input[name="username"]', PULP_USER);
 	await page.fill('input[name="password"]', PULP_PASS);
 	await page.click('button[type="submit"]');
-	await expect(page).toHaveURL('/repositories');
+	await expect(page).toHaveURL('/images');
 }
 
 test('capture screenshots for docs', async ({ page }) => {
@@ -24,13 +24,13 @@ test('capture screenshots for docs', async ({ page }) => {
 	await expect(page.locator('[data-slot="card-title"]')).toContainText('PulpHub');
 	await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'login.png'), fullPage: false });
 
-	// 2. Repositories page (light mode)
+	// 2. Images page (light mode)
 	await login(page);
 	await expect(page.locator('[data-slot="card"]').first()).toBeVisible();
 	await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'repositories.png'), fullPage: false });
 
 	// 3. Repository detail with tags
-	await page.goto('/repositories/dockerhub%2Flibrary%2Falpine');
+	await page.goto('/images/dockerhub%2Flibrary%2Falpine');
 	await expect(page.locator('h1')).toBeVisible();
 	await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'repo-detail.png'), fullPage: false });
 
@@ -94,8 +94,8 @@ test('capture screenshots for docs', async ({ page }) => {
 	await expect(page.locator('h1')).toBeVisible();
 	await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'npm-detail.png'), fullPage: true });
 
-	// 13. Repositories in dark mode
-	await page.goto('/repositories');
+	// 13. Images in dark mode
+	await page.goto('/images');
 	await expect(page.locator('[data-slot="card"]').first()).toBeVisible();
 	await page.evaluate(() => {
 		document.documentElement.classList.add('dark');

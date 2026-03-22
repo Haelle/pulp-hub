@@ -10,7 +10,7 @@ async function login(page: Page) {
 	await page.fill('input[name="username"]', PULP_USER);
 	await page.fill('input[name="password"]', PULP_PASS);
 	await page.click('button[type="submit"]');
-	await expect(page).toHaveURL('/repositories');
+	await expect(page).toHaveURL('/images');
 }
 
 test.describe('npm packages list page', () => {

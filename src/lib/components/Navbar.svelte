@@ -9,7 +9,7 @@
 <nav class="border-b border-border bg-card">
 	<div class="mx-auto flex h-14 max-w-6xl items-center justify-between px-4">
 		<div class="flex items-center gap-6">
-			<a href="/repositories" class="text-xl font-bold">PulpHub</a><span
+			<a href="/images" class="text-xl font-bold">PulpHub</a><span
 				class="text-xs text-muted-foreground">{APP_VERSION}</span
 			>
 			<div class="flex items-center gap-1">
@@ -19,9 +19,9 @@
 					href="/status">Status</Button
 				>
 				<Button
-					variant={$page.url.pathname.startsWith('/repositories') ? 'secondary' : 'ghost'}
+					variant={$page.url.pathname.startsWith('/images') ? 'secondary' : 'ghost'}
 					size="sm"
-					href="/repositories">Repositories</Button
+					href="/images">Images</Button
 				>
 				<Button
 					variant={$page.url.pathname.startsWith('/files') ? 'secondary' : 'ghost'}
