@@ -5,12 +5,13 @@
 	import PackageOpen from '@lucide/svelte/icons/package-open';
 	import CliHint from '$lib/components/CliHint.svelte';
 	import Loader from '@lucide/svelte/icons/loader';
+	import { SvelteMap, SvelteSet } from 'svelte/reactivity';
 	import { getAllNpmPackages, type NpmPackageGroup } from '$lib/pulp';
 
 	let filter = $state('');
 	let groups = $state<NpmPackageGroup[]>([]);
 	let distributions = $state<string[]>([]);
-	let enabledDists = $state<Set<string>>(new Set());
+	let enabledDists = new SvelteSet<string>();
 	let loading = $state(true);
 	let error = $state('');
 
@@ -20,10 +21,11 @@
 		try {
 			const data = await getAllNpmPackages();
 			distributions = data.distributions;
-			enabledDists = new Set(data.distributions);
+			enabledDists.clear();
+			data.distributions.forEach((d) => enabledDists.add(d));
 
 			// Group packages by name
-			const map = new Map<string, NpmPackageGroup>();
+			const map = new SvelteMap<string, NpmPackageGroup>();
 			for (const pkg of data.packages) {
 				const existing = map.get(pkg.name);
 				if (existing) {
@@ -55,17 +57,13 @@
 
 	const filtered = $derived(
 		groups.filter(
-			(g) =>
-				enabledDists.has(g.distribution) &&
-				g.name.toLowerCase().includes(filter.toLowerCase())
+			(g) => enabledDists.has(g.distribution) && g.name.toLowerCase().includes(filter.toLowerCase())
 		)
 	);
 
 	function toggleDist(name: string) {
-		const next = new Set(enabledDists);
-		if (next.has(name)) next.delete(name);
-		else next.add(name);
-		enabledDists = next;
+		if (enabledDists.has(name)) enabledDists.delete(name);
+		else enabledDists.add(name);
 	}
 </script>
 
@@ -87,7 +85,7 @@
 			<Input placeholder="Filter packages..." bind:value={filter} class="max-w-sm" />
 			{#if distributions.length > 1}
 				<div class="flex items-center gap-3">
-					{#each distributions as dist}
+					{#each distributions as dist (dist)}
 						<label class="flex items-center gap-1.5 text-sm cursor-pointer">
 							<input
 								type="checkbox"
@@ -104,14 +102,22 @@
 		{#if filtered.length > 0}
 			<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
 				{#each filtered as group (group.name)}
-					<a href="/npm/packages/{encodeURIComponent(group.name)}" class="block" data-testid="npm-package-card">
+					<a
+						href="/npm/packages/{encodeURIComponent(group.name)}"
+						class="block"
+						data-testid="npm-package-card"
+					>
 						<Card.Root class="transition-colors hover:border-ring">
 							<Card.Header>
 								<div class="flex items-center justify-between">
 									<Card.Title class="text-base font-mono">{group.name}</Card.Title>
 									<Badge variant="secondary">{group.distribution}</Badge>
 								</div>
-								<Card.Description>{group.latestVersion} · {group.versions.length} version{group.versions.length > 1 ? 's' : ''}</Card.Description>
+								<Card.Description
+									>{group.latestVersion} · {group.versions.length} version{group.versions.length > 1
+										? 's'
+										: ''}</Card.Description
+								>
 							</Card.Header>
 						</Card.Root>
 					</a>

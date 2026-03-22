@@ -127,9 +127,9 @@
 							<tr class="border-b last:border-0 hover:bg-muted/50">
 								<td class="px-4 py-2">
 									<a
-										href="/images/{encodeURIComponent(
-											distribution.name
-										)}/tags/{encodeURIComponent(tag.name)}"
+										href="/images/{encodeURIComponent(distribution.name)}/tags/{encodeURIComponent(
+											tag.name
+										)}"
 										class="flex items-center gap-2 hover:underline"
 									>
 										<Tag class="size-3.5 text-muted-foreground" />

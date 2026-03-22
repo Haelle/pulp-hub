@@ -6,13 +6,14 @@
 	import ExternalLink from '@lucide/svelte/icons/external-link';
 	import CliHint from '$lib/components/CliHint.svelte';
 	import Loader from '@lucide/svelte/icons/loader';
+	import { SvelteSet } from 'svelte/reactivity';
 	import { getDistributions, type ContainerDistribution } from '$lib/pulp';
 	import { upstreamRegistryUrl } from '$lib/utils';
 
 	let filter = $state('');
 	let distributions = $state<ContainerDistribution[]>([]);
 	let sources = $state<string[]>([]);
-	let enabledSources = $state<Set<string>>(new Set());
+	let enabledSources = new SvelteSet<string>();
 	let loading = $state(true);
 	let error = $state('');
 
@@ -29,7 +30,8 @@
 			distributions = data.results;
 			const sourceSet = new Set(data.results.map((d) => getSource(d.name)));
 			sources = [...sourceSet].sort();
-			enabledSources = new Set(sources);
+			enabledSources.clear();
+			sources.forEach((s) => enabledSources.add(s));
 		} catch (e) {
 			error = e instanceof Error ? e.message : 'Unknown error';
 		} finally {
@@ -51,10 +53,8 @@
 	);
 
 	function toggleSource(name: string) {
-		const next = new Set(enabledSources);
-		if (next.has(name)) next.delete(name);
-		else next.add(name);
-		enabledSources = next;
+		if (enabledSources.has(name)) enabledSources.delete(name);
+		else enabledSources.add(name);
 	}
 
 	function shortName(name: string): string {
@@ -77,7 +77,7 @@
 			<Input placeholder="Filter images..." bind:value={filter} class="max-w-sm" />
 			{#if sources.length > 1}
 				<div class="flex items-center gap-3">
-					{#each sources as source}
+					{#each sources as source (source)}
 						<label class="flex items-center gap-1.5 text-sm cursor-pointer">
 							<input
 								type="checkbox"
@@ -109,7 +109,11 @@
 									<button
 										type="button"
 										class="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground cursor-pointer"
-										onclick={(e) => { e.preventDefault(); e.stopPropagation(); window.open(upstream.url, '_blank'); }}
+										onclick={(e) => {
+											e.preventDefault();
+											e.stopPropagation();
+											window.open(upstream.url, '_blank');
+										}}
 									>
 										<ExternalLink class="size-3" />
 										{upstream.label}
