@@ -34,6 +34,8 @@ seed_users() {
 }
 
 verify_users() {
+  echo ""
+  echo -e "${BOLD}--- Users Verification ---${NC}"
   local count
   count=$(pulp user list 2>/dev/null | python3 -c "import sys,json; print(len(json.load(sys.stdin)))" 2>/dev/null || echo 0)
   echo -e "  Users: ${GREEN}$count${NC}"

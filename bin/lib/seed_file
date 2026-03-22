@@ -92,21 +92,36 @@ verify_file() {
   echo -e "${BOLD}--- File Verification ---${NC}"
 
   local count
-  count=$(pulp --format json file distribution list | \
-    python3 -c "import sys,json; print(len(json.load(sys.stdin)))")
+  count=$(pulp_get "/distributions/file/file/" \
+    | python3 -c "import sys,json; print(json.load(sys.stdin).get('count',0))" 2>/dev/null || echo 0)
   echo -e "File distributions: ${BOLD}${count}/2${NC}"
 
   for entry in "${FILE_REPOS[@]}"; do
     IFS='|' read -r REPO_NAME _ <<< "$entry"
     local files
-    files=$(pulp --format json file repository version list \
-      --repository "file:file:${REPO_NAME}" 2>/dev/null | \
-      python3 -c "
+    files=$(pulp_get "/repositories/file/file/?name=${REPO_NAME}" \
+      | python3 -c "
+import sys,json
+repos=json.load(sys.stdin).get('results',[])
+if not repos:
+    print('not found')
+else:
+    vh=repos[0].get('latest_version_href','')
+    print(vh)
+" 2>/dev/null)
+    if [[ -n "$files" && "$files" != "not found" && "$files" != "None" ]]; then
+      # Fetch the version to get content summary
+      local file_count
+      file_count=$(curl -s -u "${PULP_USERNAME}:${PULP_PASSWORD}" "${PULP_URL}${files}" \
+        | python3 -c "
 import sys,json
 v=json.load(sys.stdin)
-print(v[0]['content_summary']['present'].get('file.file',{}).get('count',0) if v else 'no version')
+print(v.get('content_summary',{}).get('present',{}).get('file.file',{}).get('count',0))
 " 2>/dev/null || echo "?")
-    echo -e "  ${REPO_NAME}: ${GREEN}${files} files${NC}"
+      echo -e "  ${REPO_NAME}: ${GREEN}${file_count} files${NC}"
+    else
+      echo -e "  ${REPO_NAME}: ${RED}not found${NC}"
+    fi
   done
 
   [[ "$count" -ge 2 ]] || { echo -e "${RED}⚠ Missing file distributions${NC}"; return 1; }

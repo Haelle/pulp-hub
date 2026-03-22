@@ -186,13 +186,27 @@ setup_npm_pullthrough() {
   remote_href=$(pulp_get "/remotes/npm/npm/?name=${name}" \
     | python3 -c "import sys,json; print(json.load(sys.stdin)['results'][0]['pulp_href'])")
 
+  # Create a repository so packages are indexed (not just proxied)
+  if resource_exists "/repositories/npm/npm/" "$name"; then
+    echo -e "  ${YELLOW}Repository exists${NC}"
+  else
+    echo -e "  ${BLUE}Creating repository...${NC}"
+    pulp_post "/repositories/npm/npm/" \
+      "{\"name\":\"${name}\",\"remote\":\"${remote_href}\"}" >/dev/null
+    echo -e "  ${GREEN}Repository created${NC}"
+  fi
+
+  local repo_href
+  repo_href=$(pulp_get "/repositories/npm/npm/?name=${name}" \
+    | python3 -c "import sys,json; print(json.load(sys.stdin)['results'][0]['pulp_href'])")
+
   if resource_exists "/distributions/npm/npm/" "$name"; then
     echo -e "  ${YELLOW}Distribution exists${NC}"
   else
     echo -e "  ${BLUE}Creating distribution...${NC}"
     local task_href
     task_href=$(pulp_post "/distributions/npm/npm/" \
-      "{\"name\":\"${name}\",\"base_path\":\"${name}\",\"remote\":\"${remote_href}\"}" \
+      "{\"name\":\"${name}\",\"base_path\":\"${name}\",\"remote\":\"${remote_href}\",\"repository\":\"${repo_href}\"}" \
       | python3 -c "import sys,json; print(json.load(sys.stdin).get('task',''))")
     wait_task "$task_href"
     echo -e "  ${GREEN}Distribution created${NC}"

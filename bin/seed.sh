@@ -34,10 +34,6 @@ source "./bin/lib/seed_users"
 
 # ── Main ──────────────────────────────────────────────────────
 
-echo -e "${BOLD}=== Pulp Seed ===${NC}"
-pulp status >/dev/null 2>&1 || { echo -e "${RED}ERROR: Pulp unreachable. Run 'make setup' first.${NC}"; exit 1; }
-echo -e "${GREEN}✓ Pulp API OK${NC}"
-
 # 1. Create pull-through caches
 ./bin/setup-pullthrough.sh
 
