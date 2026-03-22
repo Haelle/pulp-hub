@@ -4,6 +4,7 @@ const TALKBACK_PORT = parseInt(process.env.TALKBACK_PORT ?? '8787');
 
 export default defineConfig({
 	testDir: 'e2e',
+	reporter: [['./e2e/reporters/structured-reporter.ts']],
 	webServer: [
 		{
 			command: `node e2e/talkback-server.cjs`,
