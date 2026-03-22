@@ -243,7 +243,7 @@
 
   <section class="hero">
     <h1>Pulp<span>Hub</span></h1>
-    <p>A Docker Hub-inspired web UI for browsing container and file repositories hosted on Pulp.</p>
+    <p>A Docker Hub-inspired web UI for browsing repositories and pull-through caches hosted on Pulp.</p>
     <div class="badges">
       <span class="badge">SvelteKit</span>
       <span class="badge">Svelte 5</span>
@@ -279,6 +279,10 @@
       <p>Full dark and light theme support, respecting system preference with a manual toggle.</p>
     </div>
     <div class="card">
+      <h3>Pull-through Caches</h3>
+      <p>View all configured pull-through proxies (DockerHub, Quay.io, PyPI, npm) with ready-to-copy client configuration for podman, pip, uv, npm, pnpm and yarn.</p>
+    </div>
+    <div class="card">
       <h3>Docker Ready</h3>
       <p>Ship as a single Docker image. Point it at your Pulp instance and go.</p>
     </div>
@@ -310,6 +314,22 @@
       <figure class="gallery-item">
         <img src="screenshots/file-content.png" alt="File content detail" loading="lazy">
         <figcaption>File Detail — Checksums, size and download URL</figcaption>
+      </figure>
+      <figure class="gallery-item">
+        <img src="screenshots/pull-through.png" alt="Pull-through caches list" loading="lazy">
+        <figcaption>Pull-through — All configured cache proxies</figcaption>
+      </figure>
+      <figure class="gallery-item">
+        <img src="screenshots/pull-through-container.png" alt="Container pull-through detail" loading="lazy">
+        <figcaption>Container Pull-through — Podman/Docker config</figcaption>
+      </figure>
+      <figure class="gallery-item">
+        <img src="screenshots/pull-through-pypi.png" alt="PyPI pull-through detail" loading="lazy">
+        <figcaption>PyPI Pull-through — pip/uv/pyproject.toml config</figcaption>
+      </figure>
+      <figure class="gallery-item">
+        <img src="screenshots/pull-through-npm.png" alt="npm pull-through detail" loading="lazy">
+        <figcaption>npm Pull-through — npm/pnpm/yarn config</figcaption>
       </figure>
    </div>
   </section>

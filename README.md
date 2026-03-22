@@ -1,6 +1,8 @@
 # PulpHub
 
-UI de visualisation des dépôts d'images container Pulp, inspirée de Docker Hub.
+UI de visualisation des dépôts Pulp, inspirée de Docker Hub.
+
+Supporte les dépôts container (OCI), fichiers, et l'affichage des pull-through caches (DockerHub, Quay.io, PyPI, npm) avec les commandes de configuration client.
 
 Image sur [DockerHub](https://hub.docker.com/repository/docker/estb/pulp-hub/)
 
@@ -40,6 +42,20 @@ docker run -d -p 8080:80 docker.io/estb/pulp-hub:latest
 Ouvrir http://localhost:8080 et pointer le login vers l'URL de votre instance Pulp.
 
 > **CORS** : l'instance Pulp doit autoriser les requêtes cross-origin.
+
+### Pull-through cache (OCI)
+
+Pour tester un pull d'image via le cache pull-through en HTTP (dev local) :
+
+```bash
+# Login (nécessaire une seule fois)
+podman login --tls-verify=false localhost:8081 -u admin -p admin
+
+# Pull via le cache
+podman pull --tls-verify=false localhost:8081/dockerhub-cache/library/nginx:latest
+```
+
+> **Note** : `--tls-verify=false` est nécessaire car Pulp est exposé en HTTP. En production avec TLS, ce flag n'est pas requis.
 
 ### Authentification Docker Hub (optionnel)
 
