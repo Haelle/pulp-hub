@@ -37,6 +37,7 @@
 			if (plugins.includes('container')) {
 				try {
 					const data = await getContainerPullThroughDistributions();
+					// eslint-disable-next-line svelte/prefer-svelte-reactivity -- local cache, not reactive state
 					const remoteCache = new Map<string, PullThroughRemote>();
 
 					for (const dist of data.results) {
@@ -148,17 +149,11 @@
 		{#if filtered.length > 0}
 			<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
 				{#each filtered as entry (entry.name)}
-					<PullThroughCard
-						name={entry.name}
-						upstreamUrl={entry.upstreamUrl}
-						type={entry.type}
-					/>
+					<PullThroughCard name={entry.name} upstreamUrl={entry.upstreamUrl} type={entry.type} />
 				{/each}
 			</div>
 		{:else}
-			<div
-				class="flex flex-col items-center justify-center py-16 text-muted-foreground"
-			>
+			<div class="flex flex-col items-center justify-center py-16 text-muted-foreground">
 				<PackageOpen class="size-12 mb-4" />
 				<p>No pull-through caches found</p>
 			</div>

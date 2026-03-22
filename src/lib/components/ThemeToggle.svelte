@@ -3,6 +3,7 @@
 	import Sun from '@lucide/svelte/icons/sun';
 	import Moon from '@lucide/svelte/icons/moon';
 
+	// eslint-disable-next-line svelte/prefer-writable-derived -- reads DOM on mount, not derivable
 	let dark = $state(false);
 
 	$effect(() => {

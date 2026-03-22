@@ -15,7 +15,6 @@
 		type ContainerTag,
 		type ContainerManifest
 	} from '$lib/pulp';
-	import { auth } from '$lib/auth.svelte';
 
 	let distribution = $state<ContainerDistribution | null>(null);
 	let tag = $state<ContainerTag | null>(null);
@@ -53,9 +52,7 @@
 				manifest = m;
 
 				if (m.type === 'index' && m.listed_manifests.length > 0) {
-					platforms = await Promise.all(
-						m.listed_manifests.map((href) => getManifest(href))
-					);
+					platforms = await Promise.all(m.listed_manifests.map((href) => getManifest(href)));
 				}
 			} catch (e) {
 				error = e instanceof Error ? e.message : 'Unknown error';
@@ -93,14 +90,18 @@
 		</div>
 
 		<CliHint>
-			<span class="text-muted-foreground">Requires chaining: tag → manifest href → manifest details</span>
+			<span class="text-muted-foreground"
+				>Requires chaining: tag → manifest href → manifest details</span
+			>
 		</CliHint>
 
 		<PullCommand basePath={distribution.base_path} tag={tag.name} />
 
 		{#if manifest.compressed_image_size}
 			<p class="text-sm text-muted-foreground">
-				Total size: <span class="font-medium text-foreground">{formatBytes(manifest.compressed_image_size)}</span>
+				Total size: <span class="font-medium text-foreground"
+					>{formatBytes(manifest.compressed_image_size)}</span
+				>
 			</p>
 		{/if}
 
@@ -122,11 +123,16 @@
 								<tr class="border-b last:border-0">
 									<td class="px-4 py-2">{platform.architecture ?? 'unknown'}</td>
 									<td class="px-4 py-2">{platform.os ?? 'unknown'}</td>
-									<td class="px-4 py-2 font-mono text-xs text-muted-foreground" title={platform.digest}>
+									<td
+										class="px-4 py-2 font-mono text-xs text-muted-foreground"
+										title={platform.digest}
+									>
 										{platform.digest.slice(7, 19)}
 									</td>
 									<td class="px-4 py-2 text-muted-foreground">
-										{platform.compressed_image_size ? formatBytes(platform.compressed_image_size) : '—'}
+										{platform.compressed_image_size
+											? formatBytes(platform.compressed_image_size)
+											: '—'}
 									</td>
 								</tr>
 							{/each}

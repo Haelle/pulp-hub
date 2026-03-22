@@ -27,7 +27,7 @@
 	}
 
 	$effect(() => {
-		offset;
+		void offset;
 		load();
 	});
 
@@ -54,11 +54,7 @@
 	{:else if error}
 		<p class="text-destructive">{error}</p>
 	{:else}
-		<Input
-			placeholder="Filter repositories..."
-			bind:value={filter}
-			class="max-w-sm"
-		/>
+		<Input placeholder="Filter repositories..." bind:value={filter} class="max-w-sm" />
 
 		{#if filtered.length > 0}
 			<div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -79,19 +75,14 @@
 					variant="outline"
 					size="sm"
 					disabled={!hasPrev}
-					onclick={() => offset = Math.max(0, offset - limit)}
+					onclick={() => (offset = Math.max(0, offset - limit))}
 				>
 					Previous
 				</Button>
 				<span class="text-sm text-muted-foreground">
 					{offset + 1}–{Math.min(offset + limit, distributions.count)} of {distributions.count}
 				</span>
-				<Button
-					variant="outline"
-					size="sm"
-					disabled={!hasNext}
-					onclick={() => offset += limit}
-				>
+				<Button variant="outline" size="sm" disabled={!hasNext} onclick={() => (offset += limit)}>
 					Next
 				</Button>
 			</div>
