@@ -18,6 +18,13 @@ seed_pull_oci() {
 
   local registry="${PULP_HOST:-localhost:8081}"
 
+  echo -e "  ${BLUE}podman login --tls-verify=false -u ${PULP_USERNAME} ${registry}${NC}"
+  if ! podman login --tls-verify=false -u "${PULP_USERNAME}" -p "${PULP_PASSWORD}" "${registry}" >/dev/null 2>&1; then
+    echo -e "  ${RED}⚠ Login failed${NC}"
+    return 1
+  fi
+  echo -e "  ${GREEN}✓ Login OK${NC}"
+
   for img in "${PULL_IMAGES[@]}"; do
     echo -e "  ${BLUE}podman pull --tls-verify=false ${registry}/${img}${NC}"
     if podman pull --tls-verify=false "${registry}/${img}" >/dev/null 2>&1; then
@@ -33,9 +40,9 @@ verify_pull_oci() {
   echo -e "${BOLD}--- OCI Verification ---${NC}"
 
   for source in dockerhub-cache quay-cache; do
-    local count
-    count=$(pulp_get "/distributions/container/container/?name__startswith=${source}" \
+    local dist_count
+    dist_count=$(pulp_get "/distributions/container/container/?name__startswith=${source}" \
       | python3 -c "import sys,json; print(json.load(sys.stdin).get('count',0))" 2>/dev/null || echo 0)
-    echo -e "  ${source}: ${GREEN}${count} distributions${NC}"
+    echo -e "  ${source}: ${GREEN}${dist_count} distributions${NC}"
   done
 }

@@ -26,8 +26,10 @@ seed_pull_pypi() {
 verify_pull_pypi() {
   echo ""
   echo -e "${BOLD}--- PyPI Verification ---${NC}"
-  local count
-  count=$(pulp_get "/distributions/python/pypi/" \
+  local dist_count pkg_count
+  dist_count=$(pulp_get "/distributions/python/pypi/" \
     | python3 -c "import sys,json; print(json.load(sys.stdin).get('count',0))" 2>/dev/null || echo 0)
-  echo -e "  PyPI distributions: ${GREEN}${count}${NC}"
+  pkg_count=$(pulp_get "/content/python/packages/" \
+    | python3 -c "import sys,json; print(json.load(sys.stdin).get('count',0))" 2>/dev/null || echo 0)
+  echo -e "  PyPI distributions: ${GREEN}${dist_count}${NC}, packages: ${GREEN}${pkg_count}${NC}"
 }
