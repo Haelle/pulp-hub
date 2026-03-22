@@ -18,7 +18,7 @@ test('capture screenshots for docs', async ({ page }) => {
 	await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'repositories.png'), fullPage: false });
 
 	// 3. Repository detail with tags
-	await page.goto('/images/dockerhub%2Flibrary%2Falpine');
+	await page.goto('/images/dockerhub-cache%2Flibrary%2Falpine');
 	await expect(page.locator('h1')).toBeVisible();
 	await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'repo-detail.png'), fullPage: false });
 

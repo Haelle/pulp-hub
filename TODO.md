@@ -1,11 +1,9 @@
 # TODO
 
 - toujours bug sur les screenshots générés
-- tester npm pull-through
-  - et pages dédiées
+
 - tester python pull-through
   - et pages dédiées
-- regénérer les cassettes à partir d'un Pulp vite (là il y a kavita)
 
 - et comment ça marche pour le reste ? pas d'authent du coup ?
 - configurer TOKEN_SERVER Pulp (`PULP_TOKEN_SERVER=http://<host>/token/`) au lieu de TOKEN_AUTH_DISABLED pour un usage prod

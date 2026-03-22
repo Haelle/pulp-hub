@@ -83,20 +83,18 @@
 	{:else}
 		<div class="flex flex-wrap items-center gap-4">
 			<Input placeholder="Filter packages..." bind:value={filter} class="max-w-sm" />
-			{#if distributions.length > 1}
-				<div class="flex items-center gap-3">
-					{#each distributions as dist (dist)}
-						<label class="flex items-center gap-1.5 text-sm cursor-pointer">
-							<input
-								type="checkbox"
-								checked={enabledDists.has(dist)}
-								onchange={() => toggleDist(dist)}
-							/>
-							{dist}
-						</label>
-					{/each}
-				</div>
-			{/if}
+			<div class="flex items-center gap-3">
+				{#each distributions as dist (dist)}
+					<label class="flex items-center gap-1.5 text-sm cursor-pointer">
+						<input
+							type="checkbox"
+							checked={enabledDists.has(dist)}
+							onchange={() => toggleDist(dist)}
+						/>
+						{dist}
+					</label>
+				{/each}
+			</div>
 		</div>
 
 		{#if filtered.length > 0}

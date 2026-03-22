@@ -1,0 +1,119 @@
+{
+    meta: {
+        createdAt: '2026-03-22T22:42:42.643Z',
+        host: 'http://host.docker.internal:8081',
+        resHumanReadable: true,
+    },
+    req: {
+        headers: {
+            connection: 'keep-alive',
+            'sec-ch-ua-platform': '"Linux"',
+            'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36',
+            'sec-ch-ua': '"Not:A-Brand";v="99", "HeadlessChrome";v="145", "Chromium";v="145"',
+            'accept-language': 'en-US',
+            'sec-ch-ua-mobile': '?0',
+            accept: '*/*',
+            origin: 'http://localhost:5173',
+            'sec-fetch-site': 'same-site',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-dest': 'empty',
+            referer: 'http://localhost:5173/',
+            'accept-encoding': 'gzip, deflate, br, zstd',
+        },
+        url: '/pulp/api/v3/distributions/file/file/?limit=20&offset=0',
+        method: 'GET',
+        body: '',
+    },
+    res: {
+        status: 200,
+        headers: {
+            server: [
+                'nginx/1.29.6',
+            ],
+            date: [
+                'Sun, 22 Mar 2026 22:42:43 GMT',
+            ],
+            'content-type': [
+                'application/json',
+            ],
+            'content-length': [
+                '1191',
+            ],
+            connection: [
+                'keep-alive',
+            ],
+            vary: [
+                'Accept',
+            ],
+            allow: [
+                'GET, POST, HEAD, OPTIONS',
+            ],
+            'x-frame-options': [
+                'DENY, DENY',
+            ],
+            'x-content-type-options': [
+                'nosniff, nosniff',
+            ],
+            'referrer-policy': [
+                'same-origin, same-origin',
+            ],
+            'cross-origin-opener-policy': [
+                'same-origin',
+            ],
+            'correlation-id': [
+                '47f5bafffddb4a71aeb961b278c53130',
+            ],
+            'access-control-expose-headers': [
+                'Correlation-ID, Content-Length, Content-Range, Docker-Content-Digest',
+            ],
+            'access-control-allow-origin': [
+                '*',
+            ],
+            'access-control-allow-methods': [
+                'GET, POST, PUT, PATCH, DELETE, OPTIONS',
+            ],
+            'access-control-allow-headers': [
+                'Authorization, Content-Type, Accept, X-Requested-With',
+            ],
+        },
+        body: {
+            count: 2,
+            next: null,
+            previous: null,
+            results: [
+                {
+                    pulp_href: '/pulp/api/v3/distributions/file/file/019d17a1-c542-7be1-9126-b1c43c8d5fad/',
+                    prn: 'prn:file.filedistribution:019d17a1-c542-7be1-9126-b1c43c8d5fad',
+                    pulp_created: '2026-03-22T22:19:31.011511Z',
+                    pulp_last_updated: '2026-03-22T22:19:31.011523Z',
+                    base_path: 'test-data',
+                    base_url: 'http://localhost:8081/pulp/content/test-data/',
+                    content_guard: null,
+                    no_content_change_since: null,
+                    hidden: false,
+                    pulp_labels: {},
+                    name: 'test-data',
+                    repository: '/pulp/api/v3/repositories/file/file/019d17a1-bef1-725a-b792-84206ef1663c/',
+                    publication: null,
+                    checkpoint: false,
+                },
+                {
+                    pulp_href: '/pulp/api/v3/distributions/file/file/019d17a1-8e12-7d8b-b0c4-254fc4010aaa/',
+                    prn: 'prn:file.filedistribution:019d17a1-8e12-7d8b-b0c4-254fc4010aaa',
+                    pulp_created: '2026-03-22T22:19:16.883492Z',
+                    pulp_last_updated: '2026-03-22T22:19:16.883504Z',
+                    base_path: 'test-docs',
+                    base_url: 'http://localhost:8081/pulp/content/test-docs/',
+                    content_guard: null,
+                    no_content_change_since: null,
+                    hidden: false,
+                    pulp_labels: {},
+                    name: 'test-docs',
+                    repository: '/pulp/api/v3/repositories/file/file/019d17a1-87a6-7ec4-8e49-802a48d10b66/',
+                    publication: null,
+                    checkpoint: false,
+                },
+            ],
+        },
+    },
+}
