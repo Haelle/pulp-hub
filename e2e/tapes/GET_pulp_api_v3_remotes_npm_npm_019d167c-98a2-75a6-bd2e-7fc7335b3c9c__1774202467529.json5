@@ -1,6 +1,6 @@
 {
     meta: {
-        createdAt: '2026-03-22T16:41:02.762Z',
+        createdAt: '2026-03-22T18:01:06.430Z',
         host: 'http://host.docker.internal:8081',
         resHumanReadable: true,
     },
@@ -20,7 +20,7 @@
             referer: 'http://localhost:5173/',
             'accept-encoding': 'gzip, deflate, br, zstd',
         },
-        url: '/pulp/api/v3/repositories/npm/npm/019d160f-2165-7c00-9802-52277001b33d/',
+        url: '/pulp/api/v3/remotes/npm/npm/019d167c-98a2-75a6-bd2e-7fc7335b3c9c/',
         method: 'GET',
         body: '',
     },
@@ -31,13 +31,13 @@
                 'nginx/1.29.6',
             ],
             date: [
-                'Sun, 22 Mar 2026 16:41:03 GMT',
+                'Sun, 22 Mar 2026 18:01:07 GMT',
             ],
             'content-type': [
                 'application/json',
             ],
             'content-length': [
-                '616',
+                '793',
             ],
             connection: [
                 'keep-alive',
@@ -61,7 +61,7 @@
                 'same-origin',
             ],
             'correlation-id': [
-                'ade44e61683845168d38eef307243f45',
+                '5953bed2c0f84fc094ebad778188229e',
             ],
             'access-control-expose-headers': [
                 'Correlation-ID, Content-Length, Content-Range, Docker-Content-Digest',
@@ -77,17 +77,48 @@
             ],
         },
         body: {
-            pulp_href: '/pulp/api/v3/repositories/npm/npm/019d160f-2165-7c00-9802-52277001b33d/',
-            prn: 'prn:npm.npmrepository:019d160f-2165-7c00-9802-52277001b33d',
-            pulp_created: '2026-03-22T14:59:43.591133Z',
-            pulp_last_updated: '2026-03-22T14:59:43.593821Z',
-            versions_href: '/pulp/api/v3/repositories/npm/npm/019d160f-2165-7c00-9802-52277001b33d/versions/',
+            pulp_href: '/pulp/api/v3/remotes/npm/npm/019d167c-98a2-75a6-bd2e-7fc7335b3c9c/',
+            prn: 'prn:npm.npmremote:019d167c-98a2-75a6-bd2e-7fc7335b3c9c',
+            pulp_created: '2026-03-22T16:59:17.539155Z',
+            pulp_last_updated: '2026-03-22T16:59:17.539168Z',
+            name: 'npm-registry',
+            url: 'https://registry.npmjs.org/',
             pulp_labels: {},
-            latest_version_href: '/pulp/api/v3/repositories/npm/npm/019d160f-2165-7c00-9802-52277001b33d/versions/0/',
-            name: 'npm-tools',
-            description: null,
-            retain_repo_versions: null,
-            remote: '/pulp/api/v3/remotes/npm/npm/019d160f-1e17-746f-bd5c-3435f15650c5/',
+            policy: 'immediate',
+            hidden_fields: [
+                {
+                    name: 'client_key',
+                    is_set: false,
+                },
+                {
+                    name: 'proxy_username',
+                    is_set: false,
+                },
+                {
+                    name: 'proxy_password',
+                    is_set: false,
+                },
+                {
+                    name: 'username',
+                    is_set: false,
+                },
+                {
+                    name: 'password',
+                    is_set: false,
+                },
+            ],
+            ca_cert: null,
+            client_cert: null,
+            tls_validation: true,
+            proxy_url: null,
+            max_retries: null,
+            total_timeout: null,
+            connect_timeout: null,
+            sock_connect_timeout: null,
+            sock_read_timeout: null,
+            headers: null,
+            download_concurrency: null,
+            rate_limit: null,
         },
     },
 }

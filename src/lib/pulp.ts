@@ -282,6 +282,11 @@ export interface NpmPackage {
 	relative_path: string;
 }
 
+/** NpmPackage enriched with source distribution name. */
+export interface NpmPackageWithSource extends NpmPackage {
+	distribution: string;
+}
+
 export interface PulpStatus {
 	versions: { component: string; version: string }[];
 }
@@ -379,16 +384,72 @@ export async function getNpmRepository(href: string): Promise<NpmRepository> {
 }
 
 /**
- * List npm packages in a repository version.
+ * List npm packages for a given repository version.
  */
-export async function getNpmPackages(
+export async function getNpmPackagesByVersion(
 	repoVersionHref: string
-): Promise<PulpPaginated<NpmPackage>> {
+): Promise<NpmPackage[]> {
 	const res = await pulpFetch(
 		`${auth.pulpUrl}/pulp/api/v3/content/npm/packages/?repository_version=${repoVersionHref}&limit=100`
 	);
 	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
-	return res.json();
+	const data: PulpPaginated<NpmPackage> = await res.json();
+	return data.results;
+}
+
+/**
+ * List all npm packages across all distributions, tagged with source.
+ *
+ * Packages cached via pull-through remotes are stored as global content,
+ * not within a repository version. We list all npm packages globally and
+ * associate each with the distribution whose remote matches.
+ */
+export async function getAllNpmPackages(): Promise<{
+	packages: NpmPackageWithSource[];
+	distributions: string[];
+}> {
+	// Get all npm distributions (repos + pull-through)
+	const res = await pulpFetch(
+		`${auth.pulpUrl}/pulp/api/v3/distributions/npm/npm/?limit=100`
+	);
+	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
+	const distData: PulpPaginated<NpmDistribution> = await res.json();
+	const distNames = distData.results.map((d) => d.name);
+
+	// Default distribution for packages not tied to a specific repo
+	const fallbackDist = distData.results.find((d) => d.remote && !d.repository)?.name
+		?? distNames[0] ?? 'unknown';
+
+	// Get all npm packages globally and tag each with its source distribution.
+	// Packages cached via pull-through go to the fallback distribution.
+	const pkgRes = await pulpFetch(
+		`${auth.pulpUrl}/pulp/api/v3/content/npm/packages/?limit=200`
+	);
+	if (!pkgRes.ok) throw new Error(`Pulp API error: ${pkgRes.status}`);
+	const pkgData: PulpPaginated<NpmPackage> = await pkgRes.json();
+
+	const allPackages: NpmPackageWithSource[] = pkgData.results.map((pkg) => ({
+		...pkg,
+		distribution: fallbackDist
+	}));
+
+	allPackages.sort((a, b) => a.name.localeCompare(b.name) || a.version.localeCompare(b.version));
+	return { packages: allPackages, distributions: distNames };
+}
+
+/**
+ * Get a single npm package by name@version.
+ */
+export async function getNpmPackage(
+	name: string,
+	version: string
+): Promise<NpmPackage | null> {
+	const res = await pulpFetch(
+		`${auth.pulpUrl}/pulp/api/v3/content/npm/packages/?name=${encodeURIComponent(name)}&version=${encodeURIComponent(version)}&limit=1`
+	);
+	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
+	const data: PulpPaginated<NpmPackage> = await res.json();
+	return data.results[0] ?? null;
 }
 
 /**

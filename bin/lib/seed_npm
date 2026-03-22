@@ -10,8 +10,7 @@
 # on-demand, achieving the same result as a sync.
 
 NPM_REPOS=(
-  "npm-utils|https://registry.npmjs.org/|is-odd,is-even"
-  "npm-tools|https://registry.npmjs.org/|is-number"
+  "npm-registry|https://registry.npmjs.org/|is-odd,is-even,is-number"
 )
 
 # ── HTTP helpers ───────────────────────────────────────────────
