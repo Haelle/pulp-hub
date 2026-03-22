@@ -314,3 +314,29 @@ export async function getRemote(href: string): Promise<PullThroughRemote> {
 	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
 	return res.json();
 }
+
+// ── Users ────────────────────────────────────────────────────
+
+export interface PulpUser {
+	pulp_href: string;
+	id: number;
+	username: string;
+	first_name: string;
+	last_name: string;
+	email: string;
+	is_staff: boolean;
+	is_active: boolean;
+	date_joined: string;
+	groups: string[];
+}
+
+export async function getUsers(
+	limit = 20,
+	offset = 0
+): Promise<PulpPaginated<PulpUser>> {
+	const res = await pulpFetch(
+		`${auth.pulpUrl}/pulp/api/v3/users/?limit=${limit}&offset=${offset}`
+	);
+	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
+	return res.json();
+}

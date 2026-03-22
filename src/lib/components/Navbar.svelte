@@ -33,6 +33,11 @@
 					size="sm"
 					href="/pull-through">Pull-through</Button
 				>
+				<Button
+					variant={$page.url.pathname.startsWith('/users') ? 'secondary' : 'ghost'}
+					size="sm"
+					href="/users">Users</Button
+				>
 			</div>
 		</div>
 
