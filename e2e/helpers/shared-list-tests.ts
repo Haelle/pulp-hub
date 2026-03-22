@@ -24,7 +24,6 @@ export function testListPage(config: ListPageConfig) {
 		itemSelector = '[data-slot="card"]',
 		filterText,
 		emptyText = /no.*found/i,
-		detailUrlPattern,
 		hasCliHint = true,
 		hasSourceFilter = false
 	} = config;
