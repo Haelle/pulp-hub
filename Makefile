@@ -60,6 +60,7 @@ create-pulp: ## Create Pulp + CORS proxy containers for development (first time)
 		-v pulp-dev-db:/var/lib/pgsql \
 		-e PULP_DEFAULT_ADMIN_PASSWORD=admin \
 		-e PULP_CONTENT_ORIGIN=http://localhost:8081 \
+		-e PULP_TOKEN_AUTH_DISABLED=true \
 		--device /dev/fuse \
 		pulp/pulp
 	docker run -d \
