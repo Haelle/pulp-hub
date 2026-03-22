@@ -26,6 +26,7 @@ class RSpecReporter implements Reporter {
 	private results: TestEntry[] = [];
 	private startTime = 0;
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	onBegin(_config: FullConfig, _suite: Suite) {
 		this.startTime = Date.now();
 	}
