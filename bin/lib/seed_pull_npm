@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# seed_pull_npm — Install npm packages through Pulp pull-through cache
+# Sourced by seed.sh — do not execute directly
+
+NPM_PACKAGES="is-odd is-even is-number"
+
+# ── Main ──────────────────────────────────────────────────────
+
+seed_pull_npm() {
+  echo ""
+  echo -e "${BOLD}=== npm packages (pull-through) ===${NC}"
+
+  local registry="${PULP_URL}/pulp/content/npmjs-cache/"
+  local tmpdir
+  tmpdir=$(mktemp -d)
+
+  echo -e "  ${BLUE}npm install --registry=${registry} ${NPM_PACKAGES}${NC}"
+  (
+    cd "$tmpdir"
+    npm init -y --silent >/dev/null 2>&1
+    if npm install --registry="$registry" --no-save $NPM_PACKAGES >/dev/null 2>&1; then
+      echo -e "  ${GREEN}✓ Cached npm packages${NC}"
+    else
+      echo -e "  ${RED}⚠ npm install failed${NC}"
+    fi
+  )
+  rm -rf "$tmpdir"
+}
+
+verify_pull_npm() {
+  echo ""
+  echo -e "${BOLD}--- npm Verification ---${NC}"
+  local count
+  count=$(pulp_get "/distributions/npm/npm/" \
+    | python3 -c "import sys,json; print(json.load(sys.stdin).get('count',0))" 2>/dev/null || echo 0)
+  echo -e "  npm distributions: ${GREEN}${count}${NC}"
+}

@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+# seed_pull_oci — Pull OCI images through Pulp pull-through caches
+# Sourced by seed.sh — do not execute directly
+
+PULL_IMAGES=(
+  "dockerhub-cache/library/alpine:latest"
+  "dockerhub-cache/library/alpine:3.19"
+  "dockerhub-cache/library/busybox:latest"
+  "dockerhub-cache/library/hello-world:latest"
+  "quay-cache/projectquay/quay-operator:latest"
+)
+
+# ── Main ──────────────────────────────────────────────────────
+
+seed_pull_oci() {
+  echo ""
+  echo -e "${BOLD}=== OCI Images (pull-through) ===${NC}"
+
+  local registry="${PULP_HOST:-localhost:8081}"
+
+  for img in "${PULL_IMAGES[@]}"; do
+    echo -e "  ${BLUE}podman pull --tls-verify=false ${registry}/${img}${NC}"
+    if podman pull --tls-verify=false "${registry}/${img}" >/dev/null 2>&1; then
+      echo -e "  ${GREEN}✓ ${img}${NC}"
+    else
+      echo -e "  ${RED}⚠ Failed: ${img}${NC}"
+    fi
+  done
+}
+
+verify_pull_oci() {
+  echo ""
+  echo -e "${BOLD}--- OCI Verification ---${NC}"
+
+  for source in dockerhub-cache quay-cache; do
+    local count
+    count=$(pulp_get "/distributions/container/container/?name__startswith=${source}" \
+      | python3 -c "import sys,json; print(json.load(sys.stdin).get('count',0))" 2>/dev/null || echo 0)
+    echo -e "  ${source}: ${GREEN}${count} distributions${NC}"
+  done
+}
