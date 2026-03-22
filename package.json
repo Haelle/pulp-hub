@@ -10,9 +10,14 @@
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"test:e2e": "playwright test"
+		"test:e2e": "playwright test",
+		"lint": "eslint .",
+		"format": "prettier --write .",
+		"format:check": "prettier --check .",
+		"audit:security": "npm audit --audit-level=high"
 	},
 	"devDependencies": {
+		"@eslint/js": "^10.0.1",
 		"@internationalized/date": "^3.12.0",
 		"@playwright/test": "^1.58.2",
 		"@sveltejs/adapter-auto": "^7.0.0",
@@ -20,11 +25,18 @@
 		"@sveltejs/vite-plugin-svelte": "^6.2.4",
 		"@tailwindcss/vite": "^4.2.1",
 		"bits-ui": "^2.16.3",
+		"eslint": "^10.1.0",
+		"eslint-config-prettier": "^10.1.8",
+		"eslint-plugin-svelte": "^3.16.0",
+		"globals": "^17.4.0",
+		"prettier": "^3.8.1",
+		"prettier-plugin-svelte": "^3.5.1",
 		"svelte": "^5.51.0",
 		"svelte-check": "^4.4.2",
 		"tailwindcss": "^4.2.1",
 		"talkback": "^4.2.0",
 		"typescript": "^5.9.3",
+		"typescript-eslint": "^8.57.1",
 		"vite": "^7.3.1"
 	},
 	"dependencies": {
