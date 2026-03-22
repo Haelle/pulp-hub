@@ -12,7 +12,7 @@ YELLOW='\033[0;33m'
 BOLD='\033[1m'
 NC='\033[0m'
 
-STATES_PER_ROUTE=5
+STATES_PER_ROUTE=6
 MIN_RATIO="${MIN_RATIO:-1.5}"
 
 # ── Count routes ──────────────────────────────────────────────
