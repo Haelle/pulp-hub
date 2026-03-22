@@ -330,13 +330,8 @@ export interface PulpUser {
 	groups: string[];
 }
 
-export async function getUsers(
-	limit = 20,
-	offset = 0
-): Promise<PulpPaginated<PulpUser>> {
-	const res = await pulpFetch(
-		`${auth.pulpUrl}/pulp/api/v3/users/?limit=${limit}&offset=${offset}`
-	);
+export async function getUsers(limit = 20, offset = 0): Promise<PulpPaginated<PulpUser>> {
+	const res = await pulpFetch(`${auth.pulpUrl}/pulp/api/v3/users/?limit=${limit}&offset=${offset}`);
 	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
 	return res.json();
 }
