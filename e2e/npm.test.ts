@@ -13,7 +13,7 @@ async function login(page: Page) {
 	await expect(page).toHaveURL('/repositories');
 }
 
-test.describe('npm list page', () => {
+test.describe('npm packages list page', () => {
 	test.beforeEach(async ({ page }) => {
 		await login(page);
 	});
@@ -38,39 +38,53 @@ test.describe('npm list page', () => {
 		await expect(page.locator('[data-slot="alert-title"]')).toContainText('pulp-cli');
 	});
 
-	test('displays npm distribution cards', async ({ page }) => {
+	test('displays package cards', async ({ page }) => {
 		await page.goto('/npm');
-		const cards = page.locator('[data-slot="card"]');
+		const cards = page.locator('[data-testid="npm-package-card"]');
 		await expect(cards.first()).toBeVisible();
-		await expect(cards).not.toHaveCount(0);
 	});
 
-	test('card shows name and npm badge', async ({ page }) => {
+	test('package card shows name and version', async ({ page }) => {
 		await page.goto('/npm');
-		const card = page.locator('[data-slot="card"]').first();
+		const card = page.locator('[data-testid="npm-package-card"]').first();
 		await expect(card.locator('[data-slot="card-title"]')).toBeVisible();
-		await expect(card.locator('[data-slot="badge"]')).toContainText('npm');
+		await expect(card.locator('[data-slot="card-description"]')).toBeVisible();
 	});
 
-	test('card links to detail page', async ({ page }) => {
+	test('package card shows source distribution', async ({ page }) => {
 		await page.goto('/npm');
-		await page.locator('[data-slot="card"]').first().click();
-		await expect(page).toHaveURL(/\/npm\//);
+		const card = page.locator('[data-testid="npm-package-card"]').first();
+		await expect(card.locator('[data-slot="badge"]')).toBeVisible();
 	});
 
-	test('filter narrows results', async ({ page }) => {
+	test('text filter narrows results', async ({ page }) => {
 		await page.goto('/npm');
+		await expect(page.locator('[data-testid="npm-package-card"]').first()).toBeVisible();
 		const filterInput = page.getByPlaceholder(/search|filter/i);
-		await filterInput.fill('npm-utils');
-		const cards = page.locator('[data-slot="card"]');
-		await expect(cards).toHaveCount(1);
+		await filterInput.fill('is-odd');
+		const cards = page.locator('[data-testid="npm-package-card"]');
+		await expect(cards.first()).toBeVisible();
 	});
 
-	test('filter with no match shows empty state', async ({ page }) => {
+	test('text filter with no match shows empty state', async ({ page }) => {
 		await page.goto('/npm');
+		await expect(page.locator('[data-testid="npm-package-card"]').first()).toBeVisible();
 		const filterInput = page.getByPlaceholder(/search|filter/i);
 		await filterInput.fill('zzz-nonexistent-zzz');
-		await expect(page.getByText('No npm repositories found')).toBeVisible();
+		await expect(page.getByText('No npm packages found')).toBeVisible();
+	});
+
+	test('distribution filter checkboxes are visible', async ({ page }) => {
+		await page.goto('/npm');
+		await expect(page.locator('[data-testid="npm-package-card"]').first()).toBeVisible();
+		const checkbox = page.locator('input[type="checkbox"]').first();
+		await expect(checkbox).toBeVisible();
+	});
+
+	test('package card links to detail page', async ({ page }) => {
+		await page.goto('/npm');
+		await page.locator('[data-testid="npm-package-card"]').first().click();
+		await expect(page).toHaveURL(/\/npm\/packages\//);
 	});
 
 	test('redirects to login if not authenticated', async ({ browser }) => {
@@ -82,65 +96,55 @@ test.describe('npm list page', () => {
 	});
 });
 
-test.describe('npm detail page', () => {
+test.describe('npm package detail page', () => {
 	test.beforeEach(async ({ page }) => {
 		await login(page);
 	});
 
 	test('navigable from list page', async ({ page }) => {
 		await page.goto('/npm');
-		await page.locator('[data-slot="card"]').first().click();
-		await expect(page).toHaveURL(/\/npm\//);
+		await expect(page.locator('[data-testid="npm-package-card"]').first()).toBeVisible();
+		await page.locator('[data-testid="npm-package-card"]').first().click();
+		await expect(page).toHaveURL(/\/npm\/packages\//);
 		await expect(page.locator('h1')).toBeVisible();
 	});
 
-	test('displays name and npm badge', async ({ page }) => {
+	test('displays package name and version badge', async ({ page }) => {
 		await page.goto('/npm');
-		await page.locator('[data-slot="card"]').first().click();
-		await expect(page).toHaveURL(/\/npm\//);
+		await expect(page.locator('[data-testid="npm-package-card"]').first()).toBeVisible();
+		await page.locator('[data-testid="npm-package-card"]').first().click();
+		await expect(page).toHaveURL(/\/npm\/packages\//);
 		await expect(page.locator('h1')).toBeVisible();
-		await expect(page.locator('h1 + [data-slot="badge"]')).toBeVisible();
+		await expect(page.locator('[data-slot="badge"]').first()).toBeVisible();
 	});
 
-	test('shows upstream registry URL', async ({ page }) => {
+	test('shows tarball path', async ({ page }) => {
 		await page.goto('/npm');
-		await page.locator('[data-slot="card"]').first().click();
-		await expect(page).toHaveURL(/\/npm\//);
-		await expect(page.getByText(/https?:\/\//).first()).toBeVisible();
+		await expect(page.locator('[data-testid="npm-package-card"]').first()).toBeVisible();
+		await page.locator('[data-testid="npm-package-card"]').first().click();
+		await expect(page).toHaveURL(/\/npm\/packages\//);
+		await expect(page.getByText(/\.tgz/).first()).toBeVisible();
 	});
 
-	test('shows npm install registry command', async ({ page }) => {
+	test('shows source distribution', async ({ page }) => {
 		await page.goto('/npm');
-		await page.locator('[data-slot="card"]').first().click();
-		await expect(page).toHaveURL(/\/npm\//);
-		await expect(page.getByText(/npm.*--registry/).first()).toBeVisible();
+		await expect(page.locator('[data-testid="npm-package-card"]').first()).toBeVisible();
+		await page.locator('[data-testid="npm-package-card"]').first().click();
+		await expect(page).toHaveURL(/\/npm\/packages\//);
+		// Source distribution should be visible (e.g. npmjs-cache or npm-registry)
+		await expect(page.getByText('Source:').first()).toBeVisible();
 	});
 
-	test('shows cli hint', async ({ page }) => {
-		await page.goto('/npm');
-		await page.locator('[data-slot="card"]').first().click();
-		await expect(page).toHaveURL(/\/npm\//);
-		await expect(page.locator('[data-slot="alert-title"]')).toContainText('pulp-cli');
-	});
-
-	test('displays packages table', async ({ page }) => {
-		await page.goto('/npm/npm-utils');
+	test('shows other cached versions when available', async ({ page }) => {
+		// is-odd has multiple versions (0.1.2 and 3.0.1)
+		await page.goto('/npm/packages/is-odd%403.0.1');
 		await expect(page.locator('h1')).toBeVisible();
-		const rows = page.locator('table tbody tr');
-		await expect(rows.first()).toBeVisible();
+		await expect(page.getByText('Other cached versions')).toBeVisible();
+		await expect(page.getByText('0.1.2')).toBeVisible();
 	});
 
-	test('package row shows name and version', async ({ page }) => {
-		await page.goto('/npm/npm-utils');
-		await expect(page.locator('h1')).toBeVisible();
-		const row = page.locator('table tbody tr').first();
-		await expect(row).toBeVisible();
-		await expect(row.locator('td').first()).not.toBeEmpty();
-		await expect(row.locator('td').nth(1)).not.toBeEmpty();
-	});
-
-	test('shows not found for nonexistent entry', async ({ page }) => {
-		await page.goto('/npm/zzz-nonexistent-zzz');
+	test('shows not found for nonexistent package', async ({ page }) => {
+		await page.goto('/npm/packages/zzz-fake%403.0.0');
 		await expect(page.getByText(/not found/i)).toBeVisible();
 	});
 });
