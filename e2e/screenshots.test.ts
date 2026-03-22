@@ -77,7 +77,12 @@ test('capture screenshots for docs', async ({ page }) => {
 		fullPage: true
 	});
 
-	// 10. Repositories in dark mode
+	// 10. Users list
+	await page.goto('/users');
+	await expect(page.locator('table tbody tr').first()).toBeVisible();
+	await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'users.png'), fullPage: false });
+
+	// 11. Repositories in dark mode
 	await page.goto('/repositories');
 	await expect(page.locator('[data-slot="card"]').first()).toBeVisible();
 	await page.evaluate(() => {
