@@ -1,7 +1,5 @@
 # TODO
 
-- seed : pas besoin de créer des repo, faut juste des pull-through avec des exemples
-
 - toujours bug sur les screenshots générés
 - tester npm pull-through
   - et pages dédiées
