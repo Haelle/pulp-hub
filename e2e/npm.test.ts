@@ -70,7 +70,7 @@ test.describe('npm list page', () => {
 		await page.goto('/npm');
 		const filterInput = page.getByPlaceholder(/search|filter/i);
 		await filterInput.fill('zzz-nonexistent-zzz');
-		await expect(page.getByText(/no|aucun|empty/i)).toBeVisible();
+		await expect(page.getByText('No npm repositories found')).toBeVisible();
 	});
 
 	test('redirects to login if not authenticated', async ({ browser }) => {
