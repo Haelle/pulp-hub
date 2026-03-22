@@ -3,7 +3,7 @@ PULP_DEV_NAME = pulp-dev
 PULP_PROXY_NAME = pulp-proxy-dev
 PULP_DEV_NET = pulp-dev-net
 
-.PHONY: up down recreate setup shell dev build check lint format format-check audit quality test test-record test-ui screenshots seed clean create-pulp start-pulp stop-pulp help
+.PHONY: up down recreate setup shell dev build check lint format format-check audit quality test test-record test-ui screenshots seed clean create-pulp start-pulp stop-pulp reset-pulp help
 
 # ── Devcontainer ─────────────────────────────────────────────
 
@@ -98,6 +98,12 @@ start-pulp: ## Start existing Pulp + proxy containers
 
 stop-pulp: ## Stop Pulp + proxy containers
 	docker stop $(PULP_PROXY_NAME) $(PULP_DEV_NAME) 2>/dev/null || true
+
+reset-pulp: stop-pulp ## Destroy Pulp containers, volumes and network (full reset)
+	docker rm -f $(PULP_DEV_NAME) $(PULP_PROXY_NAME) 2>/dev/null || true
+	docker volume rm pulp-dev-settings pulp-dev-storage pulp-dev-db 2>/dev/null || true
+	docker network rm $(PULP_DEV_NET) 2>/dev/null || true
+	@echo "\033[32m✓ Pulp reset. Run 'make create-pulp' to start fresh.\033[0m"
 
 # ── Help ─────────────────────────────────────────────────────
 
