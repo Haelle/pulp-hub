@@ -10,9 +10,12 @@ seed_pull_pypi() {
   echo ""
   echo -e "${BOLD}=== PyPI packages (pull-through) ===${NC}"
 
-  local index_url="${PULP_URL}/pulp/content/pypi-cache/simple/"
+  local index_url="${PULP_URL}/pulp/content/pypi-cache/"
   local tmpdir
   tmpdir=$(mktemp -d)
+
+  echo -e "  ${BLUE}Clearing uv cache...${NC}"
+  uv cache clean >/dev/null 2>&1 || true
 
   echo -e "  ${BLUE}uv pip install --index-url ${index_url} ${PYPI_PACKAGES}${NC}"
   if uv pip install --index-url "$index_url" --target "$tmpdir" $PYPI_PACKAGES >/dev/null 2>&1; then
