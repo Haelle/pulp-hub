@@ -64,4 +64,11 @@ test.describe('PyPI package detail page', () => {
 		await page.goto('/python/packages/Flask');
 		await expect(page.getByText('Source:').first()).toBeVisible();
 	});
+
+	test('links to pypi.org', async ({ page }) => {
+		await page.goto('/python/packages/Flask');
+		const link = page.locator('a[href="https://pypi.org/project/Flask/"]');
+		await expect(link).toBeVisible();
+		await expect(link).toHaveText('pypi.org');
+	});
 });

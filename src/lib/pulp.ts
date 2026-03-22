@@ -295,6 +295,42 @@ export interface NpmPackageGroup {
 	versions: NpmPackageWithSource[];
 }
 
+export interface PythonRemote {
+	pulp_href: string;
+	name: string;
+	url: string;
+}
+
+export interface PythonRepository {
+	pulp_href: string;
+	name: string;
+	latest_version_href: string;
+	description: string | null;
+	remote: string | null;
+}
+
+export interface PythonPackage {
+	pulp_href: string;
+	name: string;
+	version: string;
+	filename: string;
+	summary: string;
+	requires_python: string;
+}
+
+/** PythonPackage enriched with source distribution name. */
+export interface PythonPackageWithSource extends PythonPackage {
+	distribution: string;
+}
+
+/** Grouped view: one entry per package name with all versions. */
+export interface PythonPackageGroup {
+	name: string;
+	latestVersion: string;
+	distribution: string;
+	versions: PythonPackageWithSource[];
+}
+
 export interface PulpStatus {
 	versions: { component: string; version: string }[];
 }
@@ -458,6 +494,66 @@ export async function getNpmRemote(href: string): Promise<NpmRemote> {
 	const res = await pulpFetch(`${auth.pulpUrl}${href}`);
 	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
 	return res.json();
+}
+
+// ── Python (PyPI) repositories ───────────────────────────────
+
+/**
+ * Get a single Python distribution by name.
+ */
+export async function getPythonDistribution(name: string): Promise<PythonDistribution | null> {
+	const res = await pulpFetch(
+		`${auth.pulpUrl}/pulp/api/v3/distributions/python/pypi/?name=${encodeURIComponent(name)}`
+	);
+	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
+	const data: PulpPaginated<PythonDistribution> = await res.json();
+	return data.results[0] ?? null;
+}
+
+/**
+ * Get a Python repository by href.
+ */
+export async function getPythonRepository(href: string): Promise<PythonRepository> {
+	const res = await pulpFetch(`${auth.pulpUrl}${href}`);
+	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
+	return res.json();
+}
+
+/**
+ * Get a Python remote by href.
+ */
+export async function getPythonRemote(href: string): Promise<PythonRemote> {
+	const res = await pulpFetch(`${auth.pulpUrl}${href}`);
+	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
+	return res.json();
+}
+
+/**
+ * List all Python packages across all distributions, tagged with source.
+ */
+export async function getAllPythonPackages(): Promise<{
+	packages: PythonPackageWithSource[];
+	distributions: string[];
+}> {
+	const res = await pulpFetch(`${auth.pulpUrl}/pulp/api/v3/distributions/python/pypi/?limit=100`);
+	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
+	const distData: PulpPaginated<PythonDistribution> = await res.json();
+	const distNames = distData.results.map((d) => d.name);
+
+	const fallbackDist =
+		distData.results.find((d) => d.remote && !d.repository)?.name ?? distNames[0] ?? 'unknown';
+
+	const pkgRes = await pulpFetch(`${auth.pulpUrl}/pulp/api/v3/content/python/packages/?limit=200`);
+	if (!pkgRes.ok) throw new Error(`Pulp API error: ${pkgRes.status}`);
+	const pkgData: PulpPaginated<PythonPackage> = await pkgRes.json();
+
+	const allPackages: PythonPackageWithSource[] = pkgData.results.map((pkg) => ({
+		...pkg,
+		distribution: fallbackDist
+	}));
+
+	allPackages.sort((a, b) => a.name.localeCompare(b.name) || a.version.localeCompare(b.version));
+	return { packages: allPackages, distributions: distNames };
 }
 
 // ── Users ────────────────────────────────────────────────────

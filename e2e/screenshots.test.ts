@@ -82,7 +82,17 @@ test('capture screenshots for docs', async ({ page }) => {
 	await expect(page.locator('h2', { hasText: 'Cached versions' })).toBeVisible();
 	await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'npm-detail.png'), fullPage: true });
 
-	// 13. Images in dark mode
+	// 13. PyPI list
+	await page.goto('/python');
+	await expect(page.locator('[data-slot="card"]').first()).toBeVisible();
+	await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'python.png'), fullPage: false });
+
+	// 14. PyPI detail
+	await page.locator('[data-slot="card"]').first().click();
+	await expect(page.locator('h2', { hasText: 'Cached versions' })).toBeVisible();
+	await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'python-detail.png'), fullPage: true });
+
+	// 15. Images in dark mode
 	await page.goto('/images');
 	await expect(page.locator('[data-slot="card"]').first()).toBeVisible();
 	await page.evaluate(() => {

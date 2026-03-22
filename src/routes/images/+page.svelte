@@ -78,15 +78,15 @@
 			<div class="flex items-center gap-3">
 				{#each sources as source (source)}
 					<label class="flex items-center gap-1.5 text-sm cursor-pointer">
-							<input
-								type="checkbox"
-								checked={enabledSources.has(source)}
-								onchange={() => toggleSource(source)}
-							/>
-							{source}
-						</label>
-					{/each}
-				</div>
+						<input
+							type="checkbox"
+							checked={enabledSources.has(source)}
+							onchange={() => toggleSource(source)}
+						/>
+						{source}
+					</label>
+				{/each}
+			</div>
 		</div>
 
 		{#if filtered.length > 0}

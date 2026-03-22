@@ -4,16 +4,16 @@
 	import CopyBlock from '$lib/components/CopyBlock.svelte';
 	import Loader from '@lucide/svelte/icons/loader';
 	import { auth } from '$lib/auth.svelte';
-	import { getAllNpmPackages, type NpmPackageWithSource } from '$lib/pulp';
+	import { getAllPythonPackages, type PythonPackageWithSource } from '$lib/pulp';
 
 	let packageName = $state('');
-	let versions = $state<NpmPackageWithSource[]>([]);
+	let versions = $state<PythonPackageWithSource[]>([]);
 	let distribution = $state('');
 	let loading = $state(true);
 	let notFound = $state(false);
 
 	const pulpHost = $derived(auth.pulpUrl);
-	const registryUrl = $derived(distribution ? `${pulpHost}/pulp/content/${distribution}/` : '');
+	const registryUrl = $derived(distribution ? `${pulpHost}/pypi/${distribution}/simple/` : '');
 
 	$effect(() => {
 		const name = $page.params.name;
@@ -24,7 +24,7 @@
 		loading = true;
 		notFound = false;
 		try {
-			const data = await getAllNpmPackages();
+			const data = await getAllPythonPackages();
 			const matching = data.packages.filter((p) => p.name === name);
 			if (matching.length === 0) {
 				notFound = true;
@@ -56,17 +56,17 @@
 				· {versions.length} cached version{versions.length > 1 ? 's' : ''}
 				·
 				<a
-					href="https://www.npmjs.com/package/{packageName}"
+					href="https://pypi.org/project/{packageName}/"
 					target="_blank"
 					rel="noopener"
-					class="underline hover:text-foreground">npmjs.com</a
+					class="underline hover:text-foreground">pypi.org</a
 				>
 			</p>
 		</div>
 
 		<CopyBlock
 			label="Install latest cached version"
-			code="npm install {packageName}@{versions[0].version} --registry={registryUrl}"
+			code="pip install {packageName}=={versions[0].version} --index-url {registryUrl}"
 		/>
 
 		<div class="space-y-3">
@@ -76,7 +76,7 @@
 					<thead>
 						<tr class="border-b bg-muted/50">
 							<th class="px-4 py-2 text-left font-medium">Version</th>
-							<th class="px-4 py-2 text-left font-medium">Tarball</th>
+							<th class="px-4 py-2 text-left font-medium">Filename</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -85,7 +85,7 @@
 								<td class="px-4 py-2 font-mono">
 									<Badge variant={v === versions[0] ? 'default' : 'outline'}>{v.version}</Badge>
 								</td>
-								<td class="px-4 py-2 text-muted-foreground font-mono text-xs">{v.relative_path}</td>
+								<td class="px-4 py-2 text-muted-foreground font-mono text-xs">{v.filename}</td>
 							</tr>
 						{/each}
 					</tbody>

@@ -34,6 +34,11 @@
 					href="/npm">npm</Button
 				>
 				<Button
+					variant={$page.url.pathname.startsWith('/python') ? 'secondary' : 'ghost'}
+					size="sm"
+					href="/python">PyPI</Button
+				>
+				<Button
 					variant={$page.url.pathname.startsWith('/pull-through') ? 'secondary' : 'ghost'}
 					size="sm"
 					href="/pull-through">Pull-through</Button
