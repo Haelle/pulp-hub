@@ -101,17 +101,19 @@ test.describe('Pull-through detail page', () => {
 	test('displays name and type badge', async ({ page }) => {
 		await page.goto('/pull-through');
 		await page.locator('[data-slot="card"]').first().click();
+		await expect(page).toHaveURL(/\/pull-through\//);
 
 		await expect(page.locator('h1')).toBeVisible();
-		await expect(page.locator('[data-slot="badge"]')).toBeVisible();
+		await expect(page.locator('h1 + [data-slot="badge"]')).toBeVisible();
 	});
 
 	test('shows upstream URL', async ({ page }) => {
 		await page.goto('/pull-through');
 		await page.locator('[data-slot="card"]').first().click();
+		await expect(page).toHaveURL(/\/pull-through\//);
 
 		// Upstream URL should be visible somewhere on the page
-		await expect(page.getByText(/https?:\/\//)).toBeVisible();
+		await expect(page.getByText(/https?:\/\//).first()).toBeVisible();
 	});
 
 	test('shows copyable usage command', async ({ page }) => {

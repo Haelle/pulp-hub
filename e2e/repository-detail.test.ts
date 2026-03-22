@@ -43,7 +43,7 @@ test.describe('Repository detail page', () => {
 	test('pull command has copy button', async ({ page }) => {
 		await page.goto('/repositories/dockerhub%2Flibrary%2Falpine');
 
-		const copyButton = page.getByRole('button', { name: /copy/i });
+		const copyButton = page.getByRole('button', { name: /copy/i }).first();
 		await expect(copyButton).toBeVisible();
 	});
 

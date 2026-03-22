@@ -2,7 +2,7 @@ const http = require('http');
 const talkback = require('talkback');
 const path = require('path');
 
-const PULP_HOST = process.env.PULP_HOST ?? 'http://localhost:8081';
+const PULP_HOST = process.env.PULP_HOST ?? 'http://host.docker.internal:8081';
 const TALKBACK_PORT = parseInt(process.env.TALKBACK_PORT ?? '8787');
 const RECORD_MODE = process.env.TALKBACK_RECORD ?? 'NEW';
 
@@ -29,7 +29,7 @@ const talkbackServer = talkback({
 			.replace(/[^a-zA-Z0-9_-]/g, '');
 		return `${tape.req.method}_${pathname}_${tapeNumber}`;
 	},
-	responseDecorator: (tape, req) => {
+	responseDecorator: (tape, _req) => {
 		if (!tape.res.headers) tape.res.headers = {};
 		Object.assign(tape.res.headers, CORS_HEADERS);
 		return tape;

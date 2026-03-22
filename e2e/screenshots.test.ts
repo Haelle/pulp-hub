@@ -64,7 +64,7 @@ test('capture screenshots for docs', async ({ page }) => {
 	await page.goBack();
 
 	// 9. Pull-through detail — npm
-	await page.locator('[data-slot="card"]', { hasText: /^npm$/ }).first().click();
+	await page.locator('[data-slot="card"]', { hasText: 'npm' }).first().click();
 	await expect(page.locator('h1')).toBeVisible();
 	await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'pull-through-npm.png'), fullPage: true });
 
