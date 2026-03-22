@@ -16,8 +16,8 @@
 	const registryUrl = $derived(distribution ? `${pulpHost}/pulp/content/${distribution}/` : '');
 
 	$effect(() => {
-		const name = decodeURIComponent($page.params.name);
-		load(name);
+		const name = $page.params.name;
+		if (name) load(decodeURIComponent(name));
 	});
 
 	async function load(name: string) {

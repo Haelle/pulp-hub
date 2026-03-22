@@ -394,9 +394,7 @@ export async function getNpmRepository(href: string): Promise<NpmRepository> {
 /**
  * List npm packages for a given repository version.
  */
-export async function getNpmPackagesByVersion(
-	repoVersionHref: string
-): Promise<NpmPackage[]> {
+export async function getNpmPackagesByVersion(repoVersionHref: string): Promise<NpmPackage[]> {
 	const res = await pulpFetch(
 		`${auth.pulpUrl}/pulp/api/v3/content/npm/packages/?repository_version=${repoVersionHref}&limit=100`
 	);
@@ -417,22 +415,18 @@ export async function getAllNpmPackages(): Promise<{
 	distributions: string[];
 }> {
 	// Get all npm distributions (repos + pull-through)
-	const res = await pulpFetch(
-		`${auth.pulpUrl}/pulp/api/v3/distributions/npm/npm/?limit=100`
-	);
+	const res = await pulpFetch(`${auth.pulpUrl}/pulp/api/v3/distributions/npm/npm/?limit=100`);
 	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
 	const distData: PulpPaginated<NpmDistribution> = await res.json();
 	const distNames = distData.results.map((d) => d.name);
 
 	// Default distribution for packages not tied to a specific repo
-	const fallbackDist = distData.results.find((d) => d.remote && !d.repository)?.name
-		?? distNames[0] ?? 'unknown';
+	const fallbackDist =
+		distData.results.find((d) => d.remote && !d.repository)?.name ?? distNames[0] ?? 'unknown';
 
 	// Get all npm packages globally and tag each with its source distribution.
 	// Packages cached via pull-through go to the fallback distribution.
-	const pkgRes = await pulpFetch(
-		`${auth.pulpUrl}/pulp/api/v3/content/npm/packages/?limit=200`
-	);
+	const pkgRes = await pulpFetch(`${auth.pulpUrl}/pulp/api/v3/content/npm/packages/?limit=200`);
 	if (!pkgRes.ok) throw new Error(`Pulp API error: ${pkgRes.status}`);
 	const pkgData: PulpPaginated<NpmPackage> = await pkgRes.json();
 
@@ -448,10 +442,7 @@ export async function getAllNpmPackages(): Promise<{
 /**
  * Get a single npm package by name@version.
  */
-export async function getNpmPackage(
-	name: string,
-	version: string
-): Promise<NpmPackage | null> {
+export async function getNpmPackage(name: string, version: string): Promise<NpmPackage | null> {
 	const res = await pulpFetch(
 		`${auth.pulpUrl}/pulp/api/v3/content/npm/packages/?name=${encodeURIComponent(name)}&version=${encodeURIComponent(version)}&limit=1`
 	);

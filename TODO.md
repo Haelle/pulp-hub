@@ -1,5 +1,7 @@
 # TODO
 
+- seed : pas besoin de créer des repo, faut juste des pull-through avec des exemples
+- pourquoi deux pull through pour npm ?
 - /repositories → renommer en /images, lister toutes les images container (tous repos confondus), chaque carte indique la source (dockerhub-cache, dockerhub/library, etc.), filtre par distribution + texte, même approche que /npm
 - tester npm pull-through
   - et pages dédiées

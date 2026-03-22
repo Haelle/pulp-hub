@@ -91,7 +91,7 @@ test('capture screenshots for docs', async ({ page }) => {
 
 	// 12. npm detail
 	await page.locator('[data-slot="card"]').first().click();
-	await expect(page.locator('h1')).toBeVisible();
+	await expect(page.locator('h2', { hasText: 'Cached versions' })).toBeVisible();
 	await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'npm-detail.png'), fullPage: true });
 
 	// 13. Images in dark mode
