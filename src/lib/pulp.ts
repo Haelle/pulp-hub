@@ -235,3 +235,90 @@ export async function getArtifact(href: string): Promise<PulpArtifact> {
 	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
 	return res.json();
 }
+
+// ── Pull-through types ───────────────────────────────────────
+
+export interface PullThroughRemote {
+	pulp_href: string;
+	name: string;
+	url: string;
+}
+
+export interface ContainerPullThroughDistribution {
+	pulp_href: string;
+	name: string;
+	base_path: string;
+	remote: string;
+}
+
+export interface PythonDistribution {
+	pulp_href: string;
+	name: string;
+	base_path: string;
+	remote: string | null;
+	repository: string | null;
+}
+
+export interface NpmDistribution {
+	pulp_href: string;
+	name: string;
+	base_path: string;
+	remote: string | null;
+}
+
+export interface PulpStatus {
+	versions: { component: string; version: string }[];
+}
+
+// ── Pull-through functions ───────────────────────────────────
+
+/**
+ * Get Pulp status (plugins, versions).
+ */
+export async function getStatus(): Promise<PulpStatus> {
+	const res = await pulpFetch(`${auth.pulpUrl}/pulp/api/v3/status/`);
+	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
+	return res.json();
+}
+
+/**
+ * List container pull-through distributions.
+ */
+export async function getContainerPullThroughDistributions(): Promise<
+	PulpPaginated<ContainerPullThroughDistribution>
+> {
+	const res = await pulpFetch(
+		`${auth.pulpUrl}/pulp/api/v3/distributions/container/pull-through/?limit=100`
+	);
+	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
+	return res.json();
+}
+
+/**
+ * List Python distributions that have a remote (= pull-through).
+ */
+export async function getPythonDistributions(): Promise<PulpPaginated<PythonDistribution>> {
+	const res = await pulpFetch(
+		`${auth.pulpUrl}/pulp/api/v3/distributions/python/pypi/?limit=100`
+	);
+	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
+	return res.json();
+}
+
+/**
+ * List npm distributions that have a remote (= pull-through).
+ */
+export async function getNpmDistributions(): Promise<PulpPaginated<NpmDistribution>> {
+	const res = await pulpFetch(`${auth.pulpUrl}/pulp/api/v3/distributions/npm/npm/?limit=100`);
+	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
+	return res.json();
+}
+
+/**
+ * Get a remote by href (works for any plugin type).
+ */
+export async function getRemote(href: string): Promise<PullThroughRemote> {
+	const res = await pulpFetch(`${auth.pulpUrl}${href}`);
+	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
+	return res.json();
+}
