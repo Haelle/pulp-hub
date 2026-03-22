@@ -54,8 +54,9 @@ class RSpecReporter implements Reporter {
 	onEnd(result: FullResult) {
 		const totalDuration = Date.now() - this.startTime;
 		const passed = this.results.filter((r) => r.status === 'passed').length;
-		const failed = this.results.filter((r) => r.status === 'failed' || r.status === 'timedOut')
-			.length;
+		const failed = this.results.filter(
+			(r) => r.status === 'failed' || r.status === 'timedOut'
+		).length;
 		const skipped = this.results.filter((r) => r.status === 'skipped').length;
 
 		// Blank line after dots
@@ -65,9 +66,7 @@ class RSpecReporter implements Reporter {
 		this.printTree(this.results);
 
 		// Failures detail
-		const failures = this.results.filter(
-			(r) => r.status === 'failed' || r.status === 'timedOut'
-		);
+		const failures = this.results.filter((r) => r.status === 'failed' || r.status === 'timedOut');
 		if (failures.length > 0) {
 			console.log(`\n${RED}${BOLD}Failures:${RESET}\n`);
 			for (const f of failures) {
@@ -87,11 +86,14 @@ class RSpecReporter implements Reporter {
 		parts.push(`${BOLD}${passed} passed${RESET}`);
 		if (failed > 0) parts.push(`${RED}${BOLD}${failed} failed${RESET}`);
 		if (skipped > 0) parts.push(`${YELLOW}${skipped} skipped${RESET}`);
-		const duration = totalDuration > 60000
-			? `${(totalDuration / 60000).toFixed(1)}m`
-			: `${(totalDuration / 1000).toFixed(1)}s`;
+		const duration =
+			totalDuration > 60000
+				? `${(totalDuration / 60000).toFixed(1)}m`
+				: `${(totalDuration / 1000).toFixed(1)}s`;
 
-		console.log(`${BOLD}${this.results.length} tests${RESET}, ${parts.join(', ')} ${DIM}(${duration})${RESET}`);
+		console.log(
+			`${BOLD}${this.results.length} tests${RESET}, ${parts.join(', ')} ${DIM}(${duration})${RESET}`
+		);
 
 		if (result.status !== 'passed') {
 			process.exitCode = 1;
