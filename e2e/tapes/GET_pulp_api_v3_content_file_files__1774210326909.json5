@@ -1,0 +1,119 @@
+{
+    meta: {
+        createdAt: '2026-03-22T20:12:05.892Z',
+        host: 'http://host.docker.internal:8081',
+        resHumanReadable: true,
+    },
+    req: {
+        headers: {
+            connection: 'keep-alive',
+            'sec-ch-ua-platform': '"Linux"',
+            'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36',
+            'sec-ch-ua': '"Not:A-Brand";v="99", "HeadlessChrome";v="145", "Chromium";v="145"',
+            'accept-language': 'en-US',
+            'sec-ch-ua-mobile': '?0',
+            accept: '*/*',
+            origin: 'http://localhost:5173',
+            'sec-fetch-site': 'same-site',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-dest': 'empty',
+            referer: 'http://localhost:5173/',
+            'accept-encoding': 'gzip, deflate, br, zstd',
+        },
+        url: '/pulp/api/v3/content/file/files/?repository_version=%2Fpulp%2Fapi%2Fv3%2Frepositories%2Ffile%2Ffile%2F019d0a98-7019-765f-8294-4915c8bce457%2Fversions%2F2%2F&limit=100&offset=0',
+        method: 'GET',
+        body: '',
+    },
+    res: {
+        status: 200,
+        headers: {
+            server: [
+                'nginx/1.29.6',
+            ],
+            date: [
+                'Sun, 22 Mar 2026 20:12:06 GMT',
+            ],
+            'content-type': [
+                'application/json',
+            ],
+            'content-length': [
+                '1652',
+            ],
+            connection: [
+                'keep-alive',
+            ],
+            vary: [
+                'Accept',
+            ],
+            allow: [
+                'GET, POST, HEAD, OPTIONS',
+            ],
+            'x-frame-options': [
+                'DENY, DENY',
+            ],
+            'x-content-type-options': [
+                'nosniff, nosniff',
+            ],
+            'referrer-policy': [
+                'same-origin, same-origin',
+            ],
+            'cross-origin-opener-policy': [
+                'same-origin',
+            ],
+            'correlation-id': [
+                '66eface2b23d410386f4ce897383e4f0',
+            ],
+            'access-control-expose-headers': [
+                'Correlation-ID, Content-Length, Content-Range, Docker-Content-Digest',
+            ],
+            'access-control-allow-origin': [
+                '*',
+            ],
+            'access-control-allow-methods': [
+                'GET, POST, PUT, PATCH, DELETE, OPTIONS',
+            ],
+            'access-control-allow-headers': [
+                'Authorization, Content-Type, Accept, X-Requested-With',
+            ],
+        },
+        body: {
+            count: 2,
+            next: null,
+            previous: null,
+            results: [
+                {
+                    pulp_href: '/pulp/api/v3/content/file/files/019d0a98-8f09-7d3d-b96e-30be6bea1612/',
+                    prn: 'prn:file.filecontent:019d0a98-8f09-7d3d-b96e-30be6bea1612',
+                    pulp_created: '2026-03-20T09:34:23.498684Z',
+                    pulp_last_updated: '2026-03-20T09:34:23.498698Z',
+                    pulp_labels: {},
+                    vuln_report: null,
+                    artifact: '/pulp/api/v3/artifacts/019d0a98-8dea-7dc3-a55a-9982d2b13680/',
+                    relative_path: 'data.csv',
+                    md5: null,
+                    sha1: null,
+                    sha224: 'a64c1c681de6154378be5917d5857e76db7cf89bb6908961618fcdc8',
+                    sha256: '15cad54fcfbfd10e625f81ab5698d439958c2eb9c0b2d15e775392fb08068343',
+                    sha384: '1533be16bd2f6a67d52796fa0bbe09a4bbbddb2377d6d7f1d5f7f0bc318beb9af841d47c5d4f702075c6f9a018f5099b',
+                    sha512: '8158888cbd5c202f4c879990163f395e03eef181fd9cc81c88c1e679e3b8c2e3a8a314a7d5cc33bdb7a7f1fc8f4812e898a696ae822c6de146b745779d1349eb',
+                },
+                {
+                    pulp_href: '/pulp/api/v3/content/file/files/019d0a98-82e7-738f-b7a8-b2bfdc0ef0e5/',
+                    prn: 'prn:file.filecontent:019d0a98-82e7-738f-b7a8-b2bfdc0ef0e5',
+                    pulp_created: '2026-03-20T09:34:20.393148Z',
+                    pulp_last_updated: '2026-03-20T09:34:20.393160Z',
+                    pulp_labels: {},
+                    vuln_report: null,
+                    artifact: '/pulp/api/v3/artifacts/019d0a98-81b2-7102-9dc0-04734abb22e4/',
+                    relative_path: 'config.json',
+                    md5: null,
+                    sha1: null,
+                    sha224: 'c3cd660aa0515285944c3ef053c8ddb687c56365bd5ad2dee0ff2bb0',
+                    sha256: 'e43abcf3375244839c012f9633f95862d232a95b00d5bc7348b3098b9fed7f32',
+                    sha384: 'b491c9142540686efa07e25e090562ae3f7c1cac3cb00d730f1aaf251e3e703d19a3ca88de1d7cd5375d14c76346a3c2',
+                    sha512: '0213f898602b6a489de25f20d8d32c3dbf3d6fee0fbe468f89ac803874ac846f8cd239294a78c2bddf3e0988acb8cd3d00e067a981c9c7933b43a42d3b273eae',
+                },
+            ],
+        },
+    },
+}
