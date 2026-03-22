@@ -3,6 +3,7 @@
 	import { Button } from "$lib/components/ui/button";
 	import ThemeToggle from "$lib/components/ThemeToggle.svelte";
 	import { auth } from "$lib/auth.svelte";
+	import { APP_VERSION } from '$lib/version';
 </script>
 
 <nav class="border-b border-border bg-card">
@@ -12,7 +13,7 @@
 		<div class="flex items-center gap-6">
 			<a href="/repositories" class="text-xl font-bold"
 				>PulpHub</a
-			>
+			><span class="text-xs text-muted-foreground">{APP_VERSION}</span>
 			<div class="flex items-center gap-1">
 				<Button
 					variant={$page.url.pathname ===
