@@ -5,10 +5,19 @@
 	import CopyBlock from '$lib/components/CopyBlock.svelte';
 	import Loader from '@lucide/svelte/icons/loader';
 	import { auth } from '$lib/auth.svelte';
-	import { getNpmDistribution, getNpmRemote, type NpmDistribution, type NpmRemote } from '$lib/pulp';
+	import {
+		getNpmDistribution,
+		getNpmRemote,
+		getNpmRepository,
+		getNpmPackages,
+		type NpmDistribution,
+		type NpmRemote,
+		type NpmPackage
+	} from '$lib/pulp';
 
 	let distribution = $state<NpmDistribution | null>(null);
 	let remote = $state<NpmRemote | null>(null);
+	let packages = $state<NpmPackage[]>([]);
 	let loading = $state(true);
 	let error = $state('');
 	let notFound = $state(false);
@@ -35,6 +44,12 @@
 
 			if (dist.remote) {
 				remote = await getNpmRemote(dist.remote);
+			}
+
+			if (dist.repository) {
+				const repo = await getNpmRepository(dist.repository);
+				const pkgData = await getNpmPackages(repo.latest_version_href);
+				packages = pkgData.results;
 			}
 		} catch (e) {
 			error = e instanceof Error ? e.message : 'Unknown error';
@@ -85,5 +100,29 @@
 
 			<CopyBlock label="yarn (.yarnrc.yml)" code={'npmRegistryServer: "' + registryUrl + '"'} />
 		</div>
+
+		{#if packages.length > 0}
+			<div class="space-y-4">
+				<h2 class="text-lg font-semibold">Cached packages</h2>
+				<div class="rounded-md border">
+					<table class="w-full text-sm">
+						<thead>
+							<tr class="border-b bg-muted/50">
+								<th class="px-4 py-2 text-left font-medium">Package</th>
+								<th class="px-4 py-2 text-left font-medium">Version</th>
+							</tr>
+						</thead>
+						<tbody>
+							{#each packages as pkg (pkg.pulp_href)}
+								<tr class="border-b last:border-0">
+									<td class="px-4 py-2 font-mono">{pkg.name}</td>
+									<td class="px-4 py-2 text-muted-foreground">{pkg.version}</td>
+								</tr>
+							{/each}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		{/if}
 	{/if}
 </div>

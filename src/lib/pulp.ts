@@ -275,6 +275,13 @@ export interface NpmRepository {
 	remote: string | null;
 }
 
+export interface NpmPackage {
+	pulp_href: string;
+	name: string;
+	version: string;
+	relative_path: string;
+}
+
 export interface PulpStatus {
 	versions: { component: string; version: string }[];
 }
@@ -360,6 +367,28 @@ export async function getNpmDistribution(name: string): Promise<NpmDistribution 
 	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
 	const data: PulpPaginated<NpmDistribution> = await res.json();
 	return data.results[0] ?? null;
+}
+
+/**
+ * Get an npm repository by href.
+ */
+export async function getNpmRepository(href: string): Promise<NpmRepository> {
+	const res = await pulpFetch(`${auth.pulpUrl}${href}`);
+	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
+	return res.json();
+}
+
+/**
+ * List npm packages in a repository version.
+ */
+export async function getNpmPackages(
+	repoVersionHref: string
+): Promise<PulpPaginated<NpmPackage>> {
+	const res = await pulpFetch(
+		`${auth.pulpUrl}/pulp/api/v3/content/npm/packages/?repository_version=${repoVersionHref}&limit=100`
+	);
+	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
+	return res.json();
 }
 
 /**
