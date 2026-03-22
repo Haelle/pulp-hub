@@ -15,7 +15,7 @@
 
 	$effect(() => {
 		if (auth.authenticated) {
-			goto('/repositories');
+			goto('/images');
 		}
 	});
 
@@ -32,7 +32,7 @@
 
 		try {
 			await auth.login(url, username, password);
-			goto('/repositories');
+			goto('/images');
 		} catch (e) {
 			error = e instanceof Error ? e.message : 'Unknown error';
 		} finally {

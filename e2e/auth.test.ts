@@ -10,12 +10,12 @@ async function login(page: Page) {
 	await page.fill('input[name="username"]', PULP_USER);
 	await page.fill('input[name="password"]', PULP_PASS);
 	await page.click('button[type="submit"]');
-	await expect(page).toHaveURL('/repositories');
+	await expect(page).toHaveURL('/images');
 }
 
 test.describe('Login', () => {
 	test('redirects to / when accessing protected page without session', async ({ page }) => {
-		await page.goto('/repositories');
+		await page.goto('/images');
 		await expect(page).toHaveURL('/');
 		await expect(page.locator('[data-slot="card-title"]')).toContainText('PulpHub');
 	});
@@ -41,7 +41,7 @@ test.describe('Login', () => {
 	test('logs in and redirects to repositories', async ({ page }) => {
 		await login(page);
 
-		await expect(page.locator('h1')).toContainText('Repositories');
+		await expect(page.locator('h1')).toContainText('Images');
 		await expect(page.locator('nav')).toContainText(PULP_URL);
 	});
 });
@@ -73,7 +73,7 @@ test.describe('Logout', () => {
 		await page.click('button:has-text("Logout")');
 		await expect(page).toHaveURL('/');
 
-		await page.goto('/repositories');
+		await page.goto('/images');
 		await expect(page).toHaveURL('/');
 	});
 });
