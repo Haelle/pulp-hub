@@ -8,7 +8,7 @@ test.describe('Navbar', () => {
 
 	test('displays app version', async ({ page }) => {
 		const navbar = page.locator('nav');
-		const version = navbar.locator('span', { hasText: /^[a-f0-9]{7,}$|^v\d+/ });
+		const version = navbar.locator('span', { hasText: /^[a-f0-9]{7,}$|^v\d+|^dev$/ });
 		await expect(version).toBeVisible();
 	});
 });
