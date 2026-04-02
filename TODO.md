@@ -4,6 +4,180 @@
 
 - afficher les content guards et rôles dans PulpHub ?
 
+## Dashboard
+
+Page d'accueil `/dashboard` avec vue d'ensemble de l'instance Pulp.
+
+**Contenu envisagé :**
+
+- Compteurs : distributions (container, file, npm, python), pull-through caches, utilisateurs
+- État de l'instance (version Pulp, plugins installés — déjà dispo via `GET /pulp/api/v3/status/`)
+- Raccourcis vers les sections principales
+- Éventuellement : tâches récentes en erreur (cf. section Tâches ci-dessous)
+
+**API :**
+
+- `GET /pulp/api/v3/status/` — version et plugins (déjà utilisé dans `/status`)
+- `GET /pulp/api/v3/distributions/container/container/?limit=0` — `count` uniquement
+- `GET /pulp/api/v3/distributions/file/file/?limit=0` — idem
+- `GET /pulp/api/v3/distributions/npm/npm/?limit=0` — idem
+- `GET /pulp/api/v3/distributions/python/pypi/?limit=0` — idem
+- `GET /pulp/api/v3/distributions/container/pull-through/?limit=0` — idem
+- `GET /pulp/api/v3/users/?limit=0` — idem
+- `GET /pulp/api/v3/tasks/?state=failed&ordering=-finished_at&limit=5` — dernières tâches en erreur
+
+Astuce : `?limit=0` retourne `count` sans charger les résultats → requêtes très légères, parallélisables.
+
+**CLI :** `pulp status`
+
+## Tâches et Workers
+
+Page `/tasks` listant les tâches async Pulp (sync, publish, delete, etc.) et l'état des workers.
+
+**Tâches — contenu :**
+
+- Liste paginée avec filtres : état (`waiting`, `running`, `completed`, `failed`, `canceled`), nom
+- Colonnes : nom, état (badge couleur), worker, date de début/fin, durée
+- Détail d'une tâche : progress reports, error message, resources créées/affectées, parent/child tasks
+- Lien vers la ressource créée quand c'est une distribution/publication
+
+**API Tâches :**
+
+- `GET /pulp/api/v3/tasks/?limit=20&offset=0&ordering=-pulp_created` — liste paginée
+- `GET /pulp/api/v3/tasks/?state=failed` — filtre par état
+- `GET /pulp/api/v3/tasks/{task_href}/` — détail (progress_reports, error, created_resources)
+- Swagger : https://pulpproject.org/pulpcore/restapi/ (section Task)
+
+**Workers — contenu :**
+
+- Liste des workers avec heartbeat et tâche en cours
+- Badge online/offline basé sur `last_heartbeat` (considérer offline si > 60s)
+
+**API Workers :**
+
+- `GET /pulp/api/v3/workers/` — liste complète
+- Champs utiles : `name`, `last_heartbeat`, `current_task`
+
+**Task Schedules (optionnel) :**
+
+- `GET /pulp/api/v3/task-schedules/` — tâches planifiées (dispatch_interval, next_dispatch)
+
+**CLI :** `pulp task list`, `pulp task show --href <href>`, `pulp worker list`
+
+## Suppression d'images / dépôts
+
+Ajouter des actions de suppression (avec confirmation modale) sur les pages existantes.
+PulpHub reste orienté lecture, mais la suppression est une opération de maintenance courante.
+
+**Attention :** les suppressions sont des tâches async dans Pulp — afficher le statut de la tâche après déclenchement (lien vers la vue tâches).
+
+### Suppression d'une distribution container (+ remote + repository)
+
+Supprimer une distribution container implique généralement de nettoyer les 3 ressources liées.
+L'ordre est important : distribution → repository → remote (sinon Pulp refuse si des dépendances existent).
+
+**API :**
+
+1. `DELETE /pulp/api/v3/distributions/container/container/{pulp_id}/` — supprime la distribution
+2. `DELETE /pulp/api/v3/repositories/container/container/{pulp_id}/` — supprime le repository
+3. `DELETE /pulp/api/v3/remotes/container/container/{pulp_id}/` — supprime le remote
+
+Chaque DELETE retourne une tâche async : `{ "task": "/pulp/api/v3/tasks/{uuid}/" }`.
+Il faut attendre la fin de chaque tâche avant de passer à la suivante (poll sur `GET /pulp/api/v3/tasks/{uuid}/` jusqu'à `state == "completed"`).
+
+**UX :** modale de confirmation avec le nom de la distribution, checkboxes optionnelles "supprimer aussi le repository" et "supprimer aussi le remote". Afficher le résultat (succès/erreur + lien tâche).
+
+**CLI :** `pulp container distribution destroy --name <name>`, `pulp container repository destroy --name <name>`, `pulp container remote destroy --name <name>`
+
+### Suppression d'une distribution file / npm / python
+
+Même pattern :
+
+- `DELETE /pulp/api/v3/distributions/file/file/{id}/`
+- `DELETE /pulp/api/v3/distributions/npm/npm/{id}/`
+- `DELETE /pulp/api/v3/distributions/python/pypi/{id}/`
+
+### Suppression d'un pull-through cache
+
+- `DELETE /pulp/api/v3/distributions/container/pull-through/{id}/`
+- `DELETE /pulp/api/v3/remotes/container/pull-through/{id}/`
+
+### Nettoyage des orphelins
+
+Après suppression, proposer un lien vers le nettoyage des orphelins (artifacts non référencés) :
+
+- `POST /pulp/api/v3/orphans/cleanup/` avec body `{ "orphan_protection_time": 0 }`
+- **CLI :** `pulp orphan cleanup`
+
+### Implémentation
+
+- Étendre `pulpFetch` pour supporter les méthodes `DELETE` et `POST` (actuellement GET only)
+- Ajouter un helper `pulpDelete(href)` et un `pulpPost(href, body)`
+- Composant `DeleteConfirmModal.svelte` réutilisable (nom de la ressource, checkboxes optionnelles, état de la tâche)
+- Composant `TaskStatus.svelte` pour afficher le polling d'une tâche en cours
+
+## Gestion des droits — CRUD Users et RBAC
+
+### CRUD Utilisateurs
+
+Étendre la page `/users` existante (actuellement lecture seule) avec création, modification et suppression.
+
+**API :**
+
+- `GET /pulp/api/v3/users/?limit=20&offset=0` — liste (déjà implémenté)
+- `POST /pulp/api/v3/users/` — créer un utilisateur
+  Body : `{ "username", "password", "email", "first_name", "last_name", "is_staff", "is_active" }`
+- `PATCH /pulp/api/v3/users/{id}/` — modifier (mêmes champs, tous optionnels)
+- `DELETE /pulp/api/v3/users/{id}/` — supprimer
+
+**CLI :** `pulp user create --username <u> --password <p>`, `pulp user update --username <u> --email <e>`, `pulp user destroy --username <u>`
+
+### Groupes
+
+- `GET /pulp/api/v3/groups/` — liste
+- `POST /pulp/api/v3/groups/` — créer (`{ "name" }`)
+- `PATCH /pulp/api/v3/groups/{id}/` — modifier
+- `DELETE /pulp/api/v3/groups/{id}/` — supprimer
+- `POST /pulp/api/v3/groups/{id}/users/` — ajouter un utilisateur au groupe (`{ "username" }`)
+- `DELETE /pulp/api/v3/groups/{id}/users/{user_id}/` — retirer un utilisateur
+
+**CLI :** `pulp group create --name <g>`, `pulp group user add --group <g> --username <u>`
+
+### Rôles (RBAC)
+
+Pulp utilise un système RBAC basé sur des rôles. Chaque rôle contient un ensemble de permissions.
+
+**API Rôles :**
+
+- `GET /pulp/api/v3/roles/?limit=100` — liste des rôles (avec `locked` = rôle système non modifiable)
+- `POST /pulp/api/v3/roles/` — créer (`{ "name", "permissions": ["core.view_task", ...] }`)
+- `PATCH /pulp/api/v3/roles/{id}/` — modifier
+- `DELETE /pulp/api/v3/roles/{id}/` — supprimer (impossible si `locked`)
+
+**Assignation de rôles :**
+
+- Chaque objet Pulp (distribution, repository, remote, namespace) a des endpoints d'assignation :
+  - `POST {object_href}add_role/` — body : `{ "role": "container.containerrepository_owner", "users": ["admin"], "groups": [] }`
+  - `POST {object_href}remove_role/` — même format
+  - `GET {object_href}list_roles/` — rôles assignés sur cet objet
+  - `GET {object_href}my_permissions/` — permissions de l'utilisateur courant
+
+**Swagger :** https://pulpproject.org/pulpcore/restapi/ (sections Role, User, Group)
+
+**CLI :** `pulp role list`, `pulp role create --name <r> --permission core.view_task`
+
+### Pages envisagées
+
+- `/users` — étendre la page existante avec boutons créer/modifier/supprimer
+- `/groups` — nouvelle page avec liste, CRUD, gestion des membres
+- `/roles` — nouvelle page avec liste des rôles, permissions, indicateur locked
+
+### Implémentation
+
+- Étendre `pulpFetch` avec support POST/PATCH/DELETE (comme pour la section suppression)
+- Formulaires avec validation côté client (username unique, password requis à la création)
+- Les rôles `locked` sont en lecture seule (pas de bouton modifier/supprimer)
+
 ## Infra — Déploiement prod
 
 - configurer Pulp CIISO en pull-through et mettre à jour les dépôts pour pointer dessus
