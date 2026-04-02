@@ -6,7 +6,14 @@
 	import Loader from '@lucide/svelte/icons/loader';
 	import ListTodo from '@lucide/svelte/icons/list-todo';
 	import Cpu from '@lucide/svelte/icons/cpu';
-	import { getTasks, getWorkers, type PulpPaginated, type PulpTask, type PulpWorker, type TaskState } from '$lib/pulp';
+	import {
+		getTasks,
+		getWorkers,
+		type PulpPaginated,
+		type PulpTask,
+		type PulpWorker,
+		type TaskState
+	} from '$lib/pulp';
 	import { hrefToId, formatDuration } from '$lib/utils';
 
 	type Tab = 'tasks' | 'workers';
@@ -172,11 +179,14 @@
 
 		<!-- State filter buttons -->
 		<div class="flex flex-wrap gap-1">
-			{#each states as s}
+			{#each states as s (s ?? 'all')}
 				<Button
 					variant={stateFilter === s ? 'secondary' : 'ghost'}
 					size="sm"
-					onclick={() => { stateFilter = s; offset = 0; }}
+					onclick={() => {
+						stateFilter = s;
+						offset = 0;
+					}}
 				>
 					{stateLabel(s)}
 				</Button>
@@ -216,7 +226,10 @@
 									</a>
 								</td>
 								<td class="px-4 py-2">
-									<Badge variant={stateBadgeVariant(task.state)} class={stateBadgeClass(task.state)}>
+									<Badge
+										variant={stateBadgeVariant(task.state)}
+										class={stateBadgeClass(task.state)}
+									>
 										{task.state}
 									</Badge>
 								</td>
@@ -259,7 +272,6 @@
 				<p>No tasks found</p>
 			</div>
 		{/if}
-
 	{:else}
 		<!-- Workers tab -->
 		<CliHint command="pulp worker list" />
@@ -287,7 +299,9 @@
 								<td class="px-4 py-2 font-mono text-xs">{worker.name}</td>
 								<td class="px-4 py-2">
 									{#if isWorkerOnline(worker.last_heartbeat)}
-										<Badge variant="secondary" class="bg-green-600 text-white border-transparent">Online</Badge>
+										<Badge variant="secondary" class="bg-green-600 text-white border-transparent"
+											>Online</Badge
+										>
 									{:else}
 										<Badge variant="destructive">Offline</Badge>
 									{/if}
