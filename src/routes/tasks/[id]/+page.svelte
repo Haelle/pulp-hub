@@ -107,7 +107,8 @@
 					{task.state}
 				</Badge>
 			</div>
-			<a href="/tasks" class="text-sm text-muted-foreground hover:underline">&larr; Back to tasks</a>
+			<a href="/tasks" class="text-sm text-muted-foreground hover:underline">&larr; Back to tasks</a
+			>
 		</div>
 
 		<CliHint command="pulp task show --href {task.pulp_href}" />
@@ -152,11 +153,7 @@
 				<Alert.Description>
 					<p class="mb-2">{task.error.description}</p>
 					{#if task.error.traceback}
-						<Button
-							variant="outline"
-							size="sm"
-							onclick={() => (tracebackOpen = !tracebackOpen)}
-						>
+						<Button variant="outline" size="sm" onclick={() => (tracebackOpen = !tracebackOpen)}>
 							{#if tracebackOpen}
 								<ChevronDown class="size-3 mr-1" />
 							{:else}
@@ -165,7 +162,8 @@
 							Traceback
 						</Button>
 						{#if tracebackOpen}
-							<pre class="mt-2 overflow-x-auto rounded bg-destructive/10 p-3 text-xs">{task.error.traceback}</pre>
+							<pre class="mt-2 overflow-x-auto rounded bg-destructive/10 p-3 text-xs">{task.error
+									.traceback}</pre>
 						{/if}
 					{/if}
 				</Alert.Description>
@@ -189,7 +187,7 @@
 								</tr>
 							</thead>
 							<tbody>
-								{#each task.progress_reports as report}
+								{#each task.progress_reports as report (report.code)}
 									<tr class="border-b last:border-0">
 										<td class="px-4 py-2">{report.message}</td>
 										<td class="px-4 py-2">
@@ -197,7 +195,9 @@
 										</td>
 										<td class="px-4 py-2 font-mono text-xs">
 											{#if report.total !== null}
-												{report.done ?? 0} / {report.total}{report.suffix ? ` ${report.suffix}` : ''}
+												{report.done ?? 0} / {report.total}{report.suffix
+													? ` ${report.suffix}`
+													: ''}
 											{:else}
 												—
 											{/if}
@@ -219,7 +219,7 @@
 				</Card.Header>
 				<Card.Content>
 					<ul class="space-y-1 text-sm">
-						{#each task.created_resources as href}
+						{#each task.created_resources as href (href)}
 							{@const link = resourceToLink(href)}
 							<li class="font-mono text-xs break-all">
 								{#if link}
@@ -245,7 +245,7 @@
 				</Card.Header>
 				<Card.Content>
 					<ul class="space-y-1">
-						{#each task.reserved_resources_record as href}
+						{#each task.reserved_resources_record as href (href)}
 							<li class="font-mono text-xs text-muted-foreground break-all">{href}</li>
 						{/each}
 					</ul>
@@ -263,7 +263,10 @@
 					{#if task.parent_task}
 						<div>
 							<span class="text-muted-foreground">Parent:</span>
-							<a href="/tasks/{hrefToId(task.parent_task)}" class="font-mono text-xs hover:underline ml-1">
+							<a
+								href="/tasks/{hrefToId(task.parent_task)}"
+								class="font-mono text-xs hover:underline ml-1"
+							>
 								{hrefToId(task.parent_task)}
 							</a>
 						</div>
@@ -272,7 +275,7 @@
 						<div>
 							<span class="text-muted-foreground">Children:</span>
 							<ul class="mt-1 space-y-1">
-								{#each task.child_tasks as child}
+								{#each task.child_tasks as child (child)}
 									<li>
 										<a href="/tasks/{hrefToId(child)}" class="font-mono text-xs hover:underline">
 											{hrefToId(child)}

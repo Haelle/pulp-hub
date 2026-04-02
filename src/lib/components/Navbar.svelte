@@ -52,7 +52,7 @@
 						{/snippet}
 					</DropdownMenu.Trigger>
 					<DropdownMenu.Content>
-						{#each repoItems as item}
+						{#each repoItems as item (item.href)}
 							<DropdownMenu.Item onclick={() => goto(item.href)}>
 								{item.label}
 							</DropdownMenu.Item>
@@ -80,7 +80,7 @@
 						{/snippet}
 					</DropdownMenu.Trigger>
 					<DropdownMenu.Content>
-						{#each adminItems as item}
+						{#each adminItems as item (item.href)}
 							<DropdownMenu.Item onclick={() => goto(item.href)}>
 								{item.label}
 							</DropdownMenu.Item>
