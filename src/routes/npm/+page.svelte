@@ -83,7 +83,7 @@
 	{:else}
 		<div class="flex flex-wrap items-center gap-4">
 			<Input placeholder="Filter packages..." bind:value={filter} class="max-w-sm" />
-			<div class="flex items-center gap-3">
+			<div class="flex flex-wrap items-center gap-3">
 				{#each distributions as dist (dist)}
 					<label class="flex items-center gap-1.5 text-sm cursor-pointer">
 						<input

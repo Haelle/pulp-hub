@@ -75,7 +75,7 @@
 	{:else}
 		<div class="flex flex-wrap items-center gap-4">
 			<Input placeholder="Filter images..." bind:value={filter} class="max-w-sm" />
-			<div class="flex items-center gap-3">
+			<div class="flex flex-wrap items-center gap-3">
 				{#each sources as source (source)}
 					<label class="flex items-center gap-1.5 text-sm cursor-pointer">
 						<input
