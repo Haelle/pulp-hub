@@ -18,6 +18,7 @@
 
 	const adminItems = [
 		{ label: 'Status', href: '/status' },
+		{ label: 'Tasks', href: '/tasks' },
 		{ label: 'Users', href: '/users' }
 	];
 

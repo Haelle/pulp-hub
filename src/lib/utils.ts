@@ -55,6 +55,24 @@ export function quayUrl(distributionName: string): string | null {
  * Derive an upstream registry URL from a distribution name.
  * Returns { url, label } or null.
  */
+export function hrefToId(href: string): string {
+	return href.split('/').filter(Boolean).pop() ?? href;
+}
+
+export function formatDuration(start: string | null, end: string | null): string {
+	if (!start || !end) return '—';
+	const ms = new Date(end).getTime() - new Date(start).getTime();
+	if (ms < 1000) return `${ms}ms`;
+	const secs = Math.floor(ms / 1000);
+	if (secs < 60) return `${secs}s`;
+	const mins = Math.floor(secs / 60);
+	const remSecs = secs % 60;
+	if (mins < 60) return `${mins}m ${remSecs}s`;
+	const hours = Math.floor(mins / 60);
+	const remMins = mins % 60;
+	return `${hours}h ${remMins}m`;
+}
+
 export function upstreamRegistryUrl(
 	distributionName: string
 ): { url: string; label: string } | null {

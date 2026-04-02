@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 import { login } from './helpers/login';
 
 const REPO_TRIGGER = /^(Repositories|Images|Files|npm|PyPI)$/;
-const ADMIN_TRIGGER = /^(Admin|Status|Users)$/;
+const ADMIN_TRIGGER = /^(Admin|Status|Tasks|Users)$/;
 
 test.describe('Navbar', () => {
 	test.beforeEach(async ({ page }) => {
@@ -22,9 +22,9 @@ test.describe('Navbar', () => {
 		}
 	});
 
-	test('Admin dropdown contains Status and Users', async ({ page }) => {
+	test('Admin dropdown contains Status, Tasks and Users', async ({ page }) => {
 		await page.getByRole('button', { name: ADMIN_TRIGGER }).click();
-		for (const label of ['Status', 'Users']) {
+		for (const label of ['Status', 'Tasks', 'Users']) {
 			await expect(page.getByRole('menuitem', { name: label, exact: true })).toBeVisible();
 		}
 	});

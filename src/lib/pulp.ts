@@ -576,3 +576,75 @@ export async function getUsers(limit = 20, offset = 0): Promise<PulpPaginated<Pu
 	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
 	return res.json();
 }
+
+// ── Tasks & Workers ─────────────────────────────────────────
+
+export type TaskState =
+	| 'waiting'
+	| 'running'
+	| 'skipped'
+	| 'completed'
+	| 'failed'
+	| 'canceled'
+	| 'canceling';
+
+export interface PulpProgressReport {
+	message: string;
+	code: string;
+	state: string;
+	total: number | null;
+	done: number | null;
+	suffix: string | null;
+}
+
+export interface PulpTask {
+	pulp_href: string;
+	pulp_created: string;
+	name: string;
+	state: TaskState;
+	started_at: string | null;
+	finished_at: string | null;
+	worker: string | null;
+	logging_cid: string;
+	error: { traceback: string; description: string } | null;
+	progress_reports: PulpProgressReport[];
+	created_resources: string[];
+	reserved_resources_record: string[];
+	parent_task: string | null;
+	child_tasks: string[];
+	task_group: string | null;
+}
+
+export interface PulpWorker {
+	pulp_href: string;
+	name: string;
+	last_heartbeat: string;
+	current_task: string | null;
+}
+
+export async function getTasks(
+	limit = 20,
+	offset = 0,
+	state?: TaskState,
+	name?: string,
+	ordering = '-pulp_created'
+): Promise<PulpPaginated<PulpTask>> {
+	const params = new URLSearchParams({ limit: String(limit), offset: String(offset), ordering });
+	if (state) params.set('state', state);
+	if (name) params.set('name__contains', name);
+	const res = await pulpFetch(`${auth.pulpUrl}/pulp/api/v3/tasks/?${params}`);
+	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
+	return res.json();
+}
+
+export async function getTask(href: string): Promise<PulpTask> {
+	const res = await pulpFetch(`${auth.pulpUrl}${href}`);
+	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
+	return res.json();
+}
+
+export async function getWorkers(): Promise<PulpPaginated<PulpWorker>> {
+	const res = await pulpFetch(`${auth.pulpUrl}/pulp/api/v3/workers/?limit=100`);
+	if (!res.ok) throw new Error(`Pulp API error: ${res.status}`);
+	return res.json();
+}
