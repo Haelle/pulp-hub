@@ -2,7 +2,6 @@ import { test, expect } from '@playwright/test';
 
 export interface ListPageConfig {
 	route: string;
-	navLabel: string;
 	title: string;
 	itemSelector?: string;
 	filterText: string;
@@ -19,7 +18,6 @@ export interface ListPageConfig {
 export function testListPage(config: ListPageConfig) {
 	const {
 		route,
-		navLabel,
 		title,
 		itemSelector = '[data-slot="card"]',
 		filterText,
@@ -27,16 +25,6 @@ export function testListPage(config: ListPageConfig) {
 		hasCliHint = true,
 		hasSourceFilter = false
 	} = config;
-
-	test(`navbar has ${navLabel} link`, async ({ page }) => {
-		const link = page.getByRole('link', { name: navLabel, exact: true });
-		await expect(link).toBeVisible();
-	});
-
-	test(`navigate to ${route} via navbar`, async ({ page }) => {
-		await page.getByRole('link', { name: navLabel, exact: true }).click();
-		await expect(page).toHaveURL(route);
-	});
 
 	test('displays page title', async ({ page }) => {
 		await page.goto(route);

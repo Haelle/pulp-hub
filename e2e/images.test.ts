@@ -9,7 +9,6 @@ test.describe('Images page', () => {
 
 	testListPage({
 		route: '/images',
-		navLabel: 'Images',
 		title: 'Images',
 		filterText: 'alpine',
 		detailUrlPattern: /\/images\//,

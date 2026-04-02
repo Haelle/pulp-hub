@@ -9,7 +9,6 @@ test.describe('Pull-through list page', () => {
 
 	testListPage({
 		route: '/pull-through',
-		navLabel: 'Pull-through',
 		title: 'Pull-through',
 		filterText: 'docker',
 		detailUrlPattern: /\/pull-through\//,

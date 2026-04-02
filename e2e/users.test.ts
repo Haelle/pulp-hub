@@ -9,7 +9,6 @@ test.describe('Users page', () => {
 
 	testListPage({
 		route: '/users',
-		navLabel: 'Users',
 		title: 'Users',
 		itemSelector: 'table tbody tr',
 		filterText: 'captain',

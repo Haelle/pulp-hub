@@ -9,7 +9,6 @@ test.describe('PyPI packages list page', () => {
 
 	testListPage({
 		route: '/python',
-		navLabel: 'PyPI',
 		title: 'PyPI',
 		itemSelector: '[data-testid="python-package-card"]',
 		filterText: 'requests',

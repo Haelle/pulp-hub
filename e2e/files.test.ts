@@ -9,7 +9,6 @@ test.describe('Files page', () => {
 
 	testListPage({
 		route: '/files',
-		navLabel: 'Files',
 		title: 'Files',
 		filterText: 'test-docs',
 		detailUrlPattern: /\/files\//,

@@ -9,7 +9,6 @@ test.describe('npm packages list page', () => {
 
 	testListPage({
 		route: '/npm',
-		navLabel: 'npm',
 		title: 'npm',
 		itemSelector: '[data-testid="npm-package-card"]',
 		filterText: 'is-odd',
