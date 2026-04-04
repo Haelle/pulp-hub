@@ -4,6 +4,8 @@ const TALKBACK_PORT = parseInt(process.env.TALKBACK_PORT ?? '8787');
 
 export default defineConfig({
 	testDir: 'e2e',
+	timeout: 15000,
+	fullyParallel: true,
 	reporter: [['./e2e/reporters/structured-reporter.ts']],
 	webServer: [
 		{
@@ -11,9 +13,7 @@ export default defineConfig({
 			port: TALKBACK_PORT,
 			reuseExistingServer: true,
 			timeout: 5000,
-			env: {
-				TALKBACK_RECORD: process.env.TALKBACK_RECORD ?? 'NEW'
-			}
+			env: {}
 		},
 		{
 			command: 'npm run dev',

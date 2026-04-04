@@ -35,8 +35,6 @@ jobs:
 
       - name: Capture screenshots
         run: npx playwright test e2e/screenshots.test.ts
-        env:
-          TALKBACK_RECORD: DISABLED
 
       - uses: actions/configure-pages@v5
 

@@ -127,12 +127,14 @@ export const auth = {
 	): Promise<void> {
 		const base = url.replace(/\/+$/, '');
 
-		// Try session auth first
+		// Try session auth first, fall back to Basic Auth on any failure
 		const supportsSession = options?.forceBasicAuth ? false : await detectSessionAuth(base);
 		if (supportsSession) {
-			const success = await sessionLogin(base, user, pass);
-			if (success) {
-				// Validate the session works on a protected endpoint
+			try {
+				const success = await sessionLogin(base, user, pass);
+				if (!success) {
+					throw new Error('Invalid credentials');
+				}
 				const check = await fetch(
 					`${base}/pulp/api/v3/distributions/container/container/?limit=0`,
 					{ credentials: 'include' }
@@ -143,11 +145,17 @@ export const auth = {
 					password = '';
 					authMode = 'session';
 					authenticated = true;
-					saveToStorage({ pulpUrl: base, username: user, password: '', authMode: 'session' });
+					saveToStorage({
+						pulpUrl: base,
+						username: user,
+						password: '',
+						authMode: 'session'
+					});
 					return;
 				}
-			} else {
-				throw new Error('Invalid credentials');
+			} catch (e) {
+				// Invalid credentials → propagate, other errors → fall through to Basic Auth
+				if (e instanceof Error && e.message === 'Invalid credentials') throw e;
 			}
 		}
 

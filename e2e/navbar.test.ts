@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { login, loginBasicAuth } from './helpers/login';
+import { login, loginBasicAuth, PULP_URL, PULP_USER, PULP_PASS } from './helpers/login';
 
 const REPO_TRIGGER = /^(Repositories|Images|Files|npm|PyPI)$/;
 const ADMIN_TRIGGER = /^(Admin|Status|Tasks|Users)$/;
@@ -50,23 +50,17 @@ test.describe('Navbar', () => {
 		await expect(page).toHaveURL('/pull-through');
 	});
 
-	test('displays auth badge with username and auth mode', async ({ page }) => {
+	test('displays Session badge and popover', async ({ page }) => {
 		const navbar = page.locator('nav');
 		const badge = navbar.locator('[data-testid="auth-badge"]');
 		await expect(badge).toBeVisible();
 		await expect(badge).toContainText('admin');
-		// Talkback supports session auth, so badge shows "Session"
 		await expect(badge).toContainText('Session');
-	});
 
-	test('opens security popover on help icon click', async ({ page }) => {
-		const navbar = page.locator('nav');
-		const helpButton = navbar.locator('[data-testid="auth-help"]');
-		await helpButton.click();
-
+		await navbar.locator('[data-testid="auth-help"]').click();
 		const popover = page.locator('[data-testid="auth-popover"]');
 		await expect(popover).toBeVisible();
-		await expect(popover).toContainText('Session Auth');
+		await expect(popover).toContainText('Session');
 	});
 
 	test('closes security popover when clicking elsewhere', async ({ page }) => {
@@ -90,5 +84,27 @@ test.describe('Navbar (Basic Auth)', () => {
 		await expect(badge).toBeVisible();
 		await expect(badge).toContainText('admin');
 		await expect(badge).toContainText('Basic Auth');
+	});
+});
+
+test.describe('Navbar (Session Auth)', () => {
+	test('displays Session badge and popover', async ({ page }) => {
+		await page.goto('/');
+		await page.fill('input[name="url"]', PULP_URL);
+		await page.fill('input[name="username"]', PULP_USER);
+		await page.fill('input[name="password"]', PULP_PASS);
+		await page.click('button[type="submit"]');
+		await expect(page).toHaveURL('/images');
+
+		const navbar = page.locator('nav');
+		const badge = navbar.locator('[data-testid="auth-badge"]');
+		await expect(badge).toBeVisible();
+		await expect(badge).toContainText('admin');
+		await expect(badge).toContainText('Session');
+
+		await navbar.locator('[data-testid="auth-help"]').click();
+		const popover = page.locator('[data-testid="auth-popover"]');
+		await expect(popover).toBeVisible();
+		await expect(popover).toContainText('Session Auth');
 	});
 });
