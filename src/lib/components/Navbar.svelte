@@ -3,11 +3,13 @@
 	import { goto } from '$app/navigation';
 	import { Button } from '$lib/components/ui/button';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu';
+	import { Badge } from '$lib/components/ui/badge';
+	import * as Popover from '$lib/components/ui/popover';
 	import ThemeToggle from '$lib/components/ThemeToggle.svelte';
 	import { auth } from '$lib/auth.svelte';
 	import { APP_VERSION } from '$lib/version';
-
 	import ChevronDown from '@lucide/svelte/icons/chevron-down';
+	import CircleHelp from '@lucide/svelte/icons/circle-help';
 
 	const repoItems = [
 		{ label: 'Images', href: '/images' },
@@ -92,6 +94,27 @@
 
 		<div class="flex items-center gap-3">
 			<span class="text-sm text-muted-foreground">{auth.pulpUrl}</span>
+			<Badge variant="outline" data-testid="auth-badge" class="gap-1">
+				{auth.username} · Basic Auth
+				<Popover.Root>
+					<Popover.Trigger data-testid="auth-help" class="inline-flex cursor-pointer">
+						<CircleHelp class="h-3.5 w-3.5 text-muted-foreground" />
+					</Popover.Trigger>
+					<Popover.Portal>
+						<Popover.Content data-testid="auth-popover" class="w-80 text-sm">
+							<p class="font-semibold mb-1">Basic Auth</p>
+							<p class="text-muted-foreground mb-2">
+								Les credentials sont envoyés encodés en base64 à chaque requête.
+								Ce mode est moins sécurisé qu'un token d'authentification.
+							</p>
+							<p class="text-muted-foreground">
+								Recommandation : activez <code class="text-xs bg-muted px-1 py-0.5 rounded">AUTH_TOKEN</code>
+								sur votre serveur Pulp pour une meilleure sécurité.
+							</p>
+						</Popover.Content>
+					</Popover.Portal>
+				</Popover.Root>
+			</Badge>
 			<ThemeToggle />
 			<Button variant="outline" size="sm" onclick={() => auth.logout()}>Logout</Button>
 		</div>
