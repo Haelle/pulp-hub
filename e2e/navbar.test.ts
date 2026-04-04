@@ -50,12 +50,13 @@ test.describe('Navbar', () => {
 		await expect(page).toHaveURL('/pull-through');
 	});
 
-	test('displays auth badge with username and Basic Auth', async ({ page }) => {
+	test('displays auth badge with username and auth mode', async ({ page }) => {
 		const navbar = page.locator('nav');
 		const badge = navbar.locator('[data-testid="auth-badge"]');
 		await expect(badge).toBeVisible();
 		await expect(badge).toContainText('admin');
-		await expect(badge).toContainText('Basic Auth');
+		// Talkback supports session auth, so badge shows "Session"
+		await expect(badge).toContainText('Session');
 	});
 
 	test('opens security popover on help icon click', async ({ page }) => {
@@ -65,7 +66,7 @@ test.describe('Navbar', () => {
 
 		const popover = page.locator('[data-testid="auth-popover"]');
 		await expect(popover).toBeVisible();
-		await expect(popover).toContainText('AUTH_TOKEN');
+		await expect(popover).toContainText('Session Auth');
 	});
 
 	test('closes security popover when clicking elsewhere', async ({ page }) => {

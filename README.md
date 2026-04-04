@@ -42,6 +42,33 @@ docker run -d -p 8080:80 docker.io/estb/pulp-hub:latest
 Open http://localhost:8080 and point the login to your Pulp instance URL.
 
 > **CORS**: the Pulp instance must allow cross-origin requests.
+> See [nginx/pulp-cors-proxy.conf](nginx/pulp-cors-proxy.conf) for an example reverse proxy configuration.
+
+### Authentication
+
+PulpHub supports two authentication modes:
+
+- **Session auth** (preferred): logs in via Django's `/auth/login/` endpoint, then uses a `sessionid` cookie. The password is sent once and not stored client-side. Detected automatically — if the Pulp instance exposes `/auth/login/`, session auth is used.
+- **Basic auth** (fallback): sends `Authorization: Basic` header on every request. Used when session auth is not available.
+
+#### Session auth with cross-origin deployment
+
+If PulpHub and Pulp are on different origins (e.g. `hub.example.com` and `registry.example.com`), the Pulp reverse proxy needs extra configuration:
+
+```nginx
+# Specific origin (not wildcard) + credentials
+add_header Access-Control-Allow-Origin "https://hub.example.com" always;
+add_header Access-Control-Allow-Credentials "true" always;
+add_header Access-Control-Allow-Headers "Authorization, Content-Type, X-CSRFToken" always;
+
+# Rewrite Django cookies for cross-origin use (requires nginx >= 1.19.3)
+proxy_cookie_flags sessionid SameSite=None Secure;
+proxy_cookie_flags csrftoken SameSite=None Secure;
+```
+
+> **HTTPS is required** for cross-origin session auth (`SameSite=None` cookies require `Secure`).
+
+See [nginx/pulp-cors-proxy.conf](nginx/pulp-cors-proxy.conf) for the full example with commented-out session auth lines.
 
 ### Pull-through cache (OCI)
 
