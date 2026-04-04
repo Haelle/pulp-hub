@@ -55,8 +55,9 @@ quality: check lint audit format-check ## All quality checks at once
 test: ## Run e2e tests (records new tapes, replays existing)
 	$(DC) bash -c "npx playwright test $(FILE)"
 
-test-record: ## Re-record all tapes from scratch (requires Pulp)
-	$(DC) bash -c "rm -rf e2e/tapes && TALKBACK_RECORD=NEW npx playwright test"
+test-record: ## Re-record all tapes from scratch (requires Pulp) 
+	     ## only one worker to avoid multiple tests writing at the same time
+	$(DC) bash -c "rm -rf e2e/tapes && npx playwright test --workers=1 $(FILE)"
 
 test-ui: ## Run e2e tests in headed mode with slow-mo (host)
 	SLOWMO=500 npx playwright test --headed
