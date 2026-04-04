@@ -95,22 +95,27 @@
 		<div class="flex items-center gap-3">
 			<span class="text-sm text-muted-foreground">{auth.pulpUrl}</span>
 			<Badge variant="outline" data-testid="auth-badge" class="gap-1">
-				{auth.username} · Basic Auth
+				{auth.username} · {auth.authMode === 'session' ? 'Session' : 'Basic Auth'}
 				<Popover.Root>
 					<Popover.Trigger data-testid="auth-help" class="inline-flex cursor-pointer">
 						<CircleHelp class="h-3.5 w-3.5 text-muted-foreground" />
 					</Popover.Trigger>
 					<Popover.Portal>
 						<Popover.Content data-testid="auth-popover" class="w-80 text-sm">
-							<p class="font-semibold mb-1">Basic Auth</p>
-							<p class="text-muted-foreground mb-2">
-								Les credentials sont envoyés encodés en base64 à chaque requête.
-								Ce mode est moins sécurisé qu'un token d'authentification.
-							</p>
-							<p class="text-muted-foreground">
-								Recommandation : activez <code class="text-xs bg-muted px-1 py-0.5 rounded">AUTH_TOKEN</code>
-								sur votre serveur Pulp pour une meilleure sécurité.
-							</p>
+							{#if auth.authMode === 'session'}
+								<p class="font-semibold mb-1">Session Auth</p>
+								<p class="text-muted-foreground">
+									Authentifié via cookie de session Django. Le mot de passe n'est pas stocké côté client.
+								</p>
+							{:else}
+								<p class="font-semibold mb-1">Basic Auth</p>
+								<p class="text-muted-foreground mb-2">
+									Les credentials sont envoyés encodés en base64 à chaque requête.
+								</p>
+								<p class="text-muted-foreground">
+									Pour activer Session Auth, le serveur Pulp doit exposer <code class="text-xs bg-muted px-1 py-0.5 rounded">/auth/login/</code> avec les bons headers CORS.
+								</p>
+							{/if}
 						</Popover.Content>
 					</Popover.Portal>
 				</Popover.Root>

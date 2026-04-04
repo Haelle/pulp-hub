@@ -2,13 +2,16 @@ import { auth } from '$lib/auth.svelte';
 import { goto } from '$app/navigation';
 
 /**
- * Fetch a Pulp API endpoint using Basic Auth.
- * URL is absolute (built from auth.pulpUrl).
+ * Fetch a Pulp API endpoint.
+ * Uses session cookies or Basic Auth depending on auth mode.
  */
 async function pulpFetch(url: string): Promise<Response> {
-	const res = await fetch(url, {
-		headers: { Authorization: auth.basicAuthHeader }
-	});
+	const options: RequestInit =
+		auth.authMode === 'session'
+			? { credentials: 'include' as RequestCredentials }
+			: { headers: { Authorization: auth.basicAuthHeader } };
+
+	const res = await fetch(url, options);
 
 	if (res.status === 401) {
 		auth.logout();
