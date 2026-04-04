@@ -253,6 +253,78 @@ Ne pas versionner les credentials dans `pyproject.toml` / `.npmrc` / `.yarnrc.ym
 - **npm** — `npm login --registry=http://pulp.example.com/pulp/content/npmjs-cache/` (stocke le token dans `~/.npmrc` utilisateur)
 - **pip** — keyring système (`pip install keyring`)
 
+## Tests E2E — Module Tasks
+
+### Contexte
+
+Le module Tasks (`/tasks` et `/tasks/[id]`) n'a aucun test e2e. Toutes les autres pages (images, files, npm, python, pull-through, users) sont testées. La page Tasks est particulière : elle utilise un `<table>` au lieu de cards, a des filtres par état, un onglet Workers, et une page de détail riche (timing, erreurs, progress reports, resources liées).
+
+### Fichier à créer
+
+`e2e/tasks.test.ts`
+
+### Approche
+
+Réutiliser les helpers partagés (`testListPage`, `testDetailPage`) avec `itemSelector: 'tbody tr'` pour s'adapter au format table, puis ajouter des tests spécifiques pour les fonctionnalités propres aux Tasks.
+
+### Structure des tests
+
+#### 1. Tasks list page (`test.describe`)
+- **Shared tests via `testListPage`** (6 tests) :
+  - `route: '/tasks'`, `title: 'Tasks & Workers'`
+  - `itemSelector: 'tbody tr'` (table rows, pas cards)
+  - `filterText: 'repository'` (fragment courant dans les noms de tasks Pulp)
+  - `hasCliHint: true`
+- **State filter buttons visible** — vérifie All/running/waiting/completed/failed/canceled
+- **State filter updates table** — clic sur "completed", vérifie que tous les badges affichent "completed"
+- **Task row structure** — 5 colonnes (Name, State, Worker, Started, Duration), lien sur le nom, badge sur state
+- **Click task → navigates to detail**
+
+#### 2. Workers tab (`test.describe`)
+- **Workers tab shows table** — clic sur bouton "Workers", table visible
+- **Worker row structure** — nom + badge status (Online/Offline)
+- **CLI hint** — `pulp worker list`
+
+#### 3. Task detail page (`test.describe`)
+- **Shared tests via `testDetailPage`** (4 tests) :
+  - `listRoute: '/tasks'`, `itemSelector: 'tbody tr a'` (lien dans la row)
+  - `directRoute: '/tasks/<TASK_UUID>'` (à remplacer après enregistrement)
+  - `notFoundRoute: '/tasks/00000000-0000-0000-0000-000000000000'`
+- **State badge visible**
+- **Timing card** — Created/Started/Finished/Duration visibles
+- **CLI hint content** — contient `pulp task show`
+- **Back to tasks link** visible
+
+### Processus d'implémentation
+
+1. **Créer `e2e/tasks.test.ts`** avec les placeholders `<TASK_UUID>`
+2. **Premier run** : `make test FILE=e2e/tasks.test.ts` — enregistre les tapes via talkback (nécessite Pulp live avec `make start-pulp`)
+3. **Extraire un UUID** depuis les tapes enregistrées dans `e2e/tapes/GET_pulp_api_v3_tasks_*`
+4. **Remplacer `<TASK_UUID>`** dans le fichier de test
+5. **Re-run** : `make test FILE=e2e/tasks.test.ts` — tout passe en mode replay
+
+### Points d'attention
+
+- **Debounce 300ms** sur le filtre nom : Playwright auto-wait devrait suffire
+- **Workers heartbeat** : en replay les workers seront "Offline" (dates figées) — on teste juste la présence du badge, pas le status exact
+- **`itemSelector: 'tbody tr a'`** pour `testDetailPage` : le `.first().click()` doit cliquer sur le lien `<a>`, pas la row entière (seul le nom est cliquable)
+- **`filterText: 'repository'`** : à ajuster si les tapes ne contiennent pas de tâches avec ce fragment
+
+### Fichiers référencés
+- `e2e/helpers/shared-list-tests.ts` — `testListPage()`, `testDetailPage()`
+- `e2e/helpers/login.ts` — `login(page)`
+- `src/routes/tasks/+page.svelte` — page liste
+- `src/routes/tasks/[id]/+page.svelte` — page détail
+- `src/lib/pulp.ts:628-653` — `getTasks()`, `getTask()`, `getWorkers()`
+
+### Vérification
+
+```bash
+make test FILE=e2e/tasks.test.ts
+```
+
+Tous les tests doivent passer (~17 tests au total).
+
 ## Auth — Source d'utilisateurs externe
 
 ### LDAP / Active Directory
