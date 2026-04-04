@@ -13,3 +13,13 @@ export async function login(page: Page) {
 	await page.click('button[type="submit"]');
 	await expect(page).toHaveURL('/images');
 }
+
+export async function loginBasicAuth(page: Page) {
+	await page.goto('/');
+	await page.fill('input[name="url"]', PULP_URL);
+	await page.fill('input[name="username"]', PULP_USER);
+	await page.fill('input[name="password"]', PULP_PASS);
+	await page.check('[data-testid="force-basic-auth"]');
+	await page.click('button[type="submit"]');
+	await expect(page).toHaveURL('/images');
+}

@@ -105,7 +105,8 @@
 							{#if auth.authMode === 'session'}
 								<p class="font-semibold mb-1">Session Auth</p>
 								<p class="text-muted-foreground">
-									Authentifié via cookie de session Django. Le mot de passe n'est pas stocké côté client.
+									Authentifié via cookie de session Django. Le mot de passe n'est pas stocké côté
+									client.
 								</p>
 							{:else}
 								<p class="font-semibold mb-1">Basic Auth</p>
@@ -113,7 +114,9 @@
 									Les credentials sont envoyés encodés en base64 à chaque requête.
 								</p>
 								<p class="text-muted-foreground">
-									Pour activer Session Auth, le serveur Pulp doit exposer <code class="text-xs bg-muted px-1 py-0.5 rounded">/auth/login/</code> avec les bons headers CORS.
+									Pour activer Session Auth, le serveur Pulp doit exposer <code
+										class="text-xs bg-muted px-1 py-0.5 rounded">/auth/login/</code
+									> avec les bons headers CORS.
 								</p>
 							{/if}
 						</Popover.Content>

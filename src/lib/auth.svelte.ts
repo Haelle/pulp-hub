@@ -119,11 +119,16 @@ export const auth = {
 		return 'Basic ' + btoa(username + ':' + password);
 	},
 
-	async login(url: string, user: string, pass: string): Promise<void> {
+	async login(
+		url: string,
+		user: string,
+		pass: string,
+		options?: { forceBasicAuth?: boolean }
+	): Promise<void> {
 		const base = url.replace(/\/+$/, '');
 
 		// Try session auth first
-		const supportsSession = await detectSessionAuth(base);
+		const supportsSession = options?.forceBasicAuth ? false : await detectSessionAuth(base);
 		if (supportsSession) {
 			const success = await sessionLogin(base, user, pass);
 			if (success) {

@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { login } from './helpers/login';
+import { login, loginBasicAuth } from './helpers/login';
 
 const REPO_TRIGGER = /^(Repositories|Images|Files|npm|PyPI)$/;
 const ADMIN_TRIGGER = /^(Admin|Status|Tasks|Users)$/;
@@ -79,5 +79,16 @@ test.describe('Navbar', () => {
 
 		await page.locator('body').click({ position: { x: 0, y: 0 } });
 		await expect(popover).not.toBeVisible();
+	});
+});
+
+test.describe('Navbar (Basic Auth)', () => {
+	test('displays Basic Auth badge when forced', async ({ page }) => {
+		await loginBasicAuth(page);
+		const navbar = page.locator('nav');
+		const badge = navbar.locator('[data-testid="auth-badge"]');
+		await expect(badge).toBeVisible();
+		await expect(badge).toContainText('admin');
+		await expect(badge).toContainText('Basic Auth');
 	});
 });
