@@ -72,6 +72,8 @@ Without these variables, `seed.sh` works normally in anonymous mode.
 
 ## Development
 
+Il faut lancer un Pulp de dev et s'y connecter, par défaut le Pulp de dev tourne sur `localhost:8081`.
+
 ### Dev prerequisites
 
 - [Dev Containers CLI](https://github.com/devcontainers/cli) (`npm install -g @devcontainers/cli`)
