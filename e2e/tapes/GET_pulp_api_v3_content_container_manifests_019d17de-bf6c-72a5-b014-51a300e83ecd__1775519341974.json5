@@ -1,0 +1,93 @@
+{
+    meta: {
+        createdAt: '2026-04-06T23:49:01.813Z',
+        host: 'http://host.docker.internal:8081',
+        resHumanReadable: true,
+    },
+    req: {
+        headers: {
+            connection: 'keep-alive',
+            'sec-ch-ua-platform': '"Linux"',
+            'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36',
+            'sec-ch-ua': '"Not:A-Brand";v="99", "HeadlessChrome";v="145", "Chromium";v="145"',
+            'accept-language': 'en-US',
+            'sec-ch-ua-mobile': '?0',
+            accept: '*/*',
+            origin: 'http://localhost:5173',
+            'sec-fetch-site': 'same-site',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-dest': 'empty',
+            referer: 'http://localhost:5173/',
+            'accept-encoding': 'gzip, deflate, br, zstd',
+            cookie: 'csrftoken=JMnWJOkffgC519JHTHZivbHd4w5MjI3e; sessionid=ahdfwp0i5a015xdpv4e1en06et1v79wv',
+        },
+        url: '/pulp/api/v3/content/container/manifests/019d17de-bf6c-72a5-b014-51a300e83ecd/',
+        method: 'GET',
+        body: '',
+    },
+    res: {
+        status: 401,
+        headers: {
+            server: [
+                'nginx/1.29.6',
+            ],
+            date: [
+                'Mon, 06 Apr 2026 23:49:01 GMT',
+            ],
+            'content-type': [
+                'application/json',
+            ],
+            'content-length': [
+                '58',
+            ],
+            connection: [
+                'keep-alive',
+            ],
+            'www-authenticate': [
+                'Basic realm="api"',
+            ],
+            vary: [
+                'Accept, Cookie',
+            ],
+            allow: [
+                'GET, HEAD, OPTIONS',
+            ],
+            'x-frame-options': [
+                'DENY, DENY',
+            ],
+            'x-content-type-options': [
+                'nosniff, nosniff',
+            ],
+            'referrer-policy': [
+                'same-origin, same-origin',
+            ],
+            'cross-origin-opener-policy': [
+                'same-origin',
+            ],
+            'correlation-id': [
+                'c13d8d677ddf49138240fbf6dba71b43',
+            ],
+            'access-control-expose-headers': [
+                'Correlation-ID, Content-Length, Content-Range, Docker-Content-Digest',
+            ],
+            'set-cookie': [
+                'sessionid=""; expires=Thu, 01 Jan 1970 00:00:00 GMT; Max-Age=0; Path=/; SameSite=Lax',
+            ],
+            'access-control-allow-origin': [
+                'http://localhost:5173',
+            ],
+            'access-control-allow-methods': [
+                'GET, POST, PUT, PATCH, DELETE, OPTIONS',
+            ],
+            'access-control-allow-headers': [
+                'Authorization, Content-Type, Accept, X-Requested-With, X-CSRFToken',
+            ],
+            'access-control-allow-credentials': [
+                'true',
+            ],
+        },
+        body: {
+            detail: 'Authentication credentials were not provided.',
+        },
+    },
+}
