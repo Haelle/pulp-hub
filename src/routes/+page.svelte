@@ -27,11 +27,13 @@
 		const username = data.get('username') as string;
 		const password = data.get('password') as string;
 
+		const forceBasic = data.get('forceBasicAuth') === 'on';
+
 		error = '';
 		loading = true;
 
 		try {
-			await auth.login(url, username, password);
+			await auth.login(url, username, password, { forceBasicAuth: forceBasic });
 			goto('/images');
 		} catch (e) {
 			error = e instanceof Error ? e.message : 'Unknown error';
@@ -66,6 +68,21 @@
 					<Label for="password">Password</Label>
 					<Input id="password" name="password" type="password" required />
 				</div>
+
+				{#if import.meta.env.DEV}
+					<div class="flex items-center gap-2">
+						<input
+							type="checkbox"
+							id="forceBasicAuth"
+							name="forceBasicAuth"
+							data-testid="force-basic-auth"
+							class="rounded border-border"
+						/>
+						<Label for="forceBasicAuth" class="text-xs text-muted-foreground">
+							Force Basic Auth (dev only)
+						</Label>
+					</div>
+				{/if}
 
 				{#if error}
 					<Alert.Root variant="destructive">
