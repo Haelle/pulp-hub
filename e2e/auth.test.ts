@@ -45,24 +45,3 @@ test.describe('Status page', () => {
 	});
 });
 
-test.describe('Logout', () => {
-	// SKIP: POST /auth/logout/ flushes the real Django session in Pulp during
-	// recording, which invalidates the sessionid stored in subsequent replays
-	// and pollutes any later tape with 401s. Re-enable once we choose a
-	// strategy (proxy short-circuit / targeted page.route mock / test reorder).
-	test.skip('logs out and redirects to login', async ({ page }) => {
-		await login(page);
-		await page.click('button:has-text("Logout")');
-		await expect(page).toHaveURL('/');
-		await expect(page.locator('[data-slot="card-title"]')).toContainText('PulpHub');
-	});
-
-	// SKIP: see comment above on the previous logout test.
-	test.skip('cannot access protected page after logout', async ({ page }) => {
-		await login(page);
-		await page.click('button:has-text("Logout")');
-		await expect(page).toHaveURL('/');
-		await page.goto('/images');
-		await expect(page).toHaveURL('/');
-	});
-});
