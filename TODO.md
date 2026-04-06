@@ -30,40 +30,6 @@ Astuce : `?limit=0` retourne `count` sans charger les résultats → requêtes t
 
 **CLI :** `pulp status`
 
-## Tâches et Workers
-
-Page `/tasks` listant les tâches async Pulp (sync, publish, delete, etc.) et l'état des workers.
-
-**Tâches — contenu :**
-
-- Liste paginée avec filtres : état (`waiting`, `running`, `completed`, `failed`, `canceled`), nom
-- Colonnes : nom, état (badge couleur), worker, date de début/fin, durée
-- Détail d'une tâche : progress reports, error message, resources créées/affectées, parent/child tasks
-- Lien vers la ressource créée quand c'est une distribution/publication
-
-**API Tâches :**
-
-- `GET /pulp/api/v3/tasks/?limit=20&offset=0&ordering=-pulp_created` — liste paginée
-- `GET /pulp/api/v3/tasks/?state=failed` — filtre par état
-- `GET /pulp/api/v3/tasks/{task_href}/` — détail (progress_reports, error, created_resources)
-- Swagger : https://pulpproject.org/pulpcore/restapi/ (section Task)
-
-**Workers — contenu :**
-
-- Liste des workers avec heartbeat et tâche en cours
-- Badge online/offline basé sur `last_heartbeat` (considérer offline si > 60s)
-
-**API Workers :**
-
-- `GET /pulp/api/v3/workers/` — liste complète
-- Champs utiles : `name`, `last_heartbeat`, `current_task`
-
-**Task Schedules (optionnel) :**
-
-- `GET /pulp/api/v3/task-schedules/` — tâches planifiées (dispatch_interval, next_dispatch)
-
-**CLI :** `pulp task list`, `pulp task show --href <href>`, `pulp worker list`
-
 ## Suppression d'images / dépôts
 
 Ajouter des actions de suppression (avec confirmation modale) sur les pages existantes.
@@ -178,10 +144,6 @@ Pulp utilise un système RBAC basé sur des rôles. Chaque rôle contient un ens
 - Formulaires avec validation côté client (username unique, password requis à la création)
 - Les rôles `locked` sont en lecture seule (pas de bouton modifier/supprimer)
 
-## Infra — Déploiement prod
-
-- configurer Pulp CIISO en pull-through et mettre à jour les dépôts pour pointer dessus
-
 ## Auth — Docker (OCI) — TOKEN_SERVER
 
 Actuellement `TOKEN_AUTH_DISABLED=true` = registry ouvert, pas de `podman login` (dev only).
@@ -270,6 +232,7 @@ Réutiliser les helpers partagés (`testListPage`, `testDetailPage`) avec `itemS
 ### Structure des tests
 
 #### 1. Tasks list page (`test.describe`)
+
 - **Shared tests via `testListPage`** (6 tests) :
   - `route: '/tasks'`, `title: 'Tasks & Workers'`
   - `itemSelector: 'tbody tr'` (table rows, pas cards)
@@ -281,11 +244,13 @@ Réutiliser les helpers partagés (`testListPage`, `testDetailPage`) avec `itemS
 - **Click task → navigates to detail**
 
 #### 2. Workers tab (`test.describe`)
+
 - **Workers tab shows table** — clic sur bouton "Workers", table visible
 - **Worker row structure** — nom + badge status (Online/Offline)
 - **CLI hint** — `pulp worker list`
 
 #### 3. Task detail page (`test.describe`)
+
 - **Shared tests via `testDetailPage`** (4 tests) :
   - `listRoute: '/tasks'`, `itemSelector: 'tbody tr a'` (lien dans la row)
   - `directRoute: '/tasks/<TASK_UUID>'` (à remplacer après enregistrement)
@@ -311,6 +276,7 @@ Réutiliser les helpers partagés (`testListPage`, `testDetailPage`) avec `itemS
 - **`filterText: 'repository'`** : à ajuster si les tapes ne contiennent pas de tâches avec ce fragment
 
 ### Fichiers référencés
+
 - `e2e/helpers/shared-list-tests.ts` — `testListPage()`, `testDetailPage()`
 - `e2e/helpers/login.ts` — `login(page)`
 - `src/routes/tasks/+page.svelte` — page liste
@@ -369,11 +335,13 @@ define: {
   __PULP_URL__: JSON.stringify(process.env.PULP_URL ?? '_PULP_URL_')
 }
 ```
+
 - En dev (`npm run dev`) : `PULP_URL` non défini → placeholder `_PULP_URL_`, mais le proxy Vite rend ça transparent
 - En build (`npm run build`) : idem, le placeholder se retrouve dans le JS bundlé
 - Si `PULP_URL` est défini (tests, builds spéciaux) : valeur directe
 
 Ajouter aussi le proxy Vite pour le dev :
+
 ```ts
 server: {
   proxy: {
@@ -449,6 +417,7 @@ exec "$@"
 #### 8. `docker-compose.yml` et `docker-compose.demo.yml`
 
 Ajouter `PULP_URL` au service pulphub :
+
 ```yaml
 pulphub:
   image: docker.io/estb/pulp-hub:latest
