@@ -63,5 +63,4 @@ test.describe('Session Auth', () => {
 		expect(authState.authMode).toBe('basic');
 		expect(authState.password).toBeTruthy();
 	});
-
 });
