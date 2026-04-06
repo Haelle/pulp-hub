@@ -30,8 +30,18 @@ export default defineConfig({
 	},
 	projects: [
 		{
-			name: 'chromium',
-			use: { browserName: 'chromium' }
+			name: 'main',
+			use: { browserName: 'chromium' },
+			testIgnore: ['**/logout.test.ts']
+		},
+		{
+			// Logout tests run after `main` so POST /auth/logout/ never
+			// flushes a session that another test still needs (during
+			// recording). See e2e/logout.test.ts.
+			name: 'logout',
+			use: { browserName: 'chromium' },
+			testMatch: ['**/logout.test.ts'],
+			dependencies: ['main']
 		}
 	]
 });
