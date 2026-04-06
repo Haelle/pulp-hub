@@ -44,4 +44,3 @@ test.describe('Status page', () => {
 		expect(text).toContain('versions');
 	});
 });
-
