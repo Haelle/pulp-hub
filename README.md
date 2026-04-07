@@ -4,7 +4,7 @@ A Pulp repository viewer UI, inspired by Docker Hub.
 
 Supports container (OCI) repositories, file repositories, and pull-through cache display (DockerHub, Quay.io, PyPI, npm) with client configuration commands.
 
-Image on [DockerHub](https://hub.docker.com/repository/docker/estb/pulp-hub/)
+Image on [DockerHub](https://hub.docker.com/r/estb/pulp-hub)
 
 ## Installation
 
