@@ -2,7 +2,7 @@
 
 ## PulpHub
 
-- afficher les content guards et rôles dans PulpHub ?
+- afficher les content guards et rôles dans PulpHub ? ou pas (test)
 
 ## Dashboard
 
