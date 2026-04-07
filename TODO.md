@@ -314,76 +314,105 @@ REMOTE_USER_ENVIRON_NAME = "HTTP_REMOTE_USER"
 - `PulpNoCreateRemoteUserBackend` = l'utilisateur doit exister dans Pulp
 - `RemoteUserBackend` (Django standard) = auto-création à la première connexion
 
-## Docker — PULP_URL injectée au runtime
+## Docker — PULP_URL injectée au runtime (pattern `config.js`)
 
-Actuellement l'utilisateur saisit l'URL Pulp dans le formulaire de login. On veut que l'URL soit une variable d'environnement du container (`PULP_URL`, obligatoire), injectée au runtime via `sed` dans les fichiers buildés. Plus besoin de saisir l'URL au login.
+### Contexte
+
+Aujourd'hui l'utilisateur doit saisir l'URL Pulp dans le formulaire de login (`src/routes/+page.svelte:59`), elle est ensuite stockée en `sessionStorage` (`src/lib/auth.svelte.ts:99`). On veut que l'URL soit fixée par une variable d'environnement `PULP_URL` du conteneur, **modifiable sans rebuild** : `docker stop` → changer `PULP_URL` → `docker start` doit suffire pour pointer vers une autre instance Pulp.
+
+Le plan initial proposait un `sed` sur les `.js` bundlés avec une copie `/var/www.orig` → `/var/www` à chaque démarrage. C'est un hack — on touche à des fichiers hashés, on doit scanner tous les bundles, et la copie `.orig` est inutilement contournée. On part sur le pattern standard SPA : un fichier **`config.js` séparé** chargé par `index.html` et **généré par `envsubst` dans l'entrypoint** à chaque démarrage du conteneur. Les bundles JS hashés ne sont jamais touchés.
 
 ### Approche
 
-1. Le code source utilise une constante `__PULP_URL__` (comme `__APP_VERSION__`)
-2. Vite `define` remplace par `'_PULP_URL_'` (placeholder littéral) au build
-3. En dev, Vite `define` remplace par `''` (string vide = URLs relatives via proxy Vite)
-4. Au démarrage du container, un entrypoint `sed` remplace `_PULP_URL_` par la vraie URL
+1. `index.html` charge `<script src="/config.js">` qui définit `window.__PULPHUB__ = { PULP_URL: "..." }`.
+2. **En prod** : l'entrypoint nginx lance `envsubst` sur un template avant `nginx`, à **chaque démarrage** → modification de `PULP_URL` + restart = nouvelle URL, sans rebuild.
+3. **En dev (Vite)** : un petit plugin Vite sert dynamiquement `/config.js` depuis `process.env.PULP_URL` (relu à chaque requête). Pas de fichier `static/config.js` versionné — il serait gênant en prod (priorité statique sur le template).
+4. **En e2e** : Playwright passe `PULP_URL=http://localhost:8787` au `webServer` Vite ; le plugin sert ce que talkback attend.
+5. `auth.svelte.ts` lit `window.__PULPHUB__.PULP_URL` une seule fois à l'initialisation et l'expose comme constante via le getter `auth.pulpUrl` existant.
+6. La page de login perd son champ URL et affiche à la place « Connexion à `<URL>` ». La navbar (`Navbar.svelte:96`) reste inchangée.
 
-### Fichiers à modifier
+### Modifications
 
-#### 1. `vite.config.ts` — define `__PULP_URL__`
-
-```ts
-define: {
-  __APP_VERSION__: JSON.stringify(getVersion()),
-  __PULP_URL__: JSON.stringify(process.env.PULP_URL ?? '_PULP_URL_')
-}
-```
-
-- En dev (`npm run dev`) : `PULP_URL` non défini → placeholder `_PULP_URL_`, mais le proxy Vite rend ça transparent
-- En build (`npm run build`) : idem, le placeholder se retrouve dans le JS bundlé
-- Si `PULP_URL` est défini (tests, builds spéciaux) : valeur directe
-
-Ajouter aussi le proxy Vite pour le dev :
+#### 1. `src/lib/config.ts` — nouveau fichier
 
 ```ts
-server: {
-  proxy: {
-    '/pulp/': { target: 'http://localhost:8081', changeOrigin: true },
-    '/auth/': { target: 'http://localhost:8081', changeOrigin: true }
+declare global {
+  interface Window {
+    __PULPHUB__?: { PULP_URL?: string };
   }
 }
+
+function readPulpUrl(): string {
+  if (typeof window === 'undefined') return '';
+  const raw = window.__PULPHUB__?.PULP_URL ?? '';
+  return raw.replace(/\/+$/, '');
+}
+
+export const PULP_URL = readPulpUrl();
 ```
 
-#### 2. `src/app.d.ts` — déclarer le global
+Lecture une seule fois au chargement du module. Trim du trailing slash centralisé ici (au lieu de `auth.svelte.ts:128`).
+
+#### 2. `src/app.html` — injection du script
+
+Avant `%sveltekit.head%` (ligne 15), ajouter :
+
+```html
+<script src="%sveltekit.assets%/config.js"></script>
+```
+
+Le script doit charger **avant** les bundles SvelteKit pour que `window.__PULPHUB__` soit défini quand `auth.svelte.ts` est évalué.
+
+#### 3. `vite.config.ts` — plugin servant `/config.js` en dev
+
+Ajouter un plugin local avant `sveltekit()` :
 
 ```ts
-const __PULP_URL__: string;
+function pulpUrlConfigPlugin() {
+  return {
+    name: 'pulphub-config',
+    configureServer(server) {
+      server.middlewares.use('/config.js', (_req, res) => {
+        const url = process.env.PULP_URL ?? '';
+        res.setHeader('Content-Type', 'application/javascript');
+        res.setHeader('Cache-Control', 'no-store');
+        res.end(`window.__PULPHUB__ = { PULP_URL: ${JSON.stringify(url)} };\n`);
+      });
+    }
+  };
+}
 ```
 
-#### 3. `src/lib/auth.svelte.ts` — utiliser `__PULP_URL__`
+Ajouter `pulpUrlConfigPlugin()` aux `plugins`. **Ne rien mettre dans `static/`** — sinon adapter-static copierait un `config.js` versionné dans `build/`, qui prendrait la priorité sur celui généré par envsubst en prod.
 
-- `pulpUrl` n'est plus un input user, c'est une constante : `const PULP_URL = __PULP_URL__`
-- Supprimer `pulpUrl` du `$state` et de `AuthState` (plus besoin de le stocker en sessionStorage)
-- `login()` ne prend plus `url` en paramètre, juste `(user, pass)`
-- Garder `auth.pulpUrl` en getter qui retourne la constante
-- `AuthState` simplifié : `{ username, authMode }`
+#### 4. `src/lib/auth.svelte.ts` — supprimer `pulpUrl` du state
 
-#### 4. `src/routes/+page.svelte` — supprimer le champ URL
+- Importer `PULP_URL` depuis `$lib/config`.
+- Supprimer `pulpUrl` du `$state` (ligne 99) et du type `AuthState` (ligne 7).
+- `AuthState` devient `{ username: string; password: string; authMode: AuthMode }` (on garde `password` pour Basic Auth qui reste cross-origin sans cookie).
+- Le getter `auth.pulpUrl` (ligne 106) retourne directement `PULP_URL`.
+- `login()` — supprimer le paramètre `url`. Nouvelle signature : `login(user: string, pass: string, options?: { forceBasicAuth?: boolean })`. Utiliser `PULP_URL` partout en interne (lignes 128-180).
+- `logout()` (ligne 183) — utiliser `PULP_URL` au lieu de `pulpUrl` local.
+- Migration sessionStorage : si l'ancien blob contenait `pulpUrl`, l'ignorer (le nouveau format est plus petit, pas de back-compat nécessaire vu le statut R&D du projet).
 
-- Supprimer le champ `input[name="url"]`
-- Appeler `auth.login(username, password)` sans URL
-- Afficher l'URL Pulp configurée quelque part (petit texte sous le titre ?)
+#### 5. `src/routes/+page.svelte` — virer le champ URL, afficher l'URL
 
-#### 5. `src/lib/components/Navbar.svelte`
+- Supprimer l'`<Input id="url" name="url">` (ligne 59).
+- Sous le titre du formulaire, ajouter un texte type `<p class="text-sm text-muted-foreground">Connexion à <code>{auth.pulpUrl}</code></p>` (ou `PULP_URL` importé directement).
+- Mettre à jour l'appel : `auth.login(username, password, { forceBasicAuth })` (ligne 36).
+- Si `auth.pulpUrl` est vide → afficher une erreur claire « `PULP_URL` non configurée » au lieu du formulaire (cas dev sans variable d'env, ou config.js manquant).
 
-- `auth.pulpUrl` affiche maintenant la constante — OK, rien à changer
-
-#### 6. `Dockerfile` — entrypoint + copie
+#### 6. `Dockerfile` — entrypoint + template
 
 ```dockerfile
 FROM docker.io/library/nginx:alpine
 
-COPY nginx/pulphub.conf /etc/nginx/nginx.conf
-COPY build /var/www.orig
-COPY docker-entrypoint.sh /docker-entrypoint.sh
+RUN apk add --no-cache gettext  # pour envsubst
 
+COPY nginx/pulphub.conf /etc/nginx/nginx.conf
+COPY build /var/www
+COPY docker/config.js.tpl /etc/pulphub/config.js.tpl
+COPY docker/entrypoint.sh /docker-entrypoint.sh
 RUN chmod +x /docker-entrypoint.sh
 
 EXPOSE 80
@@ -391,58 +420,110 @@ ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["nginx", "-g", "daemon off;"]
 ```
 
-#### 7. `docker-entrypoint.sh` — nouveau fichier
+Note : `gettext` (pour `envsubst`) est ~200 KB, négligeable. Pas de copie `/var/www.orig` — le template est dans `/etc/pulphub/`, le rendu va dans `/var/www/config.js` (écrasement à chaque démarrage, idempotent).
+
+#### 7. `docker/config.js.tpl` — nouveau fichier
+
+```js
+window.__PULPHUB__ = { PULP_URL: "${PULP_URL}" };
+```
+
+#### 8. `docker/entrypoint.sh` — nouveau fichier
 
 ```bash
 #!/bin/sh
 set -e
 
+RED='\033[31m'
+GREEN='\033[32m'
+NC='\033[0m'
+
 if [ -z "$PULP_URL" ]; then
-  echo "\033[31mERROR: PULP_URL is required\033[0m" >&2
+  printf "${RED}ERROR: PULP_URL environment variable is required${NC}\n" >&2
   exit 1
 fi
 
-# Remove trailing slash
+# Strip trailing slash
 PULP_URL="${PULP_URL%/}"
 
-rm -rf /var/www
-cp -r /var/www.orig /var/www
+export PULP_URL
+envsubst < /etc/pulphub/config.js.tpl > /var/www/config.js
 
-# Replace placeholder in built JS files
-find /var/www -name '*.js' -exec sed -i "s|_PULP_URL_|${PULP_URL}|g" {} +
+printf "${GREEN}PulpHub configured for ${PULP_URL}${NC}\n"
 
 exec "$@"
 ```
 
-#### 8. `docker-compose.yml` et `docker-compose.demo.yml`
+À chaque `docker start` : entrypoint relancé → `config.js` régénéré → nginx sert le nouveau contenu. **Aucun rebuild nécessaire.**
 
-Ajouter `PULP_URL` au service pulphub :
+#### 9. `nginx/pulphub.conf`
 
-```yaml
-pulphub:
-  image: docker.io/estb/pulp-hub:latest
-  ports: ['8080:80']
-  environment:
-    PULP_URL: http://localhost:8081
-```
+S'assurer que `/config.js` est servi avec `Cache-Control: no-store` (sinon le navigateur peut garder un ancien `PULP_URL` après restart). Ajouter un `location = /config.js { add_header Cache-Control "no-store"; }` avant le `try_files` global. Garder le caching agressif sur les bundles hashés `_app/immutable/`.
 
-#### 9. Tests e2e
+#### 10. `docker-compose.yml` et `docker-compose.demo.yml`
 
-- `e2e/helpers/login.ts` : supprimer la saisie du champ URL
-- `e2e/auth.test.ts` : adapter (plus de champ URL)
-- `e2e/session-auth.test.ts` : adapter
-- `e2e/navbar.test.ts` : adapter le test du badge (URL affichée = `_PULP_URL_` ou la valeur talkback)
-- Les tests utilisent talkback (port 8787). Le `__PULP_URL__` en dev/test pointe vers talkback via env ou le define Vite.
+Ajouter `environment: { PULP_URL: http://host.docker.internal:8081 }` (ou l'URL appropriée) au service `pulphub`.
 
-Pour les tests : `PULP_URL` sera défini dans `vite.config.ts` define comme `process.env.PULP_URL ?? '_PULP_URL_'`. Le playwright.config.ts peut setter `PULP_URL` à `http://localhost:8787` pour que le build de test utilise talkback.
+#### 11. `Makefile`
 
-#### 10. `src/lib/pulp.ts`
+- `make dev` doit propager `PULP_URL` au process Vite. Soit l'utilisateur l'exporte, soit on le set par défaut dans la cible : `PULP_URL ?= http://localhost:8081` puis `PULP_URL=$(PULP_URL) npm run dev`.
+- `make test` : `PULP_URL=http://localhost:8787` (talkback) doit être dans l'environnement de la cible test.
 
-Toutes les fonctions utilisent déjà `${auth.pulpUrl}/pulp/api/v3/...`. Comme `auth.pulpUrl` retourne la constante, rien à changer dans ce fichier.
+#### 12. Tests e2e
+
+- **`e2e/helpers/login.ts:10`** — supprimer `await page.fill('input[name="url"]', PULP_URL)`. Garder le `PULP_URL` env var, mais c'est désormais le `webServer` Vite qui en a besoin (pas le test).
+- **`playwright.config.ts:18-23`** — ajouter `env: { PULP_URL: 'http://localhost:8787' }` au webServer Vite (port 5173). C'est ça qui injecte la valeur dans le plugin Vite, donc dans le `/config.js` servi.
+- **`e2e/auth.test.ts`** — adapter / supprimer les assertions sur le champ URL.
+- **`e2e/session-auth.test.ts`** — idem.
+- **`e2e/navbar.test.ts`** — adapter le test du badge URL : il doit maintenant afficher `http://localhost:8787`.
+- **Login page** : ajouter un test « affiche `Connexion à http://localhost:8787` » sur `/`.
+
+⚠ Les tapes talkback existantes ne devraient pas être impactées (les requêtes sortantes sont identiques), mais à valider via `make test` sur les fichiers concernés (cf. mémoire `feedback_test_record_incremental.md` — valider fichier par fichier en commençant par `session-auth.test.ts`).
+
+#### 13. `src/lib/pulp.ts`
+
+**Aucun changement.** Toutes les fonctions utilisent déjà `${auth.pulpUrl}/...` (ex : lignes 80, 90, 347, 457). Comme `auth.pulpUrl` retourne maintenant la constante `PULP_URL`, tout fonctionne sans modif.
+
+### Fichiers critiques
+
+| Fichier | Action |
+|---|---|
+| `src/lib/config.ts` | **créer** |
+| `src/lib/auth.svelte.ts` | modifier (supprimer `pulpUrl` du state, simplifier `login()`) |
+| `src/routes/+page.svelte` | modifier (supprimer champ URL, afficher URL) |
+| `src/app.html` | modifier (ajouter `<script src="/config.js">`) |
+| `vite.config.ts` | modifier (ajouter plugin `pulpUrlConfigPlugin`) |
+| `Dockerfile` | modifier (ajouter `gettext`, entrypoint, template) |
+| `docker/entrypoint.sh` | **créer** |
+| `docker/config.js.tpl` | **créer** |
+| `nginx/pulphub.conf` | modifier (no-cache sur `/config.js`) |
+| `docker-compose.yml`, `docker-compose.demo.yml` | modifier (env `PULP_URL`) |
+| `Makefile` | modifier (`PULP_URL` propagé à `dev` et `test`) |
+| `playwright.config.ts` | modifier (`env: { PULP_URL }` sur webServer Vite) |
+| `e2e/helpers/login.ts` | modifier (supprimer fill URL) |
+| `e2e/auth.test.ts`, `e2e/session-auth.test.ts`, `e2e/navbar.test.ts` | adapter |
 
 ### Vérification
 
-1. `make test` — tous les tests passent
-2. Build local : `npm run build` → vérifier que `_PULP_URL_` est dans les .js
-3. Docker : `docker build -t pulphub-test .` puis `docker run -e PULP_URL=http://localhost:8081 pulphub-test` → vérifier que sed remplace correctement
-4. Docker sans PULP_URL : doit planter avec un message d'erreur clair
+1. **Dev local** : `make dev` (avec `PULP_URL=http://localhost:8081`) → ouvrir `http://localhost:5173` → la page login affiche « Connexion à http://localhost:8081 », pas de champ URL → login fonctionne → navbar affiche l'URL.
+2. **Dev sans `PULP_URL`** : `unset PULP_URL && make dev` → la page login affiche un message d'erreur clair, pas de crash.
+3. **E2E** : `make test FILE=e2e/session-auth.test.ts` doit passer en replay (sans réenregistrer). Puis `make test` complet.
+4. **Build statique** : `npm run build` → vérifier que **aucun** `_PULP_URL_` ni `PULP_URL` n'apparaît en dur dans `build/_app/immutable/**/*.js` (les bundles ne contiennent plus l'URL, elle vient de `window.__PULPHUB__`). Vérifier qu'il n'y a **pas** de `build/config.js` (sinon il écraserait celui de l'entrypoint).
+5. **Conteneur — démarrage normal** :
+   ```
+   docker build -t pulphub-test .
+   docker run --rm -e PULP_URL=http://host.docker.internal:8081 -p 8080:80 pulphub-test
+   curl -s http://localhost:8080/config.js
+   # → window.__PULPHUB__ = { PULP_URL: "http://host.docker.internal:8081" };
+   ```
+6. **Conteneur — sans `PULP_URL`** : `docker run --rm pulphub-test` → doit planter avec message rouge.
+7. **Le test critique — changement à chaud sans rebuild** :
+   ```
+   docker run -d --name pulphub -e PULP_URL=http://a.example/ -p 8080:80 pulphub-test
+   curl -s http://localhost:8080/config.js  # → http://a.example
+   docker stop pulphub
+   docker rm pulphub
+   docker run -d --name pulphub -e PULP_URL=http://b.example/ -p 8080:80 pulphub-test
+   curl -s http://localhost:8080/config.js  # → http://b.example  ✓ même image, pas de rebuild
+   ```
+   Variante encore plus stricte (même conteneur, juste restart) : `docker run` avec `--env-file` puis `docker stop` / éditer le fichier / `docker start` — l'entrypoint relit l'env à chaque démarrage donc c'est OK aussi.
