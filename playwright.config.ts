@@ -24,24 +24,9 @@ export default defineConfig({
 	],
 	use: {
 		baseURL: 'http://localhost:5173',
+		browserName: 'chromium',
 		launchOptions: {
 			slowMo: parseInt(process.env.SLOWMO ?? '0')
 		}
-	},
-	projects: [
-		{
-			name: 'main',
-			use: { browserName: 'chromium' },
-			testIgnore: ['**/logout.test.ts']
-		},
-		{
-			// Logout tests run after `main` so POST /auth/logout/ never
-			// flushes a session that another test still needs (during
-			// recording). See e2e/logout.test.ts.
-			name: 'logout',
-			use: { browserName: 'chromium' },
-			testMatch: ['**/logout.test.ts'],
-			dependencies: ['main']
-		}
-	]
+	}
 });

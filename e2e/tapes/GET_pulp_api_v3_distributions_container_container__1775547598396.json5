@@ -1,0 +1,109 @@
+{
+    meta: {
+        createdAt: '2026-04-07T07:39:58.062Z',
+        host: 'http://host.docker.internal:8081',
+        resHumanReadable: true,
+    },
+    req: {
+        headers: {
+            connection: 'keep-alive',
+            'sec-ch-ua-platform': '"Linux"',
+            'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36',
+            'sec-ch-ua': '"Not:A-Brand";v="99", "HeadlessChrome";v="145", "Chromium";v="145"',
+            'accept-language': 'en-US',
+            'sec-ch-ua-mobile': '?0',
+            accept: '*/*',
+            origin: 'http://localhost:5173',
+            'sec-fetch-site': 'same-site',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-dest': 'empty',
+            referer: 'http://localhost:5173/',
+            'accept-encoding': 'gzip, deflate, br, zstd',
+        },
+        url: '/pulp/api/v3/distributions/container/container/?name=dockerhub-cache%2Flibrary%2Falpine',
+        method: 'GET',
+        body: '',
+    },
+    res: {
+        status: 200,
+        headers: {
+            server: [
+                'nginx/1.29.6',
+            ],
+            date: [
+                'Tue, 07 Apr 2026 07:39:58 GMT',
+            ],
+            'content-type': [
+                'application/json',
+            ],
+            'content-length': [
+                '897',
+            ],
+            connection: [
+                'keep-alive',
+            ],
+            vary: [
+                'Accept',
+            ],
+            allow: [
+                'GET, POST, HEAD, OPTIONS',
+            ],
+            'x-frame-options': [
+                'DENY, DENY',
+            ],
+            'x-content-type-options': [
+                'nosniff, nosniff',
+            ],
+            'referrer-policy': [
+                'same-origin, same-origin',
+            ],
+            'cross-origin-opener-policy': [
+                'same-origin',
+            ],
+            'correlation-id': [
+                '3e0f0ed7dd094300ab8862b6d1f210ea',
+            ],
+            'access-control-expose-headers': [
+                'Correlation-ID, Content-Length, Content-Range, Docker-Content-Digest',
+            ],
+            'access-control-allow-origin': [
+                'http://localhost:5173',
+            ],
+            'access-control-allow-methods': [
+                'GET, POST, PUT, PATCH, DELETE, OPTIONS',
+            ],
+            'access-control-allow-headers': [
+                'Authorization, Content-Type, Accept, X-Requested-With, X-CSRFToken',
+            ],
+            'access-control-allow-credentials': [
+                'true',
+            ],
+        },
+        body: {
+            count: 1,
+            next: null,
+            previous: null,
+            results: [
+                {
+                    no_content_change_since: null,
+                    pulp_last_updated: '2026-03-22T23:25:59.195536Z',
+                    prn: 'prn:container.containerdistribution:019d17de-a01a-7066-b041-b2d360280773',
+                    name: 'dockerhub-cache/library/alpine',
+                    content_guard: null,
+                    pulp_labels: {},
+                    pulp_created: '2026-03-22T23:25:59.195526Z',
+                    base_path: 'dockerhub-cache/library/alpine',
+                    hidden: false,
+                    repository: '/pulp/api/v3/repositories/container/container/019d17de-9ffa-7e27-bf39-d6d799ddad61/',
+                    pulp_href: '/pulp/api/v3/distributions/container/container/019d17de-a01a-7066-b041-b2d360280773/',
+                    repository_version: null,
+                    registry_path: 'localhost/dockerhub-cache/library/alpine',
+                    remote: '/pulp/api/v3/remotes/container/container/019d17de-a00f-7eae-ba55-031f5d6b8706/',
+                    namespace: '/pulp/api/v3/pulp_container/namespaces/019d17de-723e-7e64-a213-e5627eae4f41/',
+                    private: false,
+                    description: null,
+                },
+            ],
+        },
+    },
+}

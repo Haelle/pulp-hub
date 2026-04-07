@@ -1,0 +1,108 @@
+{
+    meta: {
+        createdAt: '2026-04-07T07:40:00.267Z',
+        host: 'http://host.docker.internal:8081',
+        resHumanReadable: true,
+    },
+    req: {
+        headers: {
+            connection: 'keep-alive',
+            'sec-ch-ua-platform': '"Linux"',
+            'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36',
+            'sec-ch-ua': '"Not:A-Brand";v="99", "HeadlessChrome";v="145", "Chromium";v="145"',
+            'accept-language': 'en-US',
+            'sec-ch-ua-mobile': '?0',
+            accept: '*/*',
+            origin: 'http://localhost:5173',
+            'sec-fetch-site': 'same-site',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-dest': 'empty',
+            referer: 'http://localhost:5173/',
+            'accept-encoding': 'gzip, deflate, br, zstd',
+        },
+        url: '/pulp/api/v3/content/container/manifests/019d17de-ad02-7288-b47e-02d21284b0fb/',
+        method: 'GET',
+        body: '',
+    },
+    res: {
+        status: 200,
+        headers: {
+            server: [
+                'nginx/1.29.6',
+            ],
+            date: [
+                'Tue, 07 Apr 2026 07:40:01 GMT',
+            ],
+            'content-type': [
+                'application/json',
+            ],
+            'content-length': [
+                '883',
+            ],
+            connection: [
+                'keep-alive',
+            ],
+            vary: [
+                'Accept',
+            ],
+            allow: [
+                'GET, HEAD, OPTIONS',
+            ],
+            'x-frame-options': [
+                'DENY, DENY',
+            ],
+            'x-content-type-options': [
+                'nosniff, nosniff',
+            ],
+            'referrer-policy': [
+                'same-origin, same-origin',
+            ],
+            'cross-origin-opener-policy': [
+                'same-origin',
+            ],
+            'correlation-id': [
+                '2c59f728595c4805ab137a123d8efcf1',
+            ],
+            'access-control-expose-headers': [
+                'Correlation-ID, Content-Length, Content-Range, Docker-Content-Digest',
+            ],
+            'access-control-allow-origin': [
+                'http://localhost:5173',
+            ],
+            'access-control-allow-methods': [
+                'GET, POST, PUT, PATCH, DELETE, OPTIONS',
+            ],
+            'access-control-allow-headers': [
+                'Authorization, Content-Type, Accept, X-Requested-With, X-CSRFToken',
+            ],
+            'access-control-allow-credentials': [
+                'true',
+            ],
+        },
+        body: {
+            pulp_href: '/pulp/api/v3/content/container/manifests/019d17de-ad02-7288-b47e-02d21284b0fb/',
+            prn: 'prn:container.manifest:019d17de-ad02-7288-b47e-02d21284b0fb',
+            pulp_created: '2026-03-22T23:26:05.108669Z',
+            pulp_last_updated: '2026-03-22T23:26:05.108677Z',
+            pulp_labels: {},
+            vuln_report: null,
+            digest: 'sha256:93c1f97fe1c44509ffc38923b47e0113800129583f78a7932f4d1261a1603686',
+            schema_version: 2,
+            media_type: 'application/vnd.oci.image.manifest.v1+json',
+            listed_manifests: [],
+            config_blob: '/pulp/api/v3/content/container/blobs/019d17de-b3c8-7a0d-b0a2-5661d444e6e6/',
+            blobs: [
+                '/pulp/api/v3/content/container/blobs/019d17de-b3c6-7e26-890c-9f5af75de07b/',
+                '/pulp/api/v3/content/container/blobs/019d17de-b3c4-7b88-b336-500b8cd6d904/',
+            ],
+            annotations: {},
+            labels: {},
+            is_bootable: false,
+            is_flatpak: false,
+            type: 'image',
+            architecture: 'unknown',
+            os: 'unknown',
+            compressed_image_size: 84715,
+        },
+    },
+}

@@ -1,0 +1,100 @@
+{
+    meta: {
+        createdAt: '2026-04-07T07:41:50.471Z',
+        host: 'http://host.docker.internal:8081',
+        resHumanReadable: true,
+    },
+    req: {
+        headers: {
+            connection: 'keep-alive',
+            'sec-ch-ua-platform': '"Linux"',
+            'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36',
+            'sec-ch-ua': '"Not:A-Brand";v="99", "HeadlessChrome";v="145", "Chromium";v="145"',
+            'accept-language': 'en-US',
+            'sec-ch-ua-mobile': '?0',
+            accept: '*/*',
+            origin: 'http://localhost:5173',
+            'sec-fetch-site': 'same-site',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-dest': 'empty',
+            referer: 'http://localhost:5173/',
+            'accept-encoding': 'gzip, deflate, br, zstd',
+        },
+        url: '/pulp/api/v3/content/container/tags/?repository_version=%2Fpulp%2Fapi%2Fv3%2Frepositories%2Fcontainer%2Fcontainer%2F019d17df-a867-7b9e-9122-c7a4e4d2c70d%2Fversions%2F1%2F&limit=100',
+        method: 'GET',
+        body: '',
+    },
+    res: {
+        status: 200,
+        headers: {
+            server: [
+                'nginx/1.29.6',
+            ],
+            date: [
+                'Tue, 07 Apr 2026 07:41:50 GMT',
+            ],
+            'content-type': [
+                'application/json',
+            ],
+            'content-length': [
+                '450',
+            ],
+            connection: [
+                'keep-alive',
+            ],
+            vary: [
+                'Accept',
+            ],
+            allow: [
+                'GET, HEAD, OPTIONS',
+            ],
+            'x-frame-options': [
+                'DENY, DENY',
+            ],
+            'x-content-type-options': [
+                'nosniff, nosniff',
+            ],
+            'referrer-policy': [
+                'same-origin, same-origin',
+            ],
+            'cross-origin-opener-policy': [
+                'same-origin',
+            ],
+            'correlation-id': [
+                '02534d323f324b34adbdb4904fcb22a9',
+            ],
+            'access-control-expose-headers': [
+                'Correlation-ID, Content-Length, Content-Range, Docker-Content-Digest',
+            ],
+            'access-control-allow-origin': [
+                'http://localhost:5173',
+            ],
+            'access-control-allow-methods': [
+                'GET, POST, PUT, PATCH, DELETE, OPTIONS',
+            ],
+            'access-control-allow-headers': [
+                'Authorization, Content-Type, Accept, X-Requested-With, X-CSRFToken',
+            ],
+            'access-control-allow-credentials': [
+                'true',
+            ],
+        },
+        body: {
+            count: 1,
+            next: null,
+            previous: null,
+            results: [
+                {
+                    pulp_href: '/pulp/api/v3/content/container/tags/019d17df-af50-7196-812f-121fd6328b99/',
+                    prn: 'prn:container.tag:019d17df-af50-7196-812f-121fd6328b99',
+                    pulp_created: '2026-03-22T23:27:09.187522Z',
+                    pulp_last_updated: '2026-03-22T23:27:09.187533Z',
+                    pulp_labels: {},
+                    vuln_report: null,
+                    name: 'latest',
+                    tagged_manifest: '/pulp/api/v3/content/container/manifests/019d17df-b0a6-7ae0-a901-0869a38559ab/',
+                },
+            ],
+        },
+    },
+}

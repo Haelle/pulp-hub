@@ -1,12 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { login, PULP_URL, PULP_USER, PULP_PASS } from './helpers/login';
 
-// All logout tests live here so they can be wired to the dedicated
-// `logout` Playwright project, which depends on `main`. This guarantees
-// no logout test runs while another test still needs a valid Pulp
-// session — POST /auth/logout/ flushes the real Django session during
-// recording, which would otherwise pollute later tapes with 401s.
-
 test.describe('Logout', () => {
 	test('logs out and redirects to login', async ({ page }) => {
 		await login(page);
