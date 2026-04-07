@@ -67,44 +67,44 @@
 					</Alert.Description>
 				</Alert.Root>
 			{:else}
-			<form onsubmit={handleSubmit} class="space-y-4">
-				<div class="space-y-2">
-					<Label for="username">Username</Label>
-					<Input id="username" name="username" type="text" required />
-				</div>
-
-				<div class="space-y-2">
-					<Label for="password">Password</Label>
-					<Input id="password" name="password" type="password" required />
-				</div>
-
-				{#if import.meta.env.DEV}
-					<div class="flex items-center gap-2">
-						<input
-							type="checkbox"
-							id="forceBasicAuth"
-							name="forceBasicAuth"
-							data-testid="force-basic-auth"
-							class="rounded border-border"
-						/>
-						<Label for="forceBasicAuth" class="text-xs text-muted-foreground">
-							Force Basic Auth (dev only)
-						</Label>
+				<form onsubmit={handleSubmit} class="space-y-4">
+					<div class="space-y-2">
+						<Label for="username">Username</Label>
+						<Input id="username" name="username" type="text" required />
 					</div>
-				{/if}
 
-				{#if error}
-					<Alert.Root variant="destructive">
-						<CircleAlert class="size-4" />
-						<Alert.Title>Error</Alert.Title>
-						<Alert.Description>{error}</Alert.Description>
-					</Alert.Root>
-				{/if}
+					<div class="space-y-2">
+						<Label for="password">Password</Label>
+						<Input id="password" name="password" type="password" required />
+					</div>
 
-				<Button type="submit" class="w-full" disabled={loading}
-					>{loading ? 'Connecting...' : 'Connect'}</Button
-				>
-			</form>
+					{#if import.meta.env.DEV}
+						<div class="flex items-center gap-2">
+							<input
+								type="checkbox"
+								id="forceBasicAuth"
+								name="forceBasicAuth"
+								data-testid="force-basic-auth"
+								class="rounded border-border"
+							/>
+							<Label for="forceBasicAuth" class="text-xs text-muted-foreground">
+								Force Basic Auth (dev only)
+							</Label>
+						</div>
+					{/if}
+
+					{#if error}
+						<Alert.Root variant="destructive">
+							<CircleAlert class="size-4" />
+							<Alert.Title>Error</Alert.Title>
+							<Alert.Description>{error}</Alert.Description>
+						</Alert.Root>
+					{/if}
+
+					<Button type="submit" class="w-full" disabled={loading}
+						>{loading ? 'Connecting...' : 'Connect'}</Button
+					>
+				</form>
 			{/if}
 			<div class="pt-4">
 				<CliHint>

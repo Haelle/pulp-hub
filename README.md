@@ -52,8 +52,8 @@ PulpHub is configured at runtime via environment variables — no rebuild
 needed when changing the target Pulp instance. See
 [docs/configuration.md](docs/configuration.md) for the full reference.
 
-| Variable   | Required | Description                                                                                    |
-| ---------- | -------- | ---------------------------------------------------------------------------------------------- |
+| Variable   | Required | Description                                                                                                       |
+| ---------- | -------- | ----------------------------------------------------------------------------------------------------------------- |
 | `PULP_URL` | ✅       | Public URL of the Pulp API as seen by the **user's browser** (see [docs/configuration.md](docs/configuration.md)) |
 
 Example with `docker-compose.yml`:

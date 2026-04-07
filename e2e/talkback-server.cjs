@@ -80,7 +80,8 @@ function handleSessionAuth(req, res) {
 		res.writeHead(302, {
 			...cors,
 			location: '/',
-			'set-cookie': 'sessionid=""; expires=Thu, 01 Jan 1970 00:00:00 GMT; Max-Age=0; Path=/; SameSite=Lax'
+			'set-cookie':
+				'sessionid=""; expires=Thu, 01 Jan 1970 00:00:00 GMT; Max-Age=0; Path=/; SameSite=Lax'
 		});
 		res.end();
 		return true;
