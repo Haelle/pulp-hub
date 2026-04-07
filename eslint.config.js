@@ -48,6 +48,13 @@ export default ts.config(
 		}
 	},
 	{
-		ignores: ['build/', '.svelte-kit/', 'node_modules/', 'e2e/tapes/']
+		ignores: [
+			'build/',
+			'.svelte-kit/',
+			'node_modules/',
+			'e2e/tapes/',
+			'test-results/',
+			'playwright-report/'
+		]
 	}
 );
