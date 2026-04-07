@@ -36,13 +36,39 @@ pip install pulp-cli[container]
 ### Use with an existing Pulp instance
 
 ```bash
-docker run -d -p 8080:80 docker.io/estb/pulp-hub:latest
+docker run -d -p 8080:80 \
+  -e PULP_URL=https://your.pulp.example.com \
+  docker.io/estb/pulp-hub:latest
 ```
 
-Open http://localhost:8080 and point the login to your Pulp instance URL.
+Open http://localhost:8080 and log in.
 
-> **CORS**: the Pulp instance must allow cross-origin requests.
+> **CORS**: the Pulp instance must allow cross-origin requests from PulpHub's origin.
 > See [nginx/pulp-cors-proxy.conf](nginx/pulp-cors-proxy.conf) for an example reverse proxy configuration.
+
+### Configuration
+
+PulpHub is configured at runtime via environment variables — no rebuild
+needed when changing the target Pulp instance. See
+[docs/configuration.md](docs/configuration.md) for the full reference.
+
+| Variable   | Required | Description                                                                                    |
+| ---------- | -------- | ---------------------------------------------------------------------------------------------- |
+| `PULP_URL` | ✅       | Public URL of the Pulp API as seen by the **user's browser** (see [docs/configuration.md](docs/configuration.md)) |
+
+Example with `docker-compose.yml`:
+
+```yaml
+services:
+  pulphub:
+    image: docker.io/estb/pulp-hub:latest
+    ports:
+      - '8080:80'
+    environment:
+      PULP_URL: http://localhost:8081
+```
+
+The container fails to start with a clear error message if `PULP_URL` is missing.
 
 ### Authentication
 
@@ -142,6 +168,10 @@ make help
 make test          # E2E Playwright
 make test-record   # Re-record tapes
 ```
+
+See [docs/e2e-tests.md](docs/e2e-tests.md) for the Talkback setup, the
+mocked `/auth/*` endpoints, and the recommended workflow for adding new
+tests without re-recording the whole suite.
 
 ## Pulp reference
 

@@ -17,7 +17,6 @@ test.describe('Login', () => {
 		);
 
 		await page.goto('/');
-		await page.fill('input[name="url"]', PULP_URL);
 		await page.fill('input[name="username"]', 'wrong');
 		await page.fill('input[name="password"]', 'wrong');
 		await page.click('button[type="submit"]');
@@ -30,6 +29,12 @@ test.describe('Login', () => {
 
 		await expect(page.locator('h1')).toContainText('Images');
 		await expect(page.locator('nav')).toContainText(PULP_URL);
+	});
+
+	test('login page shows the configured Pulp URL', async ({ page }) => {
+		await page.goto('/');
+		await expect(page.getByText('Connexion à')).toBeVisible();
+		await expect(page.locator('[data-slot="card-description"] code')).toContainText(PULP_URL);
 	});
 });
 

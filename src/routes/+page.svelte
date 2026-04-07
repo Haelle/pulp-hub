@@ -23,7 +23,6 @@
 		e.preventDefault();
 		const form = e.target as HTMLFormElement;
 		const data = new FormData(form);
-		const url = (data.get('url') as string).replace(/\/+$/, '');
 		const username = data.get('username') as string;
 		const password = data.get('password') as string;
 
@@ -33,7 +32,7 @@
 		loading = true;
 
 		try {
-			await auth.login(url, username, password, { forceBasicAuth: forceBasic });
+			await auth.login(username, password, { forceBasicAuth: forceBasic });
 			goto('/images');
 		} catch (e) {
 			error = e instanceof Error ? e.message : 'Unknown error';
@@ -50,15 +49,25 @@
 	<Card.Root class="w-full max-w-md">
 		<Card.Header class="text-center">
 			<Card.Title class="text-3xl font-bold text-primary">PulpHub</Card.Title>
-			<Card.Description>Connect to your Pulp instance</Card.Description>
+			<Card.Description>
+				{#if auth.pulpUrl}
+					Connexion à <code class="bg-muted px-1.5 py-0.5 rounded">{auth.pulpUrl}</code>
+				{:else}
+					Connect to your Pulp instance
+				{/if}
+			</Card.Description>
 		</Card.Header>
 		<Card.Content>
+			{#if !auth.pulpUrl}
+				<Alert.Root variant="destructive">
+					<CircleAlert class="size-4" />
+					<Alert.Title>Configuration manquante</Alert.Title>
+					<Alert.Description>
+						La variable d'environnement <code>PULP_URL</code> n'est pas configurée.
+					</Alert.Description>
+				</Alert.Root>
+			{:else}
 			<form onsubmit={handleSubmit} class="space-y-4">
-				<div class="space-y-2">
-					<Label for="url">Pulp URL</Label>
-					<Input id="url" name="url" type="url" placeholder="https://your.pulp.com" required />
-				</div>
-
 				<div class="space-y-2">
 					<Label for="username">Username</Label>
 					<Input id="username" name="username" type="text" required />
@@ -96,6 +105,7 @@
 					>{loading ? 'Connecting...' : 'Connect'}</Button
 				>
 			</form>
+			{/if}
 			<div class="pt-4">
 				<CliHint>
 					<code class="bg-muted px-1.5 py-0.5 rounded">pulp config create</code>

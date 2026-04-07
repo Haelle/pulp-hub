@@ -27,6 +27,8 @@ services:
     container_name: pulphub-demo
     ports:
       - '8080:80'
+    environment:
+      PULP_URL: http://localhost:8081
     depends_on:
       - pulp
 

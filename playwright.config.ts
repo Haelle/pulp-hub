@@ -16,7 +16,7 @@ export default defineConfig({
 			env: {}
 		},
 		{
-			command: 'npm run dev',
+			command: `PULP_URL=http://localhost:${TALKBACK_PORT} npm run dev`,
 			url: 'http://localhost:5173',
 			reuseExistingServer: true,
 			timeout: 15000

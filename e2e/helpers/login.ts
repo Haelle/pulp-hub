@@ -7,7 +7,6 @@ export const PULP_PASS = process.env.PULP_PASS ?? 'admin';
 
 export async function login(page: Page) {
 	await page.goto('/');
-	await page.fill('input[name="url"]', PULP_URL);
 	await page.fill('input[name="username"]', PULP_USER);
 	await page.fill('input[name="password"]', PULP_PASS);
 	await page.click('button[type="submit"]');
@@ -16,7 +15,6 @@ export async function login(page: Page) {
 
 export async function loginBasicAuth(page: Page) {
 	await page.goto('/');
-	await page.fill('input[name="url"]', PULP_URL);
 	await page.fill('input[name="username"]', PULP_USER);
 	await page.fill('input[name="password"]', PULP_PASS);
 	await page.check('[data-testid="force-basic-auth"]');

@@ -1,11 +1,11 @@
 import { goto } from '$app/navigation';
+import { PULP_URL } from '$lib/config';
 
 const STORAGE_KEY = 'pulphub_auth';
 
 type AuthMode = 'session' | 'basic';
 
 interface AuthState {
-	pulpUrl: string;
 	username: string;
 	password: string;
 	authMode: AuthMode;
@@ -42,9 +42,9 @@ function getCookie(name: string): string | null {
 /**
  * Check if the Pulp instance supports session auth by probing /auth/login/.
  */
-async function detectSessionAuth(baseUrl: string): Promise<boolean> {
+async function detectSessionAuth(): Promise<boolean> {
 	try {
-		const res = await fetch(`${baseUrl}/auth/login/`, {
+		const res = await fetch(`${PULP_URL}/auth/login/`, {
 			method: 'GET',
 			credentials: 'include'
 		});
@@ -59,9 +59,9 @@ async function detectSessionAuth(baseUrl: string): Promise<boolean> {
  * Returns true on success, false on invalid credentials.
  * Throws on network/server errors.
  */
-async function sessionLogin(baseUrl: string, user: string, pass: string): Promise<boolean> {
+async function sessionLogin(user: string, pass: string): Promise<boolean> {
 	// Step 1: GET /auth/login/ to obtain CSRF cookie
-	await fetch(`${baseUrl}/auth/login/`, {
+	await fetch(`${PULP_URL}/auth/login/`, {
 		method: 'GET',
 		credentials: 'include'
 	});
@@ -71,7 +71,7 @@ async function sessionLogin(baseUrl: string, user: string, pass: string): Promis
 
 	// Step 2: POST /auth/login/ with credentials
 	const formData = new URLSearchParams({ username: user, password: pass });
-	const res = await fetch(`${baseUrl}/auth/login/`, {
+	const res = await fetch(`${PULP_URL}/auth/login/`, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded',
@@ -96,7 +96,6 @@ async function sessionLogin(baseUrl: string, user: string, pass: string): Promis
 
 const stored = loadFromStorage();
 
-let pulpUrl = $state(stored?.pulpUrl ?? '');
 let username = $state(stored?.username ?? '');
 let password = $state(stored?.password ?? '');
 let authMode = $state<AuthMode>(stored?.authMode ?? 'basic');
@@ -104,7 +103,7 @@ let authenticated = $state(!!stored);
 
 export const auth = {
 	get pulpUrl() {
-		return pulpUrl;
+		return PULP_URL;
 	},
 	get username() {
 		return username;
@@ -120,33 +119,28 @@ export const auth = {
 	},
 
 	async login(
-		url: string,
 		user: string,
 		pass: string,
 		options?: { forceBasicAuth?: boolean }
 	): Promise<void> {
-		const base = url.replace(/\/+$/, '');
-
 		// Try session auth first, fall back to Basic Auth on any failure
-		const supportsSession = options?.forceBasicAuth ? false : await detectSessionAuth(base);
+		const supportsSession = options?.forceBasicAuth ? false : await detectSessionAuth();
 		if (supportsSession) {
 			try {
-				const success = await sessionLogin(base, user, pass);
+				const success = await sessionLogin(user, pass);
 				if (!success) {
 					throw new Error('Invalid credentials');
 				}
 				const check = await fetch(
-					`${base}/pulp/api/v3/distributions/container/container/?limit=0`,
+					`${PULP_URL}/pulp/api/v3/distributions/container/container/?limit=0`,
 					{ credentials: 'include' }
 				);
 				if (check.ok) {
-					pulpUrl = base;
 					username = user;
 					password = '';
 					authMode = 'session';
 					authenticated = true;
 					saveToStorage({
-						pulpUrl: base,
 						username: user,
 						password: '',
 						authMode: 'session'
@@ -161,7 +155,7 @@ export const auth = {
 
 		// Fallback: Basic Auth
 		const header = 'Basic ' + btoa(user + ':' + pass);
-		const res = await fetch(`${base}/pulp/api/v3/distributions/container/container/?limit=0`, {
+		const res = await fetch(`${PULP_URL}/pulp/api/v3/distributions/container/container/?limit=0`, {
 			headers: { Authorization: header }
 		});
 
@@ -172,25 +166,23 @@ export const auth = {
 			throw new Error(`Pulp API error: ${res.status}`);
 		}
 
-		pulpUrl = base;
 		username = user;
 		password = pass;
 		authMode = 'basic';
 		authenticated = true;
-		saveToStorage({ pulpUrl: base, username: user, password: pass, authMode: 'basic' });
+		saveToStorage({ username: user, password: pass, authMode: 'basic' });
 	},
 
 	logout() {
-		if (authMode === 'session' && pulpUrl) {
+		if (authMode === 'session' && PULP_URL) {
 			// Fire-and-forget logout request to clear server session
 			const csrfToken = getCookie('csrftoken');
-			fetch(`${pulpUrl}/auth/logout/`, {
+			fetch(`${PULP_URL}/auth/logout/`, {
 				method: 'POST',
 				credentials: 'include',
 				headers: csrfToken ? { 'X-CSRFToken': csrfToken } : {}
 			}).catch(() => {});
 		}
-		pulpUrl = '';
 		username = '';
 		password = '';
 		authMode = 'basic';

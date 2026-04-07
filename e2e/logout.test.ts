@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { login, PULP_URL, PULP_USER, PULP_PASS } from './helpers/login';
+import { login, PULP_USER, PULP_PASS } from './helpers/login';
 
 test.describe('Logout', () => {
 	test('logs out and redirects to login', async ({ page }) => {
@@ -19,7 +19,6 @@ test.describe('Logout', () => {
 
 	test('session auth logout clears session', async ({ page }) => {
 		await page.goto('/');
-		await page.fill('input[name="url"]', PULP_URL);
 		await page.fill('input[name="username"]', PULP_USER);
 		await page.fill('input[name="password"]', PULP_PASS);
 		await page.click('button[type="submit"]');

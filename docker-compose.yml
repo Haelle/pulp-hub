@@ -18,3 +18,5 @@ services:
     image: docker.io/estb/pulp-hub:latest
     ports:
       - '8080:80'
+    environment:
+      PULP_URL: http://localhost:8081

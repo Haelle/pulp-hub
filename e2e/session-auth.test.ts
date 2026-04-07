@@ -1,10 +1,9 @@
 import { test, expect } from '@playwright/test';
-import { PULP_URL, PULP_USER, PULP_PASS } from './helpers/login';
+import { PULP_USER, PULP_PASS } from './helpers/login';
 
 test.describe('Session Auth', () => {
 	test('logs in via session auth and redirects to images', async ({ page }) => {
 		await page.goto('/');
-		await page.fill('input[name="url"]', PULP_URL);
 		await page.fill('input[name="username"]', PULP_USER);
 		await page.fill('input[name="password"]', PULP_PASS);
 		await page.click('button[type="submit"]');
@@ -15,7 +14,6 @@ test.describe('Session Auth', () => {
 
 	test('uses session auth mode when server supports it', async ({ page }) => {
 		await page.goto('/');
-		await page.fill('input[name="url"]', PULP_URL);
 		await page.fill('input[name="username"]', PULP_USER);
 		await page.fill('input[name="password"]', PULP_PASS);
 		await page.click('button[type="submit"]');
@@ -33,7 +31,6 @@ test.describe('Session Auth', () => {
 
 	test('shows error on invalid credentials with session auth', async ({ page }) => {
 		await page.goto('/');
-		await page.fill('input[name="url"]', PULP_URL);
 		await page.fill('input[name="username"]', 'wrong');
 		await page.fill('input[name="password"]', 'wrong');
 		await page.click('button[type="submit"]');
@@ -48,7 +45,6 @@ test.describe('Session Auth', () => {
 		);
 
 		await page.goto('/');
-		await page.fill('input[name="url"]', PULP_URL);
 		await page.fill('input[name="username"]', PULP_USER);
 		await page.fill('input[name="password"]', PULP_PASS);
 		await page.click('button[type="submit"]');

@@ -2,6 +2,7 @@ DC = devcontainer exec --workspace-folder .
 PULP_DEV_NAME = pulp-dev
 PULP_PROXY_NAME = pulp-proxy-dev
 PULP_DEV_NET = pulp-dev-net
+PULP_URL ?= http://localhost:8081
 
 .PHONY: up down recreate setup shell dev build check lint format format-check audit quality test test-record test-ui screenshots seed clean create-pulp start-pulp stop-pulp reset-pulp help
 
@@ -25,8 +26,8 @@ shell: ## Open a shell inside the devcontainer
 
 # ── Development ──────────────────────────────────────────────
 
-dev: ## Start the dev server (http://localhost:5173)
-	$(DC) bash -c "npm run dev -- --host 0.0.0.0"
+dev: ## Start the dev server (http://localhost:5173) — override with PULP_URL=...
+	$(DC) bash -c "PULP_URL=$(PULP_URL) npm run dev -- --host 0.0.0.0"
 
 build: ## Production build
 	$(DC) npm run build
