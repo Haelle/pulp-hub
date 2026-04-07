@@ -1,0 +1,116 @@
+{
+    meta: {
+        createdAt: '2026-04-07T00:44:24.756Z',
+        host: 'http://host.docker.internal:8081',
+        resHumanReadable: true,
+    },
+    req: {
+        headers: {
+            connection: 'keep-alive',
+            'sec-ch-ua-platform': '"Linux"',
+            'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36',
+            'sec-ch-ua': '"Not:A-Brand";v="99", "HeadlessChrome";v="145", "Chromium";v="145"',
+            'accept-language': 'en-US',
+            'sec-ch-ua-mobile': '?0',
+            accept: '*/*',
+            origin: 'http://localhost:5173',
+            'sec-fetch-site': 'same-site',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-dest': 'empty',
+            referer: 'http://localhost:5173/',
+            'accept-encoding': 'gzip, deflate, br, zstd',
+            cookie: 'csrftoken=8pfhKf66xuMTrgGTEJe9FeEhtElfxq3B; sessionid=1yr35sd7yqh90p3d7eegk9zy2y58uong',
+        },
+        url: '/pulp/api/v3/content/container/manifests/019d17de-b043-7b25-81e5-6f7077cb634d/',
+        method: 'GET',
+        body: '',
+    },
+    res: {
+        status: 200,
+        headers: {
+            server: [
+                'nginx/1.29.6',
+            ],
+            date: [
+                'Tue, 07 Apr 2026 00:44:25 GMT',
+            ],
+            'content-type': [
+                'application/json',
+            ],
+            'content-length': [
+                '1285',
+            ],
+            connection: [
+                'keep-alive',
+            ],
+            vary: [
+                'Accept, Cookie',
+            ],
+            allow: [
+                'GET, HEAD, OPTIONS',
+            ],
+            'x-frame-options': [
+                'DENY, DENY',
+            ],
+            'x-content-type-options': [
+                'nosniff, nosniff',
+            ],
+            'referrer-policy': [
+                'same-origin, same-origin',
+            ],
+            'cross-origin-opener-policy': [
+                'same-origin',
+            ],
+            'correlation-id': [
+                '6d31e36377334907a02a25606b47d42f',
+            ],
+            'access-control-expose-headers': [
+                'Correlation-ID, Content-Length, Content-Range, Docker-Content-Digest',
+            ],
+            'access-control-allow-origin': [
+                'http://localhost:5173',
+            ],
+            'access-control-allow-methods': [
+                'GET, POST, PUT, PATCH, DELETE, OPTIONS',
+            ],
+            'access-control-allow-headers': [
+                'Authorization, Content-Type, Accept, X-Requested-With, X-CSRFToken',
+            ],
+            'access-control-allow-credentials': [
+                'true',
+            ],
+        },
+        body: {
+            pulp_href: '/pulp/api/v3/content/container/manifests/019d17de-b043-7b25-81e5-6f7077cb634d/',
+            prn: 'prn:container.manifest:019d17de-b043-7b25-81e5-6f7077cb634d',
+            pulp_created: '2026-03-22T23:26:05.112632Z',
+            pulp_last_updated: '2026-03-22T23:26:05.112640Z',
+            pulp_labels: {},
+            vuln_report: null,
+            digest: 'sha256:b3e2feab52cb0f1b09f58d171b74624f4a4c6176dd02280d14d104273d49eb12',
+            schema_version: 2,
+            media_type: 'application/vnd.oci.image.manifest.v1+json',
+            listed_manifests: [],
+            config_blob: '/pulp/api/v3/content/container/blobs/019d17de-b3e0-71b2-95d8-0d8a1b59f81b/',
+            blobs: [
+                '/pulp/api/v3/content/container/blobs/019d17de-b3de-7a7e-bd6f-9c5ec95b729e/',
+            ],
+            annotations: {
+                'org.opencontainers.image.url': 'https://hub.docker.com/_/alpine',
+                'org.opencontainers.image.source': 'https://github.com/alpinelinux/docker-alpine.git#a037d70ba44f91b00dff940019d29a28f7ba1265:ppc64le',
+                'org.opencontainers.image.created': '2026-01-28T01:16:45Z',
+                'org.opencontainers.image.version': '3.23.3',
+                'org.opencontainers.image.revision': 'a037d70ba44f91b00dff940019d29a28f7ba1265',
+                'org.opencontainers.image.base.name': 'scratch',
+                'com.docker.official-images.bashbrew.arch': 'ppc64le',
+            },
+            labels: {},
+            is_bootable: false,
+            is_flatpak: false,
+            type: 'image',
+            architecture: 'ppc64le',
+            os: 'linux',
+            compressed_image_size: 3829643,
+        },
+    },
+}
