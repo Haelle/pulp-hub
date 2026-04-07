@@ -1,0 +1,107 @@
+{
+    meta: {
+        createdAt: '2026-04-07T00:44:16.527Z',
+        host: 'http://host.docker.internal:8081',
+        resHumanReadable: true,
+    },
+    req: {
+        headers: {
+            connection: 'keep-alive',
+            'sec-ch-ua-platform': '"Linux"',
+            'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36',
+            'sec-ch-ua': '"Not:A-Brand";v="99", "HeadlessChrome";v="145", "Chromium";v="145"',
+            'accept-language': 'en-US',
+            'sec-ch-ua-mobile': '?0',
+            accept: '*/*',
+            origin: 'http://localhost:5173',
+            'sec-fetch-site': 'same-site',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-dest': 'empty',
+            referer: 'http://localhost:5173/',
+            'accept-encoding': 'gzip, deflate, br, zstd',
+            cookie: 'csrftoken=8pfhKf66xuMTrgGTEJe9FeEhtElfxq3B; sessionid=1yr35sd7yqh90p3d7eegk9zy2y58uong',
+        },
+        url: '/pulp/api/v3/distributions/file/file/?name=test-data',
+        method: 'GET',
+        body: '',
+    },
+    res: {
+        status: 200,
+        headers: {
+            server: [
+                'nginx/1.29.6',
+            ],
+            date: [
+                'Tue, 07 Apr 2026 00:44:16 GMT',
+            ],
+            'content-type': [
+                'application/json',
+            ],
+            'content-length': [
+                '621',
+            ],
+            connection: [
+                'keep-alive',
+            ],
+            vary: [
+                'Accept, Cookie',
+            ],
+            allow: [
+                'GET, POST, HEAD, OPTIONS',
+            ],
+            'x-frame-options': [
+                'DENY, DENY',
+            ],
+            'x-content-type-options': [
+                'nosniff, nosniff',
+            ],
+            'referrer-policy': [
+                'same-origin, same-origin',
+            ],
+            'cross-origin-opener-policy': [
+                'same-origin',
+            ],
+            'correlation-id': [
+                'fe2756aee5d7481d8ed23ea11180ecb5',
+            ],
+            'access-control-expose-headers': [
+                'Correlation-ID, Content-Length, Content-Range, Docker-Content-Digest',
+            ],
+            'access-control-allow-origin': [
+                'http://localhost:5173',
+            ],
+            'access-control-allow-methods': [
+                'GET, POST, PUT, PATCH, DELETE, OPTIONS',
+            ],
+            'access-control-allow-headers': [
+                'Authorization, Content-Type, Accept, X-Requested-With, X-CSRFToken',
+            ],
+            'access-control-allow-credentials': [
+                'true',
+            ],
+        },
+        body: {
+            count: 1,
+            next: null,
+            previous: null,
+            results: [
+                {
+                    pulp_href: '/pulp/api/v3/distributions/file/file/019d17e0-0b82-7dbd-87af-100c0f55f7b0/',
+                    prn: 'prn:file.filedistribution:019d17e0-0b82-7dbd-87af-100c0f55f7b0',
+                    pulp_created: '2026-03-22T23:27:32.227988Z',
+                    pulp_last_updated: '2026-03-22T23:27:32.228001Z',
+                    base_path: 'test-data',
+                    base_url: 'http://localhost:8081/pulp/content/test-data/',
+                    content_guard: null,
+                    no_content_change_since: null,
+                    hidden: false,
+                    pulp_labels: {},
+                    name: 'test-data',
+                    repository: '/pulp/api/v3/repositories/file/file/019d17e0-04bb-7303-a318-4d8ab4ee1408/',
+                    publication: null,
+                    checkpoint: false,
+                },
+            ],
+        },
+    },
+}

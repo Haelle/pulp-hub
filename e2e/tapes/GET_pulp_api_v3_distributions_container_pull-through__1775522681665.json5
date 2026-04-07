@@ -1,0 +1,133 @@
+{
+    meta: {
+        createdAt: '2026-04-07T00:44:41.503Z',
+        host: 'http://host.docker.internal:8081',
+        resHumanReadable: true,
+    },
+    req: {
+        headers: {
+            connection: 'keep-alive',
+            'sec-ch-ua-platform': '"Linux"',
+            'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/145.0.7632.6 Safari/537.36',
+            'sec-ch-ua': '"Not:A-Brand";v="99", "HeadlessChrome";v="145", "Chromium";v="145"',
+            'accept-language': 'en-US',
+            'sec-ch-ua-mobile': '?0',
+            accept: '*/*',
+            origin: 'http://localhost:5173',
+            'sec-fetch-site': 'same-site',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-dest': 'empty',
+            referer: 'http://localhost:5173/',
+            'accept-encoding': 'gzip, deflate, br, zstd',
+            cookie: 'csrftoken=8pfhKf66xuMTrgGTEJe9FeEhtElfxq3B; sessionid=1yr35sd7yqh90p3d7eegk9zy2y58uong',
+        },
+        url: '/pulp/api/v3/distributions/container/pull-through/?limit=100',
+        method: 'GET',
+        body: '',
+    },
+    res: {
+        status: 200,
+        headers: {
+            server: [
+                'nginx/1.29.6',
+            ],
+            date: [
+                'Tue, 07 Apr 2026 00:44:41 GMT',
+            ],
+            'content-type': [
+                'application/json',
+            ],
+            'content-length': [
+                '1927',
+            ],
+            connection: [
+                'keep-alive',
+            ],
+            vary: [
+                'Accept, Cookie',
+            ],
+            allow: [
+                'GET, POST, HEAD, OPTIONS',
+            ],
+            'x-frame-options': [
+                'DENY, DENY',
+            ],
+            'x-content-type-options': [
+                'nosniff, nosniff',
+            ],
+            'referrer-policy': [
+                'same-origin, same-origin',
+            ],
+            'cross-origin-opener-policy': [
+                'same-origin',
+            ],
+            'correlation-id': [
+                '6e6dfff840a041dea5646e0b3c04916a',
+            ],
+            'access-control-expose-headers': [
+                'Correlation-ID, Content-Length, Content-Range, Docker-Content-Digest',
+            ],
+            'access-control-allow-origin': [
+                'http://localhost:5173',
+            ],
+            'access-control-allow-methods': [
+                'GET, POST, PUT, PATCH, DELETE, OPTIONS',
+            ],
+            'access-control-allow-headers': [
+                'Authorization, Content-Type, Accept, X-Requested-With, X-CSRFToken',
+            ],
+            'access-control-allow-credentials': [
+                'true',
+            ],
+        },
+        body: {
+            count: 2,
+            next: null,
+            previous: null,
+            results: [
+                {
+                    pulp_created: '2026-03-22T23:25:50.743085Z',
+                    content_guard: '/pulp/api/v3/contentguards/core/content_redirect/019d17de-722d-71c5-a153-8d1c4b8531e8/',
+                    prn: 'prn:container.containerpullthroughdistribution:019d17de-7f15-7d83-82a0-e307ee6fbdfc',
+                    repository: null,
+                    pulp_href: '/pulp/api/v3/distributions/container/pull-through/019d17de-7f15-7d83-82a0-e307ee6fbdfc/',
+                    hidden: false,
+                    name: 'quay-cache',
+                    no_content_change_since: null,
+                    base_path: 'quay-cache',
+                    pulp_labels: {},
+                    pulp_last_updated: '2026-03-22T23:25:50.743101Z',
+                    remote: '/pulp/api/v3/remotes/container/pull-through/019d17de-7b0c-734e-b823-dcdcba038222/',
+                    distributions: [
+                        '/pulp/api/v3/distributions/container/container/019d17df-a880-7d60-a8ff-be7083e1c93f/',
+                    ],
+                    namespace: '/pulp/api/v3/pulp_container/namespaces/019d17de-7db6-79f1-921e-5710f5632af3/',
+                    private: false,
+                    description: null,
+                },
+                {
+                    pulp_created: '2026-03-22T23:25:47.865670Z',
+                    content_guard: '/pulp/api/v3/contentguards/core/content_redirect/019d17de-722d-71c5-a153-8d1c4b8531e8/',
+                    prn: 'prn:container.containerpullthroughdistribution:019d17de-73d8-7e5e-b6a7-a2e24ad31f89',
+                    repository: null,
+                    pulp_href: '/pulp/api/v3/distributions/container/pull-through/019d17de-73d8-7e5e-b6a7-a2e24ad31f89/',
+                    hidden: false,
+                    name: 'dockerhub-cache',
+                    no_content_change_since: null,
+                    base_path: 'dockerhub-cache',
+                    pulp_labels: {},
+                    pulp_last_updated: '2026-03-22T23:25:47.865683Z',
+                    remote: '/pulp/api/v3/remotes/container/pull-through/019d17de-6e15-787c-bbbe-1f47ddf7dfb1/',
+                    distributions: [
+                        '/pulp/api/v3/distributions/container/container/019d17de-a01a-7066-b041-b2d360280773/',
+                        '/pulp/api/v3/distributions/container/container/019d17de-c072-7377-94be-38fd3fb2699a/',
+                        '/pulp/api/v3/distributions/container/container/019d17de-d2c3-7275-bd96-929a012a3f25/',
+                    ],
+                    namespace: '/pulp/api/v3/pulp_container/namespaces/019d17de-723e-7e64-a213-e5627eae4f41/',
+                    private: false,
+                    description: null,
+                },
+            ],
+        },
+    },
+}
