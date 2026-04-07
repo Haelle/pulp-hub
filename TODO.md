@@ -337,15 +337,15 @@ Le plan initial proposait un `sed` sur les `.js` bundlés avec une copie `/var/w
 
 ```ts
 declare global {
-  interface Window {
-    __PULPHUB__?: { PULP_URL?: string };
-  }
+	interface Window {
+		__PULPHUB__?: { PULP_URL?: string };
+	}
 }
 
 function readPulpUrl(): string {
-  if (typeof window === 'undefined') return '';
-  const raw = window.__PULPHUB__?.PULP_URL ?? '';
-  return raw.replace(/\/+$/, '');
+	if (typeof window === 'undefined') return '';
+	const raw = window.__PULPHUB__?.PULP_URL ?? '';
+	return raw.replace(/\/+$/, '');
 }
 
 export const PULP_URL = readPulpUrl();
@@ -369,17 +369,17 @@ Ajouter un plugin local avant `sveltekit()` :
 
 ```ts
 function pulpUrlConfigPlugin() {
-  return {
-    name: 'pulphub-config',
-    configureServer(server) {
-      server.middlewares.use('/config.js', (_req, res) => {
-        const url = process.env.PULP_URL ?? '';
-        res.setHeader('Content-Type', 'application/javascript');
-        res.setHeader('Cache-Control', 'no-store');
-        res.end(`window.__PULPHUB__ = { PULP_URL: ${JSON.stringify(url)} };\n`);
-      });
-    }
-  };
+	return {
+		name: 'pulphub-config',
+		configureServer(server) {
+			server.middlewares.use('/config.js', (_req, res) => {
+				const url = process.env.PULP_URL ?? '';
+				res.setHeader('Content-Type', 'application/javascript');
+				res.setHeader('Cache-Control', 'no-store');
+				res.end(`window.__PULPHUB__ = { PULP_URL: ${JSON.stringify(url)} };\n`);
+			});
+		}
+	};
 }
 ```
 
@@ -425,7 +425,7 @@ Note : `gettext` (pour `envsubst`) est ~200 KB, négligeable. Pas de copie `/var
 #### 7. `docker/config.js.tpl` — nouveau fichier
 
 ```js
-window.__PULPHUB__ = { PULP_URL: "${PULP_URL}" };
+window.__PULPHUB__ = { PULP_URL: '${PULP_URL}' };
 ```
 
 #### 8. `docker/entrypoint.sh` — nouveau fichier
@@ -486,22 +486,22 @@ Ajouter `environment: { PULP_URL: http://host.docker.internal:8081 }` (ou l'URL 
 
 ### Fichiers critiques
 
-| Fichier | Action |
-|---|---|
-| `src/lib/config.ts` | **créer** |
-| `src/lib/auth.svelte.ts` | modifier (supprimer `pulpUrl` du state, simplifier `login()`) |
-| `src/routes/+page.svelte` | modifier (supprimer champ URL, afficher URL) |
-| `src/app.html` | modifier (ajouter `<script src="/config.js">`) |
-| `vite.config.ts` | modifier (ajouter plugin `pulpUrlConfigPlugin`) |
-| `Dockerfile` | modifier (ajouter `gettext`, entrypoint, template) |
-| `docker/entrypoint.sh` | **créer** |
-| `docker/config.js.tpl` | **créer** |
-| `nginx/pulphub.conf` | modifier (no-cache sur `/config.js`) |
-| `docker-compose.yml`, `docker-compose.demo.yml` | modifier (env `PULP_URL`) |
-| `Makefile` | modifier (`PULP_URL` propagé à `dev` et `test`) |
-| `playwright.config.ts` | modifier (`env: { PULP_URL }` sur webServer Vite) |
-| `e2e/helpers/login.ts` | modifier (supprimer fill URL) |
-| `e2e/auth.test.ts`, `e2e/session-auth.test.ts`, `e2e/navbar.test.ts` | adapter |
+| Fichier                                                              | Action                                                        |
+| -------------------------------------------------------------------- | ------------------------------------------------------------- |
+| `src/lib/config.ts`                                                  | **créer**                                                     |
+| `src/lib/auth.svelte.ts`                                             | modifier (supprimer `pulpUrl` du state, simplifier `login()`) |
+| `src/routes/+page.svelte`                                            | modifier (supprimer champ URL, afficher URL)                  |
+| `src/app.html`                                                       | modifier (ajouter `<script src="/config.js">`)                |
+| `vite.config.ts`                                                     | modifier (ajouter plugin `pulpUrlConfigPlugin`)               |
+| `Dockerfile`                                                         | modifier (ajouter `gettext`, entrypoint, template)            |
+| `docker/entrypoint.sh`                                               | **créer**                                                     |
+| `docker/config.js.tpl`                                               | **créer**                                                     |
+| `nginx/pulphub.conf`                                                 | modifier (no-cache sur `/config.js`)                          |
+| `docker-compose.yml`, `docker-compose.demo.yml`                      | modifier (env `PULP_URL`)                                     |
+| `Makefile`                                                           | modifier (`PULP_URL` propagé à `dev` et `test`)               |
+| `playwright.config.ts`                                               | modifier (`env: { PULP_URL }` sur webServer Vite)             |
+| `e2e/helpers/login.ts`                                               | modifier (supprimer fill URL)                                 |
+| `e2e/auth.test.ts`, `e2e/session-auth.test.ts`, `e2e/navbar.test.ts` | adapter                                                       |
 
 ### Vérification
 
