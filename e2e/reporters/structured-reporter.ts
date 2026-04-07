@@ -105,12 +105,14 @@ class RSpecReporter implements Reporter {
 		const tree = new Map<string, TestEntry[] | Map<string, TestEntry[]>>();
 
 		for (const entry of entries) {
-			// titlePath: ["", "chromium", "describe", "test"] or deeper
-			// Skip empty and browser name
-			const path = entry.titlePath.slice(2); // remove "" and "chromium"
-			if (path.length === 0) continue;
+			// titlePath = [rootSuiteTitle, projectName?, file, ...describes, testName]
+			// rootSuiteTitle and projectName can both be empty strings depending
+			// on the playwright config (e.g. no `projects: [...]`). Filter out
+			// empties and drop the test title to get the group path.
+			const segments = entry.titlePath.filter((s) => s.length > 0);
+			if (segments.length === 0) continue;
 
-			const group = path.slice(0, -1).join(' › ') || '(root)';
+			const group = segments.slice(0, -1).join(' › ') || '(root)';
 			if (!tree.has(group)) {
 				tree.set(group, []);
 			}
