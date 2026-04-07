@@ -5,6 +5,7 @@ import { login } from './helpers/login';
 const SCREENSHOT_DIR = path.join('docs', 'screenshots');
 
 test('capture screenshots for docs', async ({ page }) => {
+	test.setTimeout(120_000);
 	await page.setViewportSize({ width: 1280, height: 720 });
 
 	// 1. Login page
@@ -92,7 +93,23 @@ test('capture screenshots for docs', async ({ page }) => {
 	await expect(page.locator('h2', { hasText: 'Cached versions' })).toBeVisible();
 	await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'python-detail.png'), fullPage: true });
 
-	// 15. Images in dark mode
+	// 15. Tasks list
+	await page.goto('/tasks');
+	await expect(page.locator('tbody tr').first()).toBeVisible();
+	await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'tasks.png'), fullPage: false });
+
+	// 16. Task detail (uses the same UUID as e2e/tasks.test.ts)
+	await page.goto('/tasks/019d651d-bf09-7241-a619-a23d1768d302');
+	await expect(page.locator('h1')).toBeVisible();
+	await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'task-detail.png'), fullPage: true });
+
+	// 17. Workers tab
+	await page.goto('/tasks');
+	await page.getByRole('button', { name: 'Workers', exact: true }).click();
+	await expect(page.locator('tbody tr').first()).toBeVisible();
+	await page.screenshot({ path: path.join(SCREENSHOT_DIR, 'workers.png'), fullPage: false });
+
+	// 18. Images in dark mode
 	await page.goto('/images');
 	await expect(page.locator('[data-slot="card"]').first()).toBeVisible();
 	await page.evaluate(() => {
