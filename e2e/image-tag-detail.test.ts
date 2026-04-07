@@ -20,6 +20,12 @@ test.describe('Image tag detail page', () => {
 	test('shows architecture and OS badges for multi-arch', async ({ page }) => {
 		await page.goto('/images/dockerhub-cache%2Flibrary%2Falpine/tags/latest');
 		await expect(page.locator('table')).toBeVisible();
+		// Wait for the Promise.all over listed_manifests to resolve and the
+		// platform rows to be rendered. The page assigns `platforms` atomically
+		// after Promise.all settles, so seeing one row guarantees all are loaded.
+		// Without this wait, Playwright closes the page before all
+		// getManifest() calls complete, leaving some platform tapes unrecorded.
+		await expect(page.locator('table tbody tr').first()).toBeVisible();
 	});
 
 	test('shows cli hint', async ({ page }) => {
